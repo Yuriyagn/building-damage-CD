@@ -2,6 +2,14 @@
 
 This repository is the Git-managed training code for DisasterM3 Stage-1.
 
+Git state:
+
+```text
+repo: stage1_optical_building/
+branch: main
+initial pipeline commit: d7621e5 Add Stage-1 optical building training pipeline
+```
+
 Task:
 
 ```text
