@@ -10,10 +10,24 @@ export OUT_ROOT="${OUT_ROOT:-${CODE_ROOT}/outputs}"
 cd "${CODE_ROOT}"
 mkdir -p "${OUT_ROOT}" logs
 
+TRAIN_EXTRA_ARGS=()
+if [[ -n "${EARLY_STOPPING_PATIENCE:-}" ]]; then
+  TRAIN_EXTRA_ARGS+=(--early-stopping-patience "${EARLY_STOPPING_PATIENCE}")
+fi
+if [[ -n "${EARLY_STOPPING_MIN_DELTA:-}" ]]; then
+  TRAIN_EXTRA_ARGS+=(--early-stopping-min-delta "${EARLY_STOPPING_MIN_DELTA}")
+fi
+if [[ -n "${EARLY_STOPPING_MIN_EPOCHS:-}" ]]; then
+  TRAIN_EXTRA_ARGS+=(--early-stopping-min-epochs "${EARLY_STOPPING_MIN_EPOCHS}")
+fi
+
 show_paths() {
   echo "[INFO] CODE_ROOT=${CODE_ROOT}"
   echo "[INFO] DATA_ROOT=${DATA_ROOT}"
   echo "[INFO] OUT_ROOT=${OUT_ROOT}"
+  if (( ${#TRAIN_EXTRA_ARGS[@]} )); then
+    echo "[INFO] TRAIN_EXTRA_ARGS=${TRAIN_EXTRA_ARGS[*]}"
+  fi
 }
 
 check_env() {
@@ -70,7 +84,8 @@ train_unet_freq() {
   python src/train.py \
     --config configs/stage1_optical_building_unet_resnet34_freq.yaml \
     --data-root "${DATA_ROOT}" \
-    --output-dir "${OUT_ROOT}/O1_unet_resnet34_freq"
+    --output-dir "${OUT_ROOT}/O1_unet_resnet34_freq" \
+    "${TRAIN_EXTRA_ARGS[@]}"
 }
 
 test_unet_freq() {
@@ -85,7 +100,8 @@ train_unet_all() {
   python src/train.py \
     --config configs/stage1_optical_building_unet_resnet34_all.yaml \
     --data-root "${DATA_ROOT}" \
-    --output-dir "${OUT_ROOT}/O2_unet_resnet34_all"
+    --output-dir "${OUT_ROOT}/O2_unet_resnet34_all" \
+    "${TRAIN_EXTRA_ARGS[@]}"
 }
 
 test_unet_all() {
@@ -101,7 +117,8 @@ train_deeplab_freq() {
   python src/train.py \
     --config configs/stage1_optical_building_deeplabv3p_resnet50_freq.yaml \
     --data-root "${DATA_ROOT}" \
-    --output-dir "${OUT_ROOT}/O3_deeplabv3p_resnet50_freq"
+    --output-dir "${OUT_ROOT}/O3_deeplabv3p_resnet50_freq" \
+    "${TRAIN_EXTRA_ARGS[@]}"
 }
 
 test_deeplab_freq() {
@@ -117,7 +134,8 @@ train_segformer_freq() {
   python src/train.py \
     --config configs/stage1_optical_building_segformer_b0_freq.yaml \
     --data-root "${DATA_ROOT}" \
-    --output-dir "${OUT_ROOT}/O4_segformer_b0_freq"
+    --output-dir "${OUT_ROOT}/O4_segformer_b0_freq" \
+    "${TRAIN_EXTRA_ARGS[@]}"
 }
 
 test_segformer_freq() {

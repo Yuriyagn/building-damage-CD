@@ -11,6 +11,8 @@ set -euo pipefail
 #   bash train.sh all     # run O1 -> O2 -> O3 -> O4 in order
 #
 # It does not start training when run without an argument.
+# For fast exploration, enable early stopping via environment variables, e.g.:
+#   EARLY_STOPPING_PATIENCE=20 EARLY_STOPPING_MIN_EPOCHS=30 bash train.sh o4
 
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 
@@ -83,6 +85,7 @@ Commands:
 Examples:
   CUDA_VISIBLE_DEVICES=0 bash train.sh o1
   CUDA_VISIBLE_DEVICES=0 bash train.sh all
+  CUDA_VISIBLE_DEVICES=0 EARLY_STOPPING_PATIENCE=20 EARLY_STOPPING_MIN_EPOCHS=30 bash train.sh o4
 EOF
 }
 

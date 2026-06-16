@@ -25,4 +25,12 @@ bash instruction.sh train_unet_freq
 bash instruction.sh test_unet_freq
 ```
 
+For faster exploration after the fixed baselines, enable early stopping without editing configs:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 EARLY_STOPPING_PATIENCE=20 EARLY_STOPPING_MIN_EPOCHS=30 bash train.sh o4
+```
+
+The fixed baseline configs keep `early_stopping_patience: 0`, so rerunning them without these environment variables preserves the original 100-epoch protocol.
+
 Do not run the training commands on the local machine.

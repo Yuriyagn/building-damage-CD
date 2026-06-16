@@ -164,6 +164,32 @@ def save_checkpoint(
     )
 
 
+def early_stopping_params(cfg: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
+    train_cfg = train_params(cfg)
+    patience = int(train_cfg.get("early_stopping_patience", 0))
+    min_delta = float(train_cfg.get("early_stopping_min_delta", 0.0))
+    min_epochs = int(train_cfg.get("early_stopping_min_epochs", 0))
+
+    if args.early_stopping_patience is not None:
+        patience = int(args.early_stopping_patience)
+    if args.early_stopping_min_delta is not None:
+        min_delta = float(args.early_stopping_min_delta)
+    if args.early_stopping_min_epochs is not None:
+        min_epochs = int(args.early_stopping_min_epochs)
+
+    patience = max(0, patience)
+    min_delta = max(0.0, min_delta)
+    min_epochs = max(0, min_epochs)
+    return {
+        "enabled": patience > 0,
+        "patience": patience,
+        "min_delta": min_delta,
+        "min_epochs": min_epochs,
+        "metric": "val_iou_building",
+        "mode": "max",
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
@@ -176,6 +202,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--overfit-batches", type=int)
     parser.add_argument("--amp", action="store_true")
     parser.add_argument("--no-pretrained", action="store_true")
+    parser.add_argument("--early-stopping-patience", type=int)
+    parser.add_argument("--early-stopping-min-delta", type=float)
+    parser.add_argument("--early-stopping-min-epochs", type=int)
     return parser.parse_args()
 
 
@@ -203,6 +232,7 @@ def main() -> None:
     batch_size = int(args.batch_size or train_cfg.get("batch_size", 8))
     num_workers = int(args.num_workers if args.num_workers is not None else train_cfg.get("num_workers", 8))
     epochs = int(args.epochs or train_cfg.get("epochs", 100))
+    early_stopping = early_stopping_params(cfg, args)
     limit = None
     if args.smoke_test:
         limit = max(batch_size, 2)
@@ -239,6 +269,7 @@ def main() -> None:
             "batch_size": batch_size,
             "epochs": epochs,
             "amp": amp,
+            "early_stopping": early_stopping,
         },
     )
 
@@ -259,21 +290,40 @@ def main() -> None:
 
     history = []
     best_iou = -1.0
+    early_stop_best_iou = -1.0
+    best_epoch = 0
+    epochs_without_improvement = 0
     for epoch in range(1, epochs + 1):
         train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device, amp)
         val_metrics = evaluate(model, val_loader, criterion, device, amp)
+        val_iou = float(val_metrics["iou_building"])
+        previous_best_iou = best_iou
+        checkpoint_improved = val_iou > previous_best_iou
+        significant_improved = val_iou > early_stop_best_iou + float(early_stopping["min_delta"])
+
+        if checkpoint_improved:
+            best_iou = val_iou
+            best_epoch = epoch
+            save_checkpoint(output_dir / "checkpoints" / "best_iou.pth", model, optimizer, cfg, epoch, best_iou)
+
+        if significant_improved:
+            early_stop_best_iou = val_iou
+            epochs_without_improvement = 0
+        elif epoch > 1:
+            epochs_without_improvement += 1
+
         row = {
             "epoch": epoch,
             **{f"train_{k}": v for k, v in train_metrics.items()},
             **{f"val_{k}": v for k, v in val_metrics.items()},
+            "best_iou": best_iou,
+            "best_epoch": best_epoch,
+            "epochs_without_improvement": epochs_without_improvement,
         }
         history.append(row)
         write_csv(output_dir / "metrics_history.csv", history)
         write_json(output_dir / "latest_metrics.json", row)
 
-        if val_metrics["iou_building"] > best_iou:
-            best_iou = val_metrics["iou_building"]
-            save_checkpoint(output_dir / "checkpoints" / "best_iou.pth", model, optimizer, cfg, epoch, best_iou)
         save_checkpoint(output_dir / "checkpoints" / "last.pth", model, optimizer, cfg, epoch, best_iou)
 
         print(
@@ -282,13 +332,33 @@ def main() -> None:
                     "epoch": epoch,
                     "train_loss": train_metrics["loss"],
                     "val_loss": val_metrics["loss"],
-                    "val_iou": val_metrics["iou_building"],
+                    "val_iou": val_iou,
                     "best_iou": best_iou,
+                    "best_epoch": best_epoch,
+                    "epochs_without_improvement": epochs_without_improvement,
                 },
                 sort_keys=True,
             ),
             flush=True,
         )
+
+        if (
+            early_stopping["enabled"]
+            and epoch >= int(early_stopping["min_epochs"])
+            and epochs_without_improvement >= int(early_stopping["patience"])
+        ):
+            payload = {
+                "early_stopped": True,
+                "epoch": epoch,
+                "best_epoch": best_epoch,
+                "best_iou": best_iou,
+                "patience": early_stopping["patience"],
+                "min_delta": early_stopping["min_delta"],
+                "min_epochs": early_stopping["min_epochs"],
+            }
+            write_json(output_dir / "early_stop.json", payload)
+            print(json.dumps(payload, sort_keys=True), flush=True)
+            break
 
 
 if __name__ == "__main__":

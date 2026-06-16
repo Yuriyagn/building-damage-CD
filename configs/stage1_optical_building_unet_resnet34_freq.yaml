@@ -33,6 +33,9 @@ train:
   image_size: 512
   batch_size: 8
   epochs: 100
+  early_stopping_patience: 0
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 0
   optimizer: adamw
   lr: 0.0001
   weight_decay: 0.0001

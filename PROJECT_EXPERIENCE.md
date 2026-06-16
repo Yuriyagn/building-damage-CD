@@ -45,6 +45,20 @@ CUDA_VISIBLE_DEVICES=0 bash train.sh o3
 CUDA_VISIBLE_DEVICES=0 bash train.sh o4
 ```
 
+Early stopping is implemented for fast exploration but disabled in the fixed baseline configs:
+
+```text
+train.early_stopping_patience: 0
+```
+
+To enable it temporarily on the server:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 EARLY_STOPPING_PATIENCE=20 EARLY_STOPPING_MIN_EPOCHS=30 bash train.sh o4
+```
+
+`best_iou.pth` still saves the best validation-IoU checkpoint; early stopping only decides when to stop spending time on later epochs.
+
 Completed as of 2026-06-16:
 
 ```text
