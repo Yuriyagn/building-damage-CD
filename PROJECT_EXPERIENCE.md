@@ -76,6 +76,31 @@ best test-all baseline: O1 U-Net ResNet34 freq, IoU 0.6871, F1 0.8145
 visualizations: reports/stage1_baseline/visualizations/O1_unet_resnet34_freq_test_all/
 ```
 
+Stage-1 closeout commands added:
+
+```bash
+bash instruction.sh freeze_stage1_o1
+bash instruction.sh tune_stage1_o1_threshold
+bash instruction.sh export_stage1_o1_priors_source
+bash instruction.sh build_minimal_stage2_package
+bash instruction.sh check_stage2_manifests
+bash instruction.sh smoke_stage2_minimal_dataloader
+bash instruction.sh verify_no_full_disasterm3_dependency
+```
+
+Closeout output roots:
+
+```text
+/home/yr/code/datasets/DisasterM3_aria2_building_damage_practice/stage1_official/
+/home/yr/code/datasets/DisasterM3_optical_sar_damage_minimal_v0.2/
+```
+
+Important Stage-2 engineering boundary: the official Stage-2 mainline should use the minimal
+package as its only `STAGE2_DATA_ROOT`. Source data is needed only to construct or rebuild this
+package. The minimal package rewrites manifests to relative paths and contains only the QC-clean
+optical-SAR building damage subset: pre optical, post SAR, four-class damage masks, oracle
+building masks, and O1 predicted building priors.
+
 O4 SegFormer-B0 failed initially because SMP tried to download `mit_b0.imagenet` weights while server network was unavailable; this was fixed by caching the weight. Local weight:
 
 ```text

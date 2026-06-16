@@ -34,3 +34,9 @@ CUDA_VISIBLE_DEVICES=0 EARLY_STOPPING_PATIENCE=20 EARLY_STOPPING_MIN_EPOCHS=30 b
 The fixed baseline configs keep `early_stopping_patience: 0`, so rerunning them without these environment variables preserves the original 100-epoch protocol.
 
 Do not run the training commands on the local machine.
+
+Stage-1 closeout and Stage-2 manifest preparation are documented in:
+
+```text
+STAGE1_CLOSEOUT_INSTRUCTIONS.md
+```
