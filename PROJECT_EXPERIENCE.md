@@ -65,9 +65,18 @@ Completed as of 2026-06-16:
 O1 U-Net ResNet34 freq: train + test completed
 O2 U-Net ResNet34 all:  train + test completed
 O3 DeepLabV3+ ResNet50 freq: train + test completed
+O4 SegFormer-B0 freq:    train + test completed
 ```
 
-O4 SegFormer-B0 failed initially because SMP tried to download `mit_b0.imagenet` weights while server network was unavailable. Local weight:
+Stage-1 baseline report:
+
+```text
+reports/stage1_baseline/stage1_baseline_report.md
+best test-all baseline: O1 U-Net ResNet34 freq, IoU 0.6871, F1 0.8145
+visualizations: reports/stage1_baseline/visualizations/O1_unet_resnet34_freq_test_all/
+```
+
+O4 SegFormer-B0 failed initially because SMP tried to download `mit_b0.imagenet` weights while server network was unavailable; this was fixed by caching the weight. Local weight:
 
 ```text
 pretrained/mit_b0.pth

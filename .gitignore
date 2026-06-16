@@ -4,6 +4,8 @@ __pycache__/
 
 outputs/
 logs/
+reports/stage1_baseline/raw_outputs/
+reports/stage1_baseline/visualizations/
 
 pretrained/*.pth
 *.pth
