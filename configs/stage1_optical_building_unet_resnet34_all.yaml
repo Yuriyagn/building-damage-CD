@@ -1,0 +1,84 @@
+experiment_name: O2_unet_resnet34_stage1_all
+
+dataset:
+  name: DisasterM3_stage1_optical_building_v0.1
+  train_manifest: splits/stage1_optical_building/building_extract_train_sar_qc_all.jsonl
+  train_manifest_all_disasters: splits/stage1_optical_building/building_extract_train_sar_qc_all.jsonl
+  train_manifest_rare_disasters: splits/stage1_optical_building/building_extract_train_sar_qc_rare.jsonl
+  val_manifest: splits/stage1_optical_building/building_extract_val_sar_qc.jsonl
+  test_manifest: splits/stage1_optical_building/building_extract_test_sar_qc.jsonl
+  test_manifest_freq: splits/stage1_optical_building/building_extract_test_sar_qc_freq.jsonl
+  test_manifest_rare: splits/stage1_optical_building/building_extract_test_sar_qc_rare.jsonl
+  test_manifest_ok_only: splits/stage1_optical_building/building_extract_test_sar_qc_ok.jsonl
+  image_key: image
+  mask_key: mask_binary
+  input_modality: pre_optical_rgb
+
+filter:
+  use_frequent_disaster_train: false
+  min_train_count: 50
+  keep_disaster_types:
+    - earthquake
+    - hurricane
+    - volcano
+
+model:
+  name: unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  in_channels: 3
+  out_channels: 1
+
+train:
+  image_size: 512
+  batch_size: 8
+  epochs: 100
+  optimizer: adamw
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  num_workers: 8
+  seed: 42
+
+input:
+  native_image_size: 1024
+  normalize: imagenet
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+target:
+  num_classes: 1
+  mask_values:
+    0: background
+    1: building
+  threshold: 0.5
+
+loss:
+  name: bce_dice
+  bce_weight: 0.5
+  dice_weight: 0.5
+  pos_weight: 5.000000
+  max_pos_weight: 5.0
+
+augmentation:
+  hflip: true
+  vflip: true
+  rotate90: true
+  color_jitter: true
+  gaussian_blur_light: true
+  random_crop_size: 512
+  positive_crop_ratio: 0.5
+
+metrics:
+  threshold: 0.5
+  report:
+    - iou_building
+    - f1_building
+    - precision_building
+    - recall_building
+    - boundary_f1
+    - per_disaster
+    - per_region
+    - per_event
+    - frequent_vs_rare
+    - ok_only_sensitivity

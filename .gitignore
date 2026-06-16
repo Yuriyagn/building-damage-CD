@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+outputs/
+logs/
+
+pretrained/*.pth
+*.pth
+*.pt
+*.ckpt
+
+.DS_Store

@@ -1,0 +1,8 @@
+segmentation-models-pytorch
+numpy
+pandas
+pillow
+pyyaml
+tqdm
+scikit-image
+matplotlib
