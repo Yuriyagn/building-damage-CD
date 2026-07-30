@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import random
 import subprocess
 import sys
@@ -77,7 +78,13 @@ def code_state() -> dict[str, Any]:
 
 
 def audit_state() -> dict[str, Any]:
-    path = SRC_ROOT.parent / "outputs" / "stage2" / "v2_preflight" / "data_audit.json"
+    configured_path = os.environ.get("STAGE2_DATA_AUDIT_PATH")
+    if configured_path:
+        path = Path(configured_path)
+        if not path.is_absolute():
+            path = SRC_ROOT.parent / path
+    else:
+        path = SRC_ROOT.parent / "outputs" / "stage2" / "v2_preflight" / "data_audit.json"
     if not path.exists():
         return {"path": str(path), "exists": False}
     content = path.read_bytes()

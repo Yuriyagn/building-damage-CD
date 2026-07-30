@@ -8,10 +8,20 @@
 - datasets: unchanged (`86 GiB`, read-only)
 - selected paths remaining after apply: `0`
 
+After the unified UABCD gate completed, a second reviewed sweep removed another
+`0.291 GiB` / `119` files: the two-batch overfit checkpoint and regenerated
+Python caches. The two formal unified-v1 best checkpoints were retained.
+A final post-test sweep removed `81` newly regenerated cache files (`0.001 GiB`)
+and left the isolated upstream Git checkout clean.
+
 Machine-readable evidence:
 
 - `workspace_cleanup_20260731_dry_run.json`
 - `workspace_cleanup_20260731_applied.json`
+- `workspace_cleanup_20260731_post_uabcd_dry_run.json`
+- `workspace_cleanup_20260731_post_uabcd_applied.json`
+- `workspace_cleanup_20260731_final_dry_run.json`
+- `workspace_cleanup_20260731_final_applied.json`
 
 ## Removed
 

@@ -101,7 +101,7 @@ echo "[PRELAUNCH] config=${repo_root}/${config}"
 echo "[PRELAUNCH] output=${run_dir}"
 echo "[PRELAUNCH] log=${log_path}"
 
-run_command="set -o pipefail; export CUDA_VISIBLE_DEVICES=${gpu}; cd \"${repo_root}\"; \"${python_bin}\" src/stage2/train_stage2_v2.py --config \"${config}\" --data-root \"${data_root}\" --output-dir \"${run_dir}\" --seed \"${seed}\" 2>&1 | tee \"${log_path}\""
+run_command="set -o pipefail; export CUDA_VISIBLE_DEVICES=${gpu}; export STAGE2_DATA_AUDIT_PATH=\"${audit_path}\"; cd \"${repo_root}\"; \"${python_bin}\" src/stage2/train_stage2_v2.py --config \"${config}\" --data-root \"${data_root}\" --output-dir \"${run_dir}\" --seed \"${seed}\" 2>&1 | tee \"${log_path}\""
 tmux new-session -d -s "${session}" bash -lc "${run_command}"
 
 echo "[STARTED] session=${session}"

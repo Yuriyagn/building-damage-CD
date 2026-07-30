@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 import shutil
+import subprocess
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -68,6 +69,19 @@ def is_within(path: Path, root: Path) -> bool:
     return True
 
 
+def git_tracked_files(git_root: Path) -> set[Path]:
+    result = subprocess.run(
+        ["git", "ls-files"],
+        cwd=git_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return set()
+    return {Path(line) for line in result.stdout.splitlines() if line}
+
+
 def checkpoint_is_retained(relative_path: Path) -> bool:
     """Return True only for checkpoints that define the current reproducible core."""
     parts = relative_path.parts
@@ -94,6 +108,14 @@ def checkpoint_is_retained(relative_path: Path) -> bool:
         "V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/"
     )
     if relative_text.startswith(e2_prefix):
+        return filename == "best_bo_grade_macro_f1.pth"
+
+    # Unified-v1 formal transfers: retain one primary checkpoint per run.
+    unified_v1_prefixes = (
+        "stage2/unified_v1/S2U1_UABCD_paired/",
+        "stage2/unified_v1/S2U1_UABCD_shuffled/",
+    )
+    if relative_text.startswith(unified_v1_prefixes):
         return filename == "best_bo_grade_macro_f1.pth"
 
     return False
@@ -149,6 +171,22 @@ def collect_removals(repo_root: Path, workspace_root: Path) -> tuple[list[Remova
                 )
 
     reproduction_root = workspace_root / "cross_modal_bdm_reproduction_20260702"
+    external_checkout = reproduction_root / "original_code"
+    external_tracked = (
+        git_tracked_files(external_checkout) if external_checkout.is_dir() else set()
+    )
+
+    def is_external_tracked(path: Path) -> bool:
+        if not is_within(path, external_checkout):
+            return False
+        return path.relative_to(external_checkout) in external_tracked
+
+    def contains_external_tracked_file(path: Path) -> bool:
+        if not is_within(path, external_checkout):
+            return False
+        relative = path.relative_to(external_checkout)
+        return any(relative == tracked or relative in tracked.parents for tracked in external_tracked)
+
     if reproduction_root.exists():
         for checkpoint in sorted(reproduction_root.rglob("Seg_epoch_*_Seg.pth")):
             add(
@@ -166,8 +204,12 @@ def collect_removals(repo_root: Path, workspace_root: Path) -> tuple[list[Remova
         for cache_name in ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"):
             for cache_dir in sorted(code_root.rglob(cache_name)):
                 if cache_dir.is_dir():
+                    if contains_external_tracked_file(cache_dir):
+                        continue
                     add(cache_dir, "cache", "Regenerable Python/tool cache.")
         for bytecode in sorted(code_root.rglob("*.pyc")):
+            if is_external_tracked(bytecode):
+                continue
             add(bytecode, "cache", "Regenerable Python bytecode.")
 
     ordered = sorted(removals.values(), key=lambda item: item.path)
@@ -244,6 +286,7 @@ def main() -> int:
                 "Stage-1 O1-O4 best_iou.pth",
                 "strict-v1 A1-A4 three-seed best_bo_grade_macro_f1.pth",
                 "current E2 best_bo_grade_macro_f1.pth",
+                "unified-v1 formal paired/shuffled best_bo_grade_macro_f1.pth",
                 "upstream UABCD Seg_epoch_best.pth",
             ],
         },

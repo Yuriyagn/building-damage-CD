@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 import torch
@@ -15,6 +17,9 @@ from torch import nn
 SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+REPO_ROOT = SRC.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from stage2.datasets import Stage2DamageDataset  # noqa: E402
 from stage2.datasets_v2 import build_derangement  # noqa: E402
@@ -22,8 +27,9 @@ from stage2.losses_v2 import BuildingOnlyGradeBinaryAuxLoss, BuildingOnlyGradeLo
 from stage2.metrics_v2 import Stage2V2MeterBundle  # noqa: E402
 from stage2.summarize_stage2_v2 import infer_run, paired_bootstrap  # noqa: E402
 from stage2.test_stage2_v2 import decode_grade_logits  # noqa: E402
-from stage2.train_stage2_v2 import checkpoint_metrics_for_policy  # noqa: E402
+from stage2.train_stage2_v2 import audit_state, checkpoint_metrics_for_policy  # noqa: E402
 from models.external_uabcd import UABCDInputAdapter  # noqa: E402
+from scripts.prune_workspace_artifacts import checkpoint_is_retained  # noqa: E402
 
 
 class BuildingOnlyLossTest(unittest.TestCase):
@@ -99,6 +105,41 @@ class ExternalUABCDAdapterTest(unittest.TestCase):
     def test_primary_checkpoint_policy_retains_one_weight(self) -> None:
         metrics = checkpoint_metrics_for_policy({"checkpoint_policy": "primary_only"})
         self.assertEqual(metrics, {"best_bo_grade_macro_f1.pth": "val_building_only_macro_f1_3class"})
+
+    def test_run_info_uses_explicit_data_audit_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_name:
+            audit_path = Path(tmp_name) / "audit.json"
+            audit_path.write_text(
+                json.dumps(
+                    {
+                        "status": "warning",
+                        "hard_error_count": 0,
+                        "warning_count": 3,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with mock.patch.dict(
+                os.environ,
+                {"STAGE2_DATA_AUDIT_PATH": str(audit_path)},
+            ):
+                state = audit_state()
+        self.assertTrue(state["exists"])
+        self.assertEqual(state["path"], str(audit_path.resolve()))
+        self.assertEqual(state["hard_error_count"], 0)
+        self.assertEqual(state["warning_count"], 3)
+
+    def test_cleanup_retains_only_formal_unified_primary_checkpoint(self) -> None:
+        formal = Path(
+            "stage2/unified_v1/S2U1_UABCD_paired/seed_42/"
+            "run_20260731/checkpoints/best_bo_grade_macro_f1.pth"
+        )
+        overfit = Path(
+            "stage2/unified_v1_overfit/paired_seed42/"
+            "checkpoints/best_bo_grade_macro_f1.pth"
+        )
+        self.assertTrue(checkpoint_is_retained(formal))
+        self.assertFalse(checkpoint_is_retained(overfit))
 
 
 class OGSRFeatureDatasetTest(unittest.TestCase):
