@@ -1,0 +1,66 @@
+protocol_id: stage2_unified_v1
+experiment_name: S2U1_UABCD_shuffled
+
+dataset:
+  train_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/train.jsonl
+  val_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/val.jsonl
+  test_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/test.jsonl
+  prior_type: predicted
+  input_mode: pre_sar_prior
+  sar_shuffle_mode: within_event
+  sar_shuffle_seed: 20260731
+  sar_singleton_policy: error
+  crop_size: 512
+  gate_threshold: 0.6
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 3
+  class_names: [intact, damaged, destroyed]
+  loss_support: gt_building
+
+model:
+  name: external_uabcd
+  external_root: ../cross_modal_bdm_reproduction_20260702/original_code/ChangeDetection
+  source_sha256: 2600e2a539aca5ea591ab5bc5c0aeca6eafcd87bec25226a149cd189bd732c3b
+  backbone_sha256: 80711cd1b37ffba12bec6c7a2a7c54efe2315ed635e6d2055fd51c3e909ede4d
+  stream_a_channels: [0, 1, 2]
+  stream_b_channels: [3, 4, 5]
+  normalization: upstream_minus_one_one
+  in_channels: 6
+  out_channels: 3
+
+loss:
+  name: building_only_ce_binary_aux
+  binary_aux_weight: 0.3
+  binary_pos_weight: 1.0
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+
+train:
+  batch_size: 4
+  gradient_accumulation_steps: 2
+  eval_batch_size: 2
+  epochs: 40
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  amp: true
+  disaster_sampling_alpha: 0.0
+  early_stopping_window: 3
+  early_stopping_patience: 10
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 12
+  checkpoint_policy: primary_only
+  save_last_checkpoint: false
+  seed: 42

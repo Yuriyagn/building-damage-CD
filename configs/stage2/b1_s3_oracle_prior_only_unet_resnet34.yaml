@@ -1,0 +1,79 @@
+experiment_name: B1_S3_oracle_prior_only_unet_resnet34
+
+dataset:
+  train_manifest: manifests/oracle_prior/train.jsonl
+  val_manifest: manifests/oracle_prior/val.jsonl
+  test_manifest: manifests/oracle_prior/test.jsonl
+  prior_type: oracle
+  input_mode: prior_only
+  crop_size: 512
+  eval_size: 1024
+
+input:
+  channels:
+    - zero_sar
+    - oracle_building_prior
+    - zero_masked_sar
+  sar_normalize: divide_by_255
+  prior_normalize: zero_one
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 4
+  class_names:
+    0: background
+    1: intact
+    2: damaged
+    3: destroyed
+
+model:
+  name: unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  in_channels: 3
+  out_channels: 4
+
+loss:
+  name: weighted_ce_dice
+  ce_weight: 0.5
+  dice_weight: 0.5
+  dice_include_background: true
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+  min_background_weight: 0.05
+
+train:
+  batch_size: 8
+  eval_batch_size: 1
+  epochs: 100
+  num_workers: 8
+  optimizer: adamw
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  early_stopping_patience: 20
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 30
+  checkpoint_metric: val_building_only_damage_macro_f1
+  seed: 42
+
+metrics:
+  - miou_4class
+  - iou_per_class
+  - f1_per_class
+  - damage_binary_f1
+  - damage_macro_f1
+  - building_only_3class
+  - per_disaster
+  - per_region
+  - per_event
+

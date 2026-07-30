@@ -1,0 +1,56 @@
+experiment_name: V2_A4_shuffled_sar_predicted_prior
+
+dataset:
+  train_manifest: manifests/predicted_prior/train.jsonl
+  val_manifest: manifests/predicted_prior/val.jsonl
+  test_manifest: manifests/predicted_prior/test.jsonl
+  prior_type: predicted
+  input_mode: sar_prior
+  sar_shuffle_mode: within_event
+  sar_shuffle_seed: 20260620
+  sar_singleton_policy: exclude
+  crop_size: 512
+  gate_threshold: 0.6
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 3
+  class_names: [intact, damaged, destroyed]
+  loss_support: gt_building
+
+model:
+  name: unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  in_channels: 3
+  out_channels: 3
+
+loss:
+  name: building_only_ce
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+
+train:
+  batch_size: 8
+  eval_batch_size: 4
+  epochs: 100
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  amp: true
+  disaster_sampling_alpha: 0.0
+  early_stopping_window: 3
+  early_stopping_patience: 30
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 40
+  seed: 42

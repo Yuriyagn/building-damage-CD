@@ -1,0 +1,102 @@
+{
+  "canonical_event_count": 17,
+  "cross_split_duplicate_group_count": 105,
+  "data_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2",
+  "duplicate_group_count": 661,
+  "duplicate_row_count_removed": 661,
+  "protocol": "stage2_v2_strict_v1",
+  "source_manifest_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2/manifests",
+  "source_row_count": 2613,
+  "split_events": {
+    "test": [
+      "mexico_hurricane",
+      "noto_earthquake",
+      "rwanda_volcano",
+      "turkey_earthquake1",
+      "turkey_earthquake3"
+    ],
+    "train": [
+      "spain_la_palma_volcano",
+      "ukraine_conflict",
+      "myanmar_hurricane",
+      "libya_flood",
+      "beriut_explosion",
+      "hawaii_wildfire",
+      "turkey_earthquake5"
+    ],
+    "val": [
+      "bata_explosion",
+      "haiti_earthquake",
+      "marshall_wildfire",
+      "morocco_earthquake",
+      "turkey_earthquake4"
+    ]
+  },
+  "splits": {
+    "test": {
+      "building_class_share": {
+        "damaged": 0.315422757466485,
+        "destroyed": 0.07585804886682694,
+        "intact": 0.608719193666688
+      },
+      "class_pixels": {
+        "background": 329664617,
+        "damaged": 24345234,
+        "destroyed": 5854942,
+        "intact": 46982695
+      },
+      "disaster_types": [
+        "earthquake",
+        "hurricane",
+        "volcano"
+      ],
+      "event_count": 5,
+      "sample_count": 388
+    },
+    "train": {
+      "building_class_share": {
+        "damaged": 0.14499182750989945,
+        "destroyed": 0.13924457587982253,
+        "intact": 0.715763596610278
+      },
+      "class_pixels": {
+        "background": 1100231827,
+        "damaged": 23981562,
+        "destroyed": 23030970,
+        "intact": 118386873
+      },
+      "disaster_types": [
+        "conflict",
+        "earthquake",
+        "explosion",
+        "fire",
+        "flood",
+        "hurricane",
+        "volcano"
+      ],
+      "event_count": 7,
+      "sample_count": 1207
+    },
+    "val": {
+      "building_class_share": {
+        "damaged": 0.10784899386374049,
+        "destroyed": 0.07085808246890395,
+        "intact": 0.8212929236673555
+      },
+      "class_pixels": {
+        "background": 322292171,
+        "damaged": 5613482,
+        "destroyed": 3688125,
+        "intact": 42747854
+      },
+      "disaster_types": [
+        "earthquake",
+        "explosion",
+        "fire"
+      ],
+      "event_count": 5,
+      "sample_count": 357
+    }
+  },
+  "unique_content_sample_count": 1952
+}

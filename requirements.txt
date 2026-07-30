@@ -6,3 +6,5 @@ pyyaml
 tqdm
 scikit-image
 matplotlib
+fastapi
+uvicorn[standard]

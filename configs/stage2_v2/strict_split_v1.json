@@ -1,0 +1,52 @@
+{
+  "protocol": "stage2_v2_strict_v1",
+  "created": "2026-06-22",
+  "identity_fields": [
+    "pre_image",
+    "post_sar",
+    "mask_multiclass"
+  ],
+  "representative_split_priority": [
+    "train",
+    "val",
+    "test"
+  ],
+  "canonical_event_aliases": {
+    "spain_la_palma_volcano": [
+      "la_palma_volcano",
+      "spain_volcano"
+    ]
+  },
+  "split_events": {
+    "train": [
+      "spain_la_palma_volcano",
+      "ukraine_conflict",
+      "myanmar_hurricane",
+      "libya_flood",
+      "beriut_explosion",
+      "hawaii_wildfire",
+      "turkey_earthquake5"
+    ],
+    "val": [
+      "bata_explosion",
+      "haiti_earthquake",
+      "marshall_wildfire",
+      "morocco_earthquake",
+      "turkey_earthquake4"
+    ],
+    "test": [
+      "mexico_hurricane",
+      "noto_earthquake",
+      "rwanda_volcano",
+      "turkey_earthquake1",
+      "turkey_earthquake3"
+    ]
+  },
+  "rationale": [
+    "Deduplicate the union of the legacy train/val/test rows by exact SHA-256 identity of pre optical, post SAR, and four-class mask.",
+    "Merge la_palma_volcano and spain_volcano because exact duplicate samples prove that they are aliases in this package.",
+    "Keep every canonical event in exactly one split.",
+    "Keep all seven available disaster types represented in train; val and test remain event-held-out and contain every damage grade.",
+    "The event inventory is too small to make every disaster type appear in both val and test; this limitation must be reported."
+  ]
+}

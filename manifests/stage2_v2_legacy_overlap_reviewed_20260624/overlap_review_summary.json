@@ -1,0 +1,113 @@
+{
+  "candidates": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/overlap_audit_20260622/legacy/candidates_all.csv",
+  "counts_after": {
+    "no_prior/test.jsonl": 564,
+    "no_prior/train.jsonl": 1436,
+    "no_prior/val.jsonl": 506,
+    "oracle_prior/test.jsonl": 564,
+    "oracle_prior/train.jsonl": 1436,
+    "oracle_prior/val.jsonl": 506,
+    "predicted_prior/test.jsonl": 564,
+    "predicted_prior/train.jsonl": 1436,
+    "predicted_prior/val.jsonl": 506,
+    "stage2_master_test.jsonl": 564,
+    "stage2_master_train.jsonl": 1436,
+    "stage2_master_val.jsonl": 506
+  },
+  "counts_before": {
+    "no_prior/test.jsonl": 564,
+    "no_prior/train.jsonl": 1543,
+    "no_prior/val.jsonl": 506,
+    "oracle_prior/test.jsonl": 564,
+    "oracle_prior/train.jsonl": 1543,
+    "oracle_prior/val.jsonl": 506,
+    "predicted_prior/test.jsonl": 564,
+    "predicted_prior/train.jsonl": 1543,
+    "predicted_prior/val.jsonl": 506,
+    "stage2_master_test.jsonl": 564,
+    "stage2_master_train.jsonl": 1543,
+    "stage2_master_val.jsonl": 506
+  },
+  "decision_count": 114,
+  "decisions": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/overlap_audit_20260622/legacy/review_decisions.csv",
+  "final": true,
+  "human_review_summary": {
+    "legacy": {
+      "candidate_count": 115,
+      "candidate_risk": {
+        "high": 106,
+        "low": 1,
+        "medium": 8
+      },
+      "candidate_split_pair": {
+        "train-test": 112,
+        "train-val": 1,
+        "val-test": 2
+      },
+      "decision_action": {
+        "exclude_train_side": 107,
+        "keep_both_record_only": 8
+      },
+      "decision_by_split_risk_label_action": [
+        {
+          "action": "exclude_train_side",
+          "count": 106,
+          "label": "confirmed_overlap",
+          "risk": "high",
+          "split_pair": "train-test"
+        },
+        {
+          "action": "exclude_train_side",
+          "count": 1,
+          "label": "likely_overlap",
+          "risk": "medium",
+          "split_pair": "train-test"
+        },
+        {
+          "action": "keep_both_record_only",
+          "count": 5,
+          "label": "not_overlap",
+          "risk": "medium",
+          "split_pair": "train-test"
+        },
+        {
+          "action": "keep_both_record_only",
+          "count": 1,
+          "label": "not_overlap",
+          "risk": "medium",
+          "split_pair": "train-val"
+        },
+        {
+          "action": "keep_both_record_only",
+          "count": 1,
+          "label": "not_overlap",
+          "risk": "low",
+          "split_pair": "val-test"
+        },
+        {
+          "action": "keep_both_record_only",
+          "count": 1,
+          "label": "not_overlap",
+          "risk": "medium",
+          "split_pair": "val-test"
+        }
+      ],
+      "decision_count": 115,
+      "decision_label": {
+        "confirmed_overlap": 106,
+        "likely_overlap": 1,
+        "not_overlap": 8
+      },
+      "unreviewed_count": 0
+    }
+  },
+  "incomplete_required_reviews": 0,
+  "overlap_cluster_count": 106,
+  "policy": "relaxed_train_test_only",
+  "protocol": "stage2_v2_legacy_overlap_reviewed_20260624",
+  "reason_not_formal": "Legacy overlap-reviewed removes train-test reviewed overlaps but still has within-split full-sample duplicates and legacy split/event limitations.",
+  "recommended_for_formal_training": false,
+  "removed_unique_sample_count": 107,
+  "required_train_test_reviews": 112,
+  "source_manifest_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2/manifests"
+}

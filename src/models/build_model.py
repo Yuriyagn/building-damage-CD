@@ -65,6 +65,14 @@ def build_model(cfg: dict, no_pretrained: bool = False) -> nn.Module:
     out_channels = int(model_cfg.get("out_channels", 1))
     weights = None if no_pretrained else _none_if_null(model_cfg.get("encoder_weights", None))
 
+    if name in {"simple_unet", "simple-unet", "simpleunet"}:
+        return SimpleUNet(in_channels=in_channels, out_channels=out_channels)
+
+    if name in {"external_uabcd", "uabcd_external", "uabcd"}:
+        from .external_uabcd import build_external_uabcd
+
+        return build_external_uabcd(model_cfg, no_pretrained=no_pretrained)
+
     try:
         import segmentation_models_pytorch as smp
     except Exception:

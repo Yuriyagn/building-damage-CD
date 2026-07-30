@@ -1,0 +1,3021 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-31T00:58:29+08:00",
+  "mode": "applied",
+  "workspace_root": "/home/yr/code/Building damage change detection",
+  "policy": {
+    "never_remove": [
+      "datasets",
+      "source code",
+      "configs",
+      "manifests",
+      "reports",
+      "scalar metrics",
+      "logs"
+    ],
+    "retained_checkpoint_policy": [
+      "Stage-1 O1-O4 best_iou.pth",
+      "strict-v1 A1-A4 three-seed best_bo_grade_macro_f1.pth",
+      "current E2 best_bo_grade_macro_f1.pth",
+      "upstream UABCD Seg_epoch_best.pth"
+    ]
+  },
+  "summary": {
+    "removal_entries": 424,
+    "files": 10337,
+    "bytes": 106324989402,
+    "gib": 99.023,
+    "remaining_selected_paths_after_apply": 0
+  },
+  "retained_checkpoints": [
+    "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_best.pth",
+    "stage1_optical_building/outputs/O1_unet_resnet34_freq/checkpoints/best_iou.pth",
+    "stage1_optical_building/outputs/O2_unet_resnet34_all/checkpoints/best_iou.pth",
+    "stage1_optical_building/outputs/O3_deeplabv3p_resnet50_freq/checkpoints/best_iou.pth",
+    "stage1_optical_building/outputs/O4_segformer_b0_freq/checkpoints/best_iou.pth",
+    "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/checkpoints/best_bo_grade_macro_f1.pth",
+    "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/checkpoints/best_bo_grade_macro_f1.pth"
+  ],
+  "removals": [
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/adapters/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 5326,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/BuildingExtraction/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 34653,
+      "files": 5
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/BuildingExtraction/network/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 30162,
+      "files": 2
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/BuildingExtraction/network/backbones/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 86822,
+      "files": 6
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/BuildingExtraction/utils/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 62168,
+      "files": 11
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/ChangeDetection/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 42161,
+      "files": 6
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/ChangeDetection/network/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 16890,
+      "files": 2
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/ChangeDetection/network/backbones/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 41148,
+      "files": 2
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/original_code/ChangeDetection/utils/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 107669,
+      "files": 16
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_10_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_11_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_12_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_13_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_14_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_15_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_16_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_17_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_18_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_19_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_1_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_20_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_21_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_22_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_23_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_24_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_25_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_26_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_27_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_28_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_29_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_2_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_30_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_31_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_32_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_33_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_34_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_35_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_36_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_37_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_38_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_39_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_3_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_40_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969653,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_4_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_5_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_6_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_7_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_8_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "cross_modal_bdm_reproduction_20260702/runs/change_detection/UABCD_20260708_114131/Seg_epoch_9_Seg.pth",
+      "kind": "checkpoint",
+      "reason": "Per-epoch upstream reproduction checkpoint; Seg_epoch_best.pth is retained.",
+      "bytes": 103969263,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/apps/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 239,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/apps/overlap_review/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 22549,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/O1_unet_resnet34_freq/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293496971,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/O1_unet_resnet34_freq/test_all/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 55212374,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O1_unet_resnet34_freq/test_freq/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 58665649,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O1_unet_resnet34_freq/test_ok/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 55212374,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O1_unet_resnet34_freq/test_rare/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53175857,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O2_unet_resnet34_all/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293496971,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/O2_unet_resnet34_all/test_all/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 55134972,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O3_deeplabv3p_resnet50_freq/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 320609655,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/O3_deeplabv3p_resnet50_freq/test_all/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54834489,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/O4_segformer_b0_freq/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 44768986,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/O4_segformer_b0_freq/test_all/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54866988,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/debug_overfit_unet_freq/checkpoints/best_iou.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293532363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/debug_overfit_unet_freq/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293496971,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S0_no_prior_unet_resnet34/checkpoints/best_metric.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293539595,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S0_no_prior_unet_resnet34/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293502091,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S0_no_prior_unet_resnet34/test/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 38956256,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S1_oracle_prior_unet_resnet34/checkpoints/best_metric.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293539659,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S1_oracle_prior_unet_resnet34/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293502155,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S1_oracle_prior_unet_resnet34/test/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 40729590,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S2_predicted_prior_unet_resnet34/checkpoints/best_metric.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293539659,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S2_predicted_prior_unet_resnet34/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293502155,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S2_predicted_prior_unet_resnet34/test/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 50257231,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_oracle_prior_only_unet_resnet34/checkpoints/best_metric.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293539659,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_oracle_prior_only_unet_resnet34/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293502091,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_oracle_prior_only_unet_resnet34/test/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 41647394,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_predicted_prior_only_unet_resnet34/checkpoints/best_metric.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293539659,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_predicted_prior_only_unet_resnet34/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293502155,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/B1_S3_predicted_prior_only_unet_resnet34/test/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 50980076,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R0_all_background/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 4388,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R0_all_background/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3231258,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_all_intact/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 57968,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_all_intact/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3302082,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_disaster_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 58264,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_disaster_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3314368,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_global_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 57968,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R1_oracle_global_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3302082,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_all_intact/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 42904,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_all_intact/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3341196,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_disaster_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 43172,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_disaster_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3328927,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_global_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 42904,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/debug_rule_limit4/R2_predicted_global_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 3341196,
+      "files": 2
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/ogsr_v0_features",
+      "kind": "derived_features",
+      "reason": "Rejected OGSR branch; features are deterministically regenerable.",
+      "bytes": 31261515075,
+      "files": 3142
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/ogsr_v0_predictor/OGSRV0_PRED_TEXTURE_PREDICTOR/seed_42/run_20260627_113112/checkpoints/best_val_loss.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 93281211,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/ogsr_v0_predictor/OGSRV0_PRED_TEXTURE_PREDICTOR/seed_42/run_20260627_113112/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 93263967,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S0_no_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 194492,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S0_no_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13711495,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S1_oracle_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 229590,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S1_oracle_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14029680,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S2_predicted_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 170886,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S2_predicted_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 17438598,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S3_oracle_prior_only/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 353054,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S3_oracle_prior_only/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14454196,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S3_predicted_prior_only/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 179904,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/report_selected_previews/S3_predicted_prior_only/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 17472362,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R0_all_background/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 618708,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R0_all_background/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 37197250,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_all_intact/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7304940,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_all_intact/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 38579700,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_disaster_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7304858,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_disaster_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 38594556,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_global_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7304940,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R1_oracle_global_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 38579700,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_all_intact/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7430013,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_all_intact/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 39338757,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_disaster_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7429748,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_disaster_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 39312587,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_global_majority_inside_prior/predictions",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 7430013,
+      "files": 564
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/rule_baselines/R2_predicted_global_majority_inside_prior/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 39338757,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D4_pred_texture_residual_paired/seed_42/run_20260628_091253/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293885259,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D4_pred_texture_residual_paired/seed_42/run_20260628_091253/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293881675,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D4_pred_texture_residual_paired/seed_42/run_20260628_091253/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293884555,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D4_pred_texture_residual_paired/seed_42/run_20260628_091253/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293839243,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D4_pred_texture_residual_paired/seed_42/run_20260628_091253/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53182548,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D5_pred_texture_residual_shuffled/seed_42/run_20260628_091309/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293885323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D5_pred_texture_residual_shuffled/seed_42/run_20260628_091309/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293881739,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D5_pred_texture_residual_shuffled/seed_42/run_20260628_091309/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293884619,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D5_pred_texture_residual_shuffled/seed_42/run_20260628_091309/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293839243,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D5_pred_texture_residual_shuffled/seed_42/run_20260628_091309/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54163841,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D6_pred_texture_plus_residual_paired/seed_42/run_20260628_101012/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293960523,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D6_pred_texture_plus_residual_paired/seed_42/run_20260628_101012/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293956939,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D6_pred_texture_plus_residual_paired/seed_42/run_20260628_101012/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293959819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D6_pred_texture_plus_residual_paired/seed_42/run_20260628_101012/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293914507,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D6_pred_texture_plus_residual_paired/seed_42/run_20260628_101012/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53257732,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D7_pred_texture_plus_residual_shuffled/seed_42/run_20260628_101022/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293960587,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D7_pred_texture_plus_residual_shuffled/seed_42/run_20260628_101022/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293957003,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D7_pred_texture_plus_residual_shuffled/seed_42/run_20260628_101022/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293959883,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D7_pred_texture_plus_residual_shuffled/seed_42/run_20260628_101022/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293914571,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_ogsr_v0_phase2/V2_OGSRV0_D7_pred_texture_plus_residual_shuffled/seed_42/run_20260628_101022/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54043482,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546443,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542859,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545739,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 36280345,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O1_prior_only/seed_42/run_20260625_170524/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44243579,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546443,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542859,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545739,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 35322617,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O2_sar_oracle_prior/seed_42/run_20260625_125918/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44029902,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546443,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542859,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545739,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500427,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 40383960,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_oracle_explore/V2_ORACLE_O3_shuffled_sar_oracle_prior/seed_42/run_20260625_140145/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44595134,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_fixed_two_batches_seed42/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_fixed_two_batches_seed42/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_fixed_two_batches_seed42/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_fixed_two_batches_seed42/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42_tmux/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42_tmux/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42_tmux/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_overfit/v2_a3_two_batches_seed42_tmux/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13024804,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_2026/run_20260620_232602/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13949035,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13037306,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_3407/run_20260620_182232/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13950875,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113615/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113615/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113615/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113615/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13103100,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A1_prior_only/seed_42/run_20260620_113649/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14056650,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13025815,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_2026/run_20260620_232605/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13850008,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 12959037,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_3407/run_20260620_182235/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13849525,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 12985847,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A2_sar_only/seed_42/run_20260620_113714/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13867952,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 12977714,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_2026/run_20260621_010320/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13882946,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 12971444,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_3407/run_20260620_201646/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13877250,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_113734/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_113734/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_113734/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_113734/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546251,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545547,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 12977362,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13885434,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A3_sar_predicted_prior/seed_42/run_20260620_154747/val_best_grade_incomplete_b4_20260621_0902/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13885468,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545675,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500299,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13041567,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_2026/run_20260621_014421/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14121190,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545675,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500299,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13044492,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_3407/run_20260620_201648/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14181662,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545675,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500299,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 13047596,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14182276,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase1/V2_A4_shuffled_sar_predicted_prior/seed_42/run_20260620_154750/val_best_grade_incomplete_b4_20260621_0902/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 14182449,
+      "files": 8
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B2_focal_sar_predicted_prior/seed_42/run_20260621_093329/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546315,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B2_focal_sar_predicted_prior/seed_42/run_20260621_093329/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542731,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B2_focal_sar_predicted_prior/seed_42/run_20260621_093329/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545611,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B2_focal_sar_predicted_prior/seed_42/run_20260621_093329/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500299,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B2_focal_sar_predicted_prior/seed_42/run_20260621_093329/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 50264667,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B3_disaster_balanced_sar_predicted_prior/seed_42/run_20260621_093331/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546315,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B3_disaster_balanced_sar_predicted_prior/seed_42/run_20260621_093331/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542731,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B3_disaster_balanced_sar_predicted_prior/seed_42/run_20260621_093331/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293545611,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B3_disaster_balanced_sar_predicted_prior/seed_42/run_20260621_093331/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500235,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase2/V2_B3_disaster_balanced_sar_predicted_prior/seed_42/run_20260621_093331/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 49893013,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E1_p2_focal/seed_42/run_20260628_113732/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E1_p2_focal/seed_42/run_20260628_113732/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E1_p2_focal/seed_42/run_20260628_113732/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E1_p2_focal/seed_42/run_20260628_113732/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E1_p2_focal/seed_42/run_20260628_113732/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53599203,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613387,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53803427,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E2_p2_binary_aux/seed_42/run_20260628_113741/val_best_grade_thr_m0p25/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53888605,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E3_p2_disaster_balanced/seed_42/run_20260628_140057/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E3_p2_disaster_balanced/seed_42/run_20260628_140057/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E3_p2_disaster_balanced/seed_42/run_20260628_140057/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E3_p2_disaster_balanced/seed_42/run_20260628_140057/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase3_objective/V2_OBJ_E3_p2_disaster_balanced/seed_42/run_20260628_140057/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 52936610,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658699,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613387,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/val_best_damage/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53633522,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F1_p2_w0p1/seed_42/run_20260629_170934/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53405994,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F2_p2_w0p5/seed_42/run_20260629_170949/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F2_p2_w0p5/seed_42/run_20260629_170949/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F2_p2_w0p5/seed_42/run_20260629_170949/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658699,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F2_p2_w0p5/seed_42/run_20260629_170949/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613387,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F2_p2_w0p5/seed_42/run_20260629_170949/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53675093,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658699,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613387,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/val_best_damage/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53924258,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_phase4_binary_aux/V2_BINAUX_F3_p2_w0p3_posw2/seed_42/run_20260629_175958/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53471896,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 37241660,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C1_pre_oracle_prior_only/seed_42/run_20260626_085906/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 46244341,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 35681186,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C2_pre_sar_oracle_prior/seed_42/run_20260626_085921/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 43853378,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658699,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 40567961,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C3_pre_shuffled_sar_oracle_prior/seed_42/run_20260626_095628/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 45373704,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293734603,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293731019,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293733899,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293688587,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 35644321,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C4_pre_sartex_oracle_prior/seed_42/run_20260626_095637/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 43848426,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293734667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293731083,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293733963,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293688587,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 40103112,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_prechange_explore/V2_PRE_C5_pre_shuffled_sartex_oracle_prior/seed_42/run_20260626_121520/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44900907,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P1_pre_pred_prior_only/seed_42/run_20260627_003908/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P1_pre_pred_prior_only/seed_42/run_20260627_003908/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P1_pre_pred_prior_only/seed_42/run_20260627_003908/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P1_pre_pred_prior_only/seed_42/run_20260627_003908/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P1_pre_pred_prior_only/seed_42/run_20260627_003908/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53752352,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P2_pre_sar_pred_prior/seed_42/run_20260627_004124/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659339,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P2_pre_sar_pred_prior/seed_42/run_20260627_004124/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655755,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P2_pre_sar_pred_prior/seed_42/run_20260627_004124/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658635,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P2_pre_sar_pred_prior/seed_42/run_20260627_004124/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613323,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P2_pre_sar_pred_prior/seed_42/run_20260627_004124/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53491477,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P3_pre_shuffled_sar_pred_prior/seed_42/run_20260627_082450/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293659403,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P3_pre_shuffled_sar_pred_prior/seed_42/run_20260627_082450/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293655819,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P3_pre_shuffled_sar_pred_prior/seed_42/run_20260627_082450/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293658699,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P3_pre_shuffled_sar_pred_prior/seed_42/run_20260627_082450/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293613387,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P3_pre_shuffled_sar_pred_prior/seed_42/run_20260627_082450/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54807300,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P4_pre_sartex_pred_prior/seed_42/run_20260627_082459/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293734603,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P4_pre_sartex_pred_prior/seed_42/run_20260627_082459/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293731019,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P4_pre_sartex_pred_prior/seed_42/run_20260627_082459/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293733899,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P4_pre_sartex_pred_prior/seed_42/run_20260627_082459/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293688587,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P4_pre_sartex_pred_prior/seed_42/run_20260627_082459/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54066967,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P5_pre_shuffled_sartex_pred_prior/seed_42/run_20260627_100305/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293734667,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P5_pre_shuffled_sartex_pred_prior/seed_42/run_20260627_100305/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293731083,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P5_pre_shuffled_sartex_pred_prior/seed_42/run_20260627_100305/checkpoints/best_bo_grade_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293733963,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P5_pre_shuffled_sartex_pred_prior/seed_42/run_20260627_100305/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293688651,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_pred_prechange_phase1/V2_PREDPRE_P5_pre_shuffled_sartex_pred_prior/seed_42/run_20260627_100305/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54094327,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44644573,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_2026/run_20260625_075655/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53304677,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44776724,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_3407/run_20260625_011242/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53290298,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 45111961,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A1_prior_only/seed_42/run_20260624_215527/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53320689,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44460149,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_2026/run_20260625_075705/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53310830,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 45078786,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_3407/run_20260625_011251/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53680659,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44649479,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A2_sar_only/seed_42/run_20260624_215545/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53210335,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44400426,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_2026/run_20260625_075714/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53156572,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44397905,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_3407/run_20260625_011300/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53142740,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546379,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542795,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500363,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 44447028,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A3_sar_predicted_prior/seed_42/run_20260625_000226/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53309979,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546507,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542923,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500427,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 48093350,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_2026/run_20260625_075723/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54043303,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546507,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542923,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500427,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 47796201,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_3407/run_20260625_011310/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 53534175,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/checkpoints/best_bo_damage_macro_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293546507,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/checkpoints/best_bo_damaged_f1.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293542923,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/checkpoints/last.pth",
+      "kind": "checkpoint",
+      "reason": "Non-primary, legacy, debug, or rejected-branch checkpoint.",
+      "bytes": 293500427,
+      "files": 1
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/test_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 48257978,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/outputs/stage2/v2_strict_v1_phase1/V2S_A4_shuffled_sar_predicted_prior/seed_42/run_20260624_231317/val_best_grade/previews",
+      "kind": "generated_visuals",
+      "reason": "Generated predictions/previews; curated report assets remain untouched.",
+      "bytes": 54390346,
+      "files": 32
+    },
+    {
+      "path": "stage1_optical_building/scripts/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 211455,
+      "files": 18
+    },
+    {
+      "path": "stage1_optical_building/src/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 30996,
+      "files": 9
+    },
+    {
+      "path": "stage1_optical_building/src/datasets/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 14482,
+      "files": 3
+    },
+    {
+      "path": "stage1_optical_building/src/models/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 10263,
+      "files": 3
+    },
+    {
+      "path": "stage1_optical_building/src/stage2/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 277306,
+      "files": 21
+    },
+    {
+      "path": "stage1_optical_building/tests/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 34666,
+      "files": 4
+    },
+    {
+      "path": "stage1_optical_building/tools/__pycache__",
+      "kind": "cache",
+      "reason": "Regenerable Python/tool cache.",
+      "bytes": 149327,
+      "files": 6
+    }
+  ],
+  "remaining_selected_paths_after_apply": []
+}

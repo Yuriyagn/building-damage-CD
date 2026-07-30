@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OverlapReview-QC</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div><h1>OverlapReview-QC</h1><p>自动检索只生成候选；人工判断决定是否修改 reviewed manifest。</p></div>
+    <button id="exportManifest">导出 strict-v1 reviewed manifest</button>
+  </header>
+  <div class="layout">
+    <aside>
+      <label>协议<select id="protocol"><option value="strict_v1">strict-v1</option><option value="legacy">legacy</option></select></label>
+      <div id="summary">加载中…</div>
+      <h2>风险</h2><div id="riskStats" class="stats"></div>
+      <h2>筛选</h2>
+      <label>split pair<select id="splitPair"><option value="train-test">train-test</option><option value="train-val">train-val</option><option value="val-test">val-test</option><option value="train-train">train-train</option><option value="val-val">val-val</option><option value="test-test">test-test</option><option value="">all</option></select></label>
+      <label>risk<select id="risk"><option value="high,medium">high + medium</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option><option value="">all</option></select></label>
+      <label>status<select id="status"><option value="">all</option><option value="unreviewed">unreviewed</option><option value="reviewed">reviewed</option></select></label>
+      <button id="reload">重新加载</button>
+      <h2>快捷键</h2>
+      <p class="help">1 overlap · 2 likely · 3 adjacent · 4 same region · 5 not overlapped · 6 uncertain<br>J/K 下一条/上一条</p>
+    </aside>
+    <main>
+      <div id="notice"></div>
+      <div id="candidateList" class="candidate-list"></div>
+      <div id="empty" hidden>当前筛选没有候选。</div>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
