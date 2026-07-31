@@ -82,6 +82,31 @@ def git_tracked_files(git_root: Path) -> set[Path]:
     return {Path(line) for line in result.stdout.splitlines() if line}
 
 
+def path_is_git_tracked(path: Path, tracked_by_root: dict[Path, set[Path]]) -> bool:
+    """Return whether ``path`` is tracked by one of the isolated Git worktrees."""
+
+    for root, tracked_files in tracked_by_root.items():
+        if is_within(path, root):
+            return path.absolute().relative_to(root.absolute()) in tracked_files
+    return False
+
+
+def path_contains_git_tracked_file(
+    path: Path, tracked_by_root: dict[Path, set[Path]]
+) -> bool:
+    """Return whether ``path`` contains any file tracked by an external worktree."""
+
+    for root, tracked_files in tracked_by_root.items():
+        if not is_within(path, root):
+            continue
+        relative = path.absolute().relative_to(root.absolute())
+        return any(
+            relative == tracked or relative in tracked.parents
+            for tracked in tracked_files
+        )
+    return False
+
+
 def checkpoint_is_retained(relative_path: Path) -> bool:
     """Return True only for checkpoints that define the current reproducible core."""
     parts = relative_path.parts
@@ -176,20 +201,19 @@ def collect_removals(repo_root: Path, workspace_root: Path) -> tuple[list[Remova
 
     reproduction_root = workspace_root / "cross_modal_bdm_reproduction_20260702"
     external_checkout = reproduction_root / "original_code"
-    external_tracked = (
-        git_tracked_files(external_checkout) if external_checkout.is_dir() else set()
+    ssfcnet_root = workspace_root / "ssfcnet_reproduction_20260731"
+    fsgnet_root = workspace_root / "fsgnet_reproduction_20260731"
+    external_git_roots = (
+        external_checkout,
+        ssfcnet_root / "original_code",
+        ssfcnet_root / "historical_284d0bf",
+        fsgnet_root / "original_code",
     )
-
-    def is_external_tracked(path: Path) -> bool:
-        if not is_within(path, external_checkout):
-            return False
-        return path.relative_to(external_checkout) in external_tracked
-
-    def contains_external_tracked_file(path: Path) -> bool:
-        if not is_within(path, external_checkout):
-            return False
-        relative = path.relative_to(external_checkout)
-        return any(relative == tracked or relative in tracked.parents for tracked in external_tracked)
+    external_tracked_by_root = {
+        root.absolute(): git_tracked_files(root)
+        for root in external_git_roots
+        if root.is_dir()
+    }
 
     if reproduction_root.exists():
         for checkpoint in sorted(reproduction_root.rglob("Seg_epoch_*_Seg.pth")):
@@ -202,19 +226,17 @@ def collect_removals(repo_root: Path, workspace_root: Path) -> tuple[list[Remova
         retained.extend(str(path.relative_to(workspace_root)) for path in best_checkpoints)
 
     # Python/test caches are local build products. Limit traversal to code workspaces.
-    ssfcnet_root = workspace_root / "ssfcnet_reproduction_20260731"
-    fsgnet_root = workspace_root / "fsgnet_reproduction_20260731"
     for code_root in (repo_root, reproduction_root, ssfcnet_root, fsgnet_root):
         if not code_root.exists():
             continue
         for cache_name in ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"):
             for cache_dir in sorted(code_root.rglob(cache_name)):
                 if cache_dir.is_dir():
-                    if contains_external_tracked_file(cache_dir):
+                    if path_contains_git_tracked_file(cache_dir, external_tracked_by_root):
                         continue
                     add(cache_dir, "cache", "Regenerable Python/tool cache.")
         for bytecode in sorted(code_root.rglob("*.pyc")):
-            if is_external_tracked(bytecode):
+            if path_is_git_tracked(bytecode, external_tracked_by_root):
                 continue
             add(bytecode, "cache", "Regenerable Python bytecode.")
 
@@ -287,12 +309,13 @@ def main() -> int:
                 "reports",
                 "scalar metrics",
                 "logs",
+                "files tracked by isolated external Git checkouts",
             ],
             "retained_checkpoint_policy": [
                 "Stage-1 O1-O4 best_iou.pth",
                 "strict-v1 A1-A4 three-seed best_bo_grade_macro_f1.pth",
                 "current E2 best_bo_grade_macro_f1.pth",
-                "unified-v1 UABCD/SSFCNet formal paired/shuffled best_bo_grade_macro_f1.pth",
+                "unified-v1 UABCD/SSFCNet/FSG-Net formal paired/shuffled best_bo_grade_macro_f1.pth",
                 "upstream UABCD Seg_epoch_best.pth",
             ],
         },

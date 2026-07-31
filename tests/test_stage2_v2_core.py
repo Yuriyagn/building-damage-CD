@@ -32,7 +32,11 @@ from models.external_uabcd import UABCDInputAdapter  # noqa: E402
 from models.external_ssfcnet import SSFCNetInputAdapter  # noqa: E402
 from models.external_fsgnet import FSGNetInputAdapter  # noqa: E402
 from scripts.evaluate_stage2_overfit_gate import summarize_losses  # noqa: E402
-from scripts.prune_workspace_artifacts import checkpoint_is_retained  # noqa: E402
+from scripts.prune_workspace_artifacts import (  # noqa: E402
+    checkpoint_is_retained,
+    path_contains_git_tracked_file,
+    path_is_git_tracked,
+)
 
 
 class BuildingOnlyLossTest(unittest.TestCase):
@@ -272,6 +276,18 @@ class ExternalFSGNetAdapterTest(unittest.TestCase):
         )
         self.assertTrue(checkpoint_is_retained(formal))
         self.assertFalse(checkpoint_is_retained(overfit))
+
+    def test_cleanup_protects_tracked_external_bytecode(self) -> None:
+        root = (Path(tempfile.gettempdir()) / "external-cleanup-test").absolute()
+        tracked = {root: {Path("model/__pycache__/legacy.cpython-38.pyc")}}
+        tracked_file = root / "model/__pycache__/legacy.cpython-38.pyc"
+        untracked_file = root / "model/__pycache__/current.cpython-312.pyc"
+
+        self.assertTrue(path_is_git_tracked(tracked_file, tracked))
+        self.assertFalse(path_is_git_tracked(untracked_file, tracked))
+        self.assertTrue(
+            path_contains_git_tracked_file(root / "model/__pycache__", tracked)
+        )
 
 
 class OGSRFeatureDatasetTest(unittest.TestCase):
