@@ -180,6 +180,18 @@ class ExternalSSFCNetAdapterTest(unittest.TestCase):
         self.assertAlmostEqual(result["best_relative_loss_reduction"], 0.35)
         self.assertAlmostEqual(result["last_relative_loss_reduction"], 0.28)
 
+    def test_cleanup_retains_formal_ssfcnet_primary_checkpoint(self) -> None:
+        formal = Path(
+            "stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_paired/seed_42/"
+            "run_20260731/checkpoints/best_bo_grade_macro_f1.pth"
+        )
+        probe = Path(
+            "stage2/ssfcnet_unified_v1_batch_probe/paired_seed42/"
+            "checkpoints/best_bo_grade_macro_f1.pth"
+        )
+        self.assertTrue(checkpoint_is_retained(formal))
+        self.assertFalse(checkpoint_is_retained(probe))
+
 
 class OGSRFeatureDatasetTest(unittest.TestCase):
     def test_ogsr_texture_mode_loads_and_crops_feature_stack(self) -> None:

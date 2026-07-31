@@ -142,4 +142,157 @@ python scripts/evaluate_stage2_unified_v1_gate.py \
   --out outputs/stage2/ssfcnet_unified_v1/gates/seed42_gate.json
 ```
 
-本文件后续追加 seed 42 正式结果、事件级检查和最终门槛裁决。
+## 7. 正式训练与复核
+
+正式训练固定在主仓库提交：
+
+```text
+6153d6145fc253c4a4113f654678a49284907a0f
+source_tree_sha256:
+aec3cfa9986de3e11a09107f6e27d85fc1148c781417e46ea8c9cfd867cda416
+```
+
+两个 run 启动时工作树均无差异，实际 `run_info.json` 均记录了本次严格数据
+审计路径、SHA-256、0 hard error 和 3 个 `qc_label=unknown` 元数据 warning。
+
+shuffled 的完整置换审计结果：
+
+| split | records | self-pair | cross-event | singleton |
+| --- | ---: | ---: | ---: | ---: |
+| train | 1207 | 0 | 0 | 0 |
+| val | 357 | 0 | 0 | 0 |
+
+训练完成情况：
+
+| 分支 | 完成 epochs | 结束方式 | 最佳 epoch | 训练内最佳 BO macro F1 |
+| --- | ---: | --- | ---: | ---: |
+| paired | 24 | early stop | 6 | 0.329494 |
+| shuffled | 28 | early stop | 6 | 0.340489 |
+
+随后分别加载唯一最佳 checkpoint，在全部 357 个 val 样本上独立复核。独立
+复核值与训练内最佳值完全一致，且生成了逐样本、per-event、per-disaster 和
+per-region 标量统计；未生成 predictions 或 previews。
+
+## 8. seed 42 全量 val 结果
+
+| 方法 | BO 3-grade macro F1 | BO damage macro F1 | BO binary damage F1 | intact F1 | damaged F1 | destroyed F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| E2 argmax reference | **0.358614** | **0.112705** | **0.199500** | 0.850430 | **0.126116** | 0.099295 |
+| SSFCNet paired | 0.329494 | 0.056961 | 0.125865 | **0.874558** | 0.020642 | 0.093281 |
+| SSFCNet shuffled | 0.340489 | 0.081564 | 0.150487 | 0.858340 | 0.056028 | **0.107099** |
+
+统一 predicted-building gate 下的端到端指标：
+
+| 方法 | 4-class macro F1 | damage macro F1 | binary damage F1 |
+| --- | ---: | ---: | ---: |
+| E2 argmax reference | **0.469296** | **0.092199** | **0.161159** |
+| SSFCNet paired | 0.451849 | 0.050837 | 0.107752 |
+| SSFCNet shuffled | 0.459267 | 0.072440 | 0.126847 |
+
+核心差值：
+
+- paired 比 E2 主指标低 `0.029120`
+- paired 比 shuffled 主指标低 `0.010996`
+- paired 的 intact F1 比 E2 高 `0.024128`，但 damaged F1 低 `0.105474`
+- paired 的 damage macro / binary damage F1 分别比 E2 低
+  `0.055744 / 0.073635`
+- shuffled 在主指标、两类损伤 F1、damage macro、binary damage 和
+  predicted-gate 指标上均高于 paired
+
+因此 paired 的分数主要由 intact 支撑。训练中偶尔会在 damaged 或 destroyed
+其中一类上升，但另一类同步退化，无法形成稳定三等级分离。真实配对 SAR 并未
+优于事件内打乱 SAR，不能声称模型学到了可靠的样本级跨模态对应关系。
+
+## 9. 事件级检查
+
+| val event | paired BO macro | shuffled BO macro | paired-shuffled | E2 BO macro |
+| --- | ---: | ---: | ---: | ---: |
+| bata_explosion | 0.267386 | 0.338049 | -0.070663 | 0.361908 |
+| haiti_earthquake | 0.320961 | 0.330365 | -0.009404 | 0.308206 |
+| marshall_wildfire | 0.313855 | 0.277669 | +0.036187 | 0.339084 |
+| morocco_earthquake | 0.333127 | 0.316656 | +0.016472 | 0.329740 |
+| turkey_earthquake4 | 0.310565 | 0.325926 | -0.015361 | 0.349356 |
+
+paired 只在 2/5 个事件上优于 shuffled，在 bata_explosion 上落后
+`0.070663`。它在 Haiti 和 Morocco 上略高于 E2，但在其余 3 个事件上低于
+E2，且没有形成稳定的跨事件 paired 优势。
+
+## 10. 预注册门槛裁决
+
+| 检查 | 观测值 | 门槛 | 结果 |
+| --- | ---: | ---: | --- |
+| paired >= E2 | 0.329494 | 0.358614 | fail |
+| paired - shuffled | -0.010996 | +0.010000 | fail |
+
+自动门槛：
+
+```text
+outputs/stage2/ssfcnet_unified_v1/gates/seed42_gate.json
+status: fail
+decision: stop_after_seed42_and_record_as_rejected_transfer
+```
+
+两项要求必须同时通过，本次两项均失败。因此：
+
+- 不运行 seeds 3407/2026
+- 不运行 test
+- 不追加 Boundary-Aware Loss 或其他调参分支
+- 将本次结论记录为作者架构在本项目统一标准下的 rejected transfer
+
+这不否定论文在其原始数据和完整未公开训练配方下的结论；它只说明可获得的历史
+SSFCNet 架构，在本项目严格数据、三等级目标和 paired/shuffled 负对照下没有
+超过当前 E2，也没有证明真实 SAR 配对增益。
+
+## 11. 正式产物
+
+Paired：
+
+```text
+outputs/stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_paired/
+  seed_42/run_20260731_103052/
+```
+
+Shuffled：
+
+```text
+outputs/stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_shuffled/
+  seed_42/run_20260731_103113/
+```
+
+每个正式 run 只保留：
+
+- `checkpoints/best_bo_grade_macro_f1.pth`
+- `completed.json`、`run_info.json`、resolved config
+- 完整置换记录与 class weights
+- 训练标量历史
+- `val_best_grade/metrics.json`
+- per-event / per-disaster / per-region / per-sample 标量 CSV
+
+共同协议、审计和门槛证据位于：
+
+```text
+configs/stage2_ssfcnet_unified_v1/
+outputs/stage2/ssfcnet_unified_v1_preflight/
+outputs/stage2/ssfcnet_unified_v1/gates/
+```
+
+## 12. 工作区收尾
+
+结果冻结后执行保守清理：
+
+- 删除两个 batch-probe / overfit 诊断 checkpoint
+- 删除主仓库新生成的 Python/test 缓存
+- 删除 SSFCNet 外部 worktree 中本次生成的 Python 3.12 bytecode
+- 两次主仓库清理共删除约 `0.708 GiB`、`184` 个文件；另删除外部
+  worktree 中本次生成的 2 个 bytecode 文件
+- 正式 paired / shuffled 最佳 checkpoint 均通过白名单复核并保留
+- 外部当前 checkout 与历史 detached worktree 均恢复 clean
+
+清理证据：
+
+```text
+reports/workspace_hygiene/
+  workspace_cleanup_ssfcnet_20260731_dry_run.json
+  workspace_cleanup_ssfcnet_20260731_applied.json
+  workspace_cleanup_ssfcnet_20260731_final_applied.json
+```

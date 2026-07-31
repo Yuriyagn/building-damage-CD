@@ -114,6 +114,8 @@ def checkpoint_is_retained(relative_path: Path) -> bool:
     unified_v1_prefixes = (
         "stage2/unified_v1/S2U1_UABCD_paired/",
         "stage2/unified_v1/S2U1_UABCD_shuffled/",
+        "stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_paired/",
+        "stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_shuffled/",
     )
     if relative_text.startswith(unified_v1_prefixes):
         return filename == "best_bo_grade_macro_f1.pth"
@@ -286,7 +288,7 @@ def main() -> int:
                 "Stage-1 O1-O4 best_iou.pth",
                 "strict-v1 A1-A4 three-seed best_bo_grade_macro_f1.pth",
                 "current E2 best_bo_grade_macro_f1.pth",
-                "unified-v1 formal paired/shuffled best_bo_grade_macro_f1.pth",
+                "unified-v1 UABCD/SSFCNet formal paired/shuffled best_bo_grade_macro_f1.pth",
                 "upstream UABCD Seg_epoch_best.pth",
             ],
         },
