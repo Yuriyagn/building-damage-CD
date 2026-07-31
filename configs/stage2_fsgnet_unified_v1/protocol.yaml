@@ -1,0 +1,135 @@
+protocol_id: stage2_fsgnet_unified_v1
+frozen_on: "2026-07-31"
+
+data:
+  manifest_root: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior
+  expected_counts:
+    train: 1207
+    val: 357
+    test: 388
+  expected_sha256:
+    train: 4a249525f2fa72cb347d1a4285e4c0ed398fe9b6e8ccd91b7126bde521affd4c
+    val: 0184b6d6f8ea6c14f9ad2eea15f857173d42880cb4342b20cf58a5845910f9cb
+    test: 3a4d624de7891bf13a4b4b35927e715e6d0b4c0542d667e80200f384e5b1d828
+  selection_split: val
+  test_policy: embargoed_during_development
+
+candidate_configs:
+  paired: configs/stage2_fsgnet_unified_v1/fsgnet_paired.yaml
+  shuffled: configs/stage2_fsgnet_unified_v1/fsgnet_shuffled.yaml
+
+external_method:
+  name: FSG-Net
+  model_name: external_fsgnet
+  checkout_root: ../fsgnet_reproduction_20260731/original_code
+  git_commit: 535d7eee2f1706b1da01c076a05d35dde1cfd977
+  formal_license_file_available: false
+  pretrained_checkpoint_source: local_torchvision_legacy_cache
+  source_boundary: external_not_vendored
+  artifacts:
+    readme:
+      path: README.md
+      sha256: b37966fe0f2692cc5b0da6b6d9beaf85aebe00caa087e7aa5532806664193150
+    requirements:
+      path: requirements.txt
+      sha256: aa86234073bd0f2be77770bd60d9d626108b440270564f5a0a27cb9d452003a5
+    main_model:
+      path: models/main_model.py
+      sha256: a38c771f1f1a812d881b3c28fb0c84ae3d0f7fbe004bf812362df33de4721add
+    backbone:
+      path: models/backbone/efficientnetv2_timm.py
+      sha256: 32ba2cd04b1345740c11055c40553248cf7406b537291f28fd13e9e83cf95fb1
+    base_blocks:
+      path: models/block/Base.py
+      sha256: c5b0cccb9b7b966067b76a498865f32899c8acff3829fb545aa07866f57659e2
+    dropblock_wrapper:
+      path: models/block/Drop.py
+      sha256: ee1cf3037e6e4e2752b05c30c2c26a92888fd877fd1fb3edcb886562cffc9077
+    wavelet_ops:
+      path: models/block/torch_wavelets.py
+      sha256: f8ae2bb1f6860975eec058893205179b7245d0209cde373275083cfcf068b14e
+    head:
+      path: models/head/FCN.py
+      sha256: 92c334be165ff1141f515037ae4275f41499ddba2d7150c902c3342f231d713c
+    neck:
+      path: models/neck/my_neck.py
+      sha256: cd3462e906301f75acd1ae96666a91348a733e1291bae4d1bc3383a1929947d9
+    dawim:
+      path: models/my_block/dawim.py
+      sha256: 050de8685543131c734e4f24c692c4e09e336cfdbc3dd63818cd9fc2fe00a60f
+    stsam:
+      path: models/my_block/stsam.py
+      sha256: 041a16ab1e71c59cd162f7c642c18ce24e78a6a09d38974c1fd2da0b7485c7de
+    lgfu:
+      path: models/my_block/lgfu.py
+      sha256: e4cdde260a3b3a3ef21b3bde11bc00f616a95940cb81d22496f3b5ba99597549
+    legacy_resnet18:
+      path: ../artifacts/resnet18-5c106cde.pth
+      sha256: 5c106cde386e87d4033832f2996f5493238eda96ccf559d1d62760c4de0613f8
+
+method_scope:
+  primary_gate: author_architecture_under_unified_project_loss
+  architecture:
+    - shared_siamese_resnet18
+    - discrepancy_aware_wavelet_interaction
+    - synergistic_temporal_spatial_attention
+    - lightweight_gated_fusion
+  author_binary_head: replaced_with_unified_three_grade_head
+  author_loss: replaced_with_unified_project_loss
+  rationale: isolate_architecture_under_the_same_three_grade_objective
+
+runtime_compatibility:
+  author_python: "3.8"
+  project_python: "3.12"
+  author_pywavelets: "1.4.1"
+  project_pywavelets: "1.8.0"
+  wavelet: haar
+  amp_fix: cast_constant_haar_filters_to_autocast_compute_dtype
+  validation_inference: deterministic_nonoverlap_512_tiles
+  validation_output_resolution: original_1024
+  upstream_files_modified: false
+
+training:
+  seeds: [42, 3407, 2026]
+  crop_size: 512
+  effective_batch_size: 8
+  max_epochs: 40
+  optimizer: AdamW
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  loss: building_only_ce_binary_aux
+  binary_aux_weight: 0.3
+  primary_checkpoint: best_bo_grade_macro_f1.pth
+
+evaluation:
+  primary_metric: building_only_macro_f1_3class
+  required_secondary_metrics:
+    - building_only_f1_damaged
+    - building_only_f1_destroyed
+    - building_only_damage_macro_f1
+    - building_only_damage_binary_f1
+    - predicted_gate_macro_f1_4class
+    - predicted_gate_damage_macro_f1
+    - per_event_metrics
+    - per_disaster_metrics
+  prohibited_selection_metrics:
+    - test_metrics
+    - cc_surrogate
+
+advancement_gate:
+  technical:
+    smoke_status: ok
+    overfit_max_batches: 2
+    overfit_min_relative_loss_reduction: 0.30
+  seed42:
+    reference_e2_argmax_bo_macro_f1: 0.35861372026578153
+    minimum_paired_minus_shuffled_bo_macro_f1: 0.01
+    require_both: true
+  three_seed_rule: run_only_after_seed42_gate_passes
+
+artifact_policy:
+  retain_checkpoints_per_completed_run: 1
+  retain_logs_and_scalar_metrics: true
+  retain_generated_previews: false
+  retain_generated_predictions: false

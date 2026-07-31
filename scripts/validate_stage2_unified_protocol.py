@@ -85,6 +85,7 @@ def main() -> int:
     supported_protocols = {
         "stage2_unified_v1",
         "stage2_ssfcnet_unified_v1",
+        "stage2_fsgnet_unified_v1",
     }
     if protocol_id not in supported_protocols:
         errors.append(f"unsupported unified protocol_id: {protocol_id}")

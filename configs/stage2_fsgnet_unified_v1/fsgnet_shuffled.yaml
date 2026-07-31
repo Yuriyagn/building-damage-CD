@@ -1,0 +1,86 @@
+protocol_id: stage2_fsgnet_unified_v1
+experiment_name: S2FG1_FSGNet_shuffled
+
+dataset:
+  train_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/train.jsonl
+  val_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/val.jsonl
+  test_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/test.jsonl
+  prior_type: predicted
+  input_mode: pre_sar_prior
+  sar_shuffle_mode: within_event
+  sar_shuffle_seed: 20260731
+  sar_singleton_policy: error
+  crop_size: 512
+  gate_threshold: 0.6
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 3
+  class_names: [intact, damaged, destroyed]
+  loss_support: gt_building
+
+model:
+  name: external_fsgnet
+  external_root: ../fsgnet_reproduction_20260731/original_code
+  source_commit: 535d7eee2f1706b1da01c076a05d35dde1cfd977
+  source_artifacts:
+    models/main_model.py: a38c771f1f1a812d881b3c28fb0c84ae3d0f7fbe004bf812362df33de4721add
+    models/backbone/efficientnetv2_timm.py: 32ba2cd04b1345740c11055c40553248cf7406b537291f28fd13e9e83cf95fb1
+    models/block/Base.py: c5b0cccb9b7b966067b76a498865f32899c8acff3829fb545aa07866f57659e2
+    models/block/Drop.py: ee1cf3037e6e4e2752b05c30c2c26a92888fd877fd1fb3edcb886562cffc9077
+    models/block/torch_wavelets.py: f8ae2bb1f6860975eec058893205179b7245d0209cde373275083cfcf068b14e
+    models/head/FCN.py: 92c334be165ff1141f515037ae4275f41499ddba2d7150c902c3342f231d713c
+    models/neck/my_neck.py: cd3462e906301f75acd1ae96666a91348a733e1291bae4d1bc3383a1929947d9
+    models/my_block/dawim.py: 050de8685543131c734e4f24c692c4e09e336cfdbc3dd63818cd9fc2fe00a60f
+    models/my_block/stsam.py: 041a16ab1e71c59cd162f7c642c18ce24e78a6a09d38974c1fd2da0b7485c7de
+    models/my_block/lgfu.py: e4cdde260a3b3a3ef21b3bde11bc00f616a95940cb81d22496f3b5ba99597549
+  backbone_path: ../artifacts/resnet18-5c106cde.pth
+  backbone_sha256: 5c106cde386e87d4033832f2996f5493238eda96ccf559d1d62760c4de0613f8
+  backbone: resnet18
+  pretrained_backbone: true
+  neck: fpn+aspp+fuse+drop
+  head: fcn
+  input_size: 512
+  amp_wavelet_compat: true
+  stream_a_channels: [0, 1, 2]
+  stream_b_channels: [3, 4, 5]
+  normalization: upstream_zero_one
+  inference_tile_size: 512
+  inference_tile_overlap: 0
+  in_channels: 6
+  out_channels: 3
+
+loss:
+  name: building_only_ce_binary_aux
+  binary_aux_weight: 0.3
+  binary_pos_weight: 1.0
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+
+train:
+  batch_size: 4
+  gradient_accumulation_steps: 2
+  eval_batch_size: 4
+  epochs: 40
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  amp: true
+  disaster_sampling_alpha: 0.0
+  early_stopping_window: 3
+  early_stopping_patience: 10
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 12
+  checkpoint_policy: primary_only
+  save_last_checkpoint: false
+  seed: 42

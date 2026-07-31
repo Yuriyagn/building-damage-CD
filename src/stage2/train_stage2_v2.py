@@ -257,6 +257,14 @@ def train_one_epoch(
     return metrics
 
 
+def step_model_epoch(model: torch.nn.Module) -> None:
+    """Advance an optional architecture-owned epoch schedule."""
+
+    hook = getattr(model, "step_epoch", None)
+    if callable(hook):
+        hook()
+
+
 @torch.no_grad()
 def evaluate(
     model: torch.nn.Module,
@@ -466,6 +474,7 @@ def main() -> None:
             max_batches=1,
             gradient_accumulation_steps=gradient_accumulation_steps,
         )
+        step_model_epoch(model)
         val_metrics = evaluate(model, val_loader, criterion, device, amp, gate_threshold, max_batches=1)
         payload = {"status": "ok", "train": train_metrics, "val": val_metrics}
         write_json(output_dir / "smoke_test.json", payload)
@@ -494,6 +503,7 @@ def main() -> None:
             max_batches,
             gradient_accumulation_steps=gradient_accumulation_steps,
         )
+        step_model_epoch(model)
         val_metrics = evaluate(model, val_loader, criterion, device, amp, gate_threshold, max_batches)
         if scheduler is not None:
             scheduler.step()

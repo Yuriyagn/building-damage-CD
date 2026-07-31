@@ -116,6 +116,8 @@ def checkpoint_is_retained(relative_path: Path) -> bool:
         "stage2/unified_v1/S2U1_UABCD_shuffled/",
         "stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_paired/",
         "stage2/ssfcnet_unified_v1/S2SF1_SSFCNet_shuffled/",
+        "stage2/fsgnet_unified_v1/S2FG1_FSGNet_paired/",
+        "stage2/fsgnet_unified_v1/S2FG1_FSGNet_shuffled/",
     )
     if relative_text.startswith(unified_v1_prefixes):
         return filename == "best_bo_grade_macro_f1.pth"
@@ -200,7 +202,9 @@ def collect_removals(repo_root: Path, workspace_root: Path) -> tuple[list[Remova
         retained.extend(str(path.relative_to(workspace_root)) for path in best_checkpoints)
 
     # Python/test caches are local build products. Limit traversal to code workspaces.
-    for code_root in (repo_root, reproduction_root):
+    ssfcnet_root = workspace_root / "ssfcnet_reproduction_20260731"
+    fsgnet_root = workspace_root / "fsgnet_reproduction_20260731"
+    for code_root in (repo_root, reproduction_root, ssfcnet_root, fsgnet_root):
         if not code_root.exists():
             continue
         for cache_name in ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"):
