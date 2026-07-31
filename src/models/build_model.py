@@ -73,6 +73,11 @@ def build_model(cfg: dict, no_pretrained: bool = False) -> nn.Module:
 
         return build_external_uabcd(model_cfg, no_pretrained=no_pretrained)
 
+    if name in {"external_ssfcnet", "ssfcnet_external", "ssfcnet"}:
+        from .external_ssfcnet import build_external_ssfcnet
+
+        return build_external_ssfcnet(model_cfg, no_pretrained=no_pretrained)
+
     try:
         import segmentation_models_pytorch as smp
     except Exception:

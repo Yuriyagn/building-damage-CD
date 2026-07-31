@@ -29,6 +29,8 @@ from stage2.summarize_stage2_v2 import infer_run, paired_bootstrap  # noqa: E402
 from stage2.test_stage2_v2 import decode_grade_logits  # noqa: E402
 from stage2.train_stage2_v2 import audit_state, checkpoint_metrics_for_policy  # noqa: E402
 from models.external_uabcd import UABCDInputAdapter  # noqa: E402
+from models.external_ssfcnet import SSFCNetInputAdapter  # noqa: E402
+from scripts.evaluate_stage2_overfit_gate import summarize_losses  # noqa: E402
 from scripts.prune_workspace_artifacts import checkpoint_is_retained  # noqa: E402
 
 
@@ -140,6 +142,43 @@ class ExternalUABCDAdapterTest(unittest.TestCase):
         )
         self.assertTrue(checkpoint_is_retained(formal))
         self.assertFalse(checkpoint_is_retained(overfit))
+
+
+class ExternalSSFCNetAdapterTest(unittest.TestCase):
+    def test_splits_and_normalizes_the_unified_six_channel_input(self) -> None:
+        class RecordingCore(nn.Module):
+            def __init__(self) -> None:
+                super().__init__()
+                self.stream_a: torch.Tensor | None = None
+                self.stream_b: torch.Tensor | None = None
+
+            def forward(self, stream_a: torch.Tensor, stream_b: torch.Tensor) -> torch.Tensor:
+                self.stream_a = stream_a.detach().clone()
+                self.stream_b = stream_b.detach().clone()
+                return torch.cat(
+                    [stream_a[:, :1, ::2, ::2], stream_b[:, :2, ::2, ::2]],
+                    dim=1,
+                )
+
+        core = RecordingCore()
+        model = SSFCNetInputAdapter(core)
+        image = torch.zeros(1, 6, 8, 8)
+        image[:, 0:3] = 0.25
+        image[:, 3:6] = 0.75
+        logits = model(image)
+        self.assertEqual(tuple(logits.shape), (1, 3, 8, 8))
+        self.assertTrue(torch.allclose(core.stream_a, torch.full((1, 3, 8, 8), -0.5)))
+        self.assertTrue(torch.allclose(core.stream_b, torch.full((1, 3, 8, 8), 0.5)))
+
+    def test_rejects_invalid_stream_channel_count(self) -> None:
+        with self.assertRaisesRegex(ValueError, "exactly three channels"):
+            SSFCNetInputAdapter(nn.Identity(), stream_b_channels=(3, 4))
+
+    def test_overfit_gate_uses_best_relative_loss_reduction(self) -> None:
+        result = summarize_losses([1.0, 0.65, 0.72], threshold=0.30)
+        self.assertEqual(result["status"], "pass")
+        self.assertAlmostEqual(result["best_relative_loss_reduction"], 0.35)
+        self.assertAlmostEqual(result["last_relative_loss_reduction"], 0.28)
 
 
 class OGSRFeatureDatasetTest(unittest.TestCase):

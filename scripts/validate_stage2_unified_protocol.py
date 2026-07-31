@@ -81,8 +81,13 @@ def main() -> int:
     errors: list[str] = []
     warnings: list[str] = []
 
-    if protocol.get("protocol_id") != "stage2_unified_v1":
-        errors.append("protocol_id must be stage2_unified_v1")
+    protocol_id = str(protocol.get("protocol_id", ""))
+    supported_protocols = {
+        "stage2_unified_v1",
+        "stage2_ssfcnet_unified_v1",
+    }
+    if protocol_id not in supported_protocols:
+        errors.append(f"unsupported unified protocol_id: {protocol_id}")
 
     data_cfg = dict(protocol.get("data", {}))
     manifest_root = repo_root / str(data_cfg.get("manifest_root", ""))
@@ -146,8 +151,14 @@ def main() -> int:
         if bool(train.get("save_last_checkpoint", True)):
             errors.append(f"{label} must not retain last.pth")
         model = dict(cfg.get("model", {}))
-        if str(model.get("name", "")).lower() != "external_uabcd":
-            errors.append(f"{label} does not select external_uabcd")
+        expected_model_name = str(
+            dict(protocol.get("external_method", {})).get(
+                "model_name",
+                "external_uabcd",
+            )
+        ).lower()
+        if str(model.get("name", "")).lower() != expected_model_name:
+            errors.append(f"{label} does not select {expected_model_name}")
 
     if candidates:
         paired_mode = str(dict(candidates.get("paired", {}).get("dataset", {})).get("sar_shuffle_mode"))
@@ -165,29 +176,49 @@ def main() -> int:
 
     external_cfg = dict(protocol.get("external_method", {}))
     external_root = (repo_root / str(external_cfg.get("checkout_root", ""))).resolve()
-    source_path = external_root / str(external_cfg.get("source_path", ""))
-    backbone_path = external_root / str(external_cfg.get("backbone_path", ""))
     external_result = {
         "root": str(external_root),
         "git_commit": git_head(external_root),
-        "source_path": str(source_path),
-        "backbone_path": str(backbone_path),
+        "name": external_cfg.get("name"),
     }
     if external_root == repo_root or repo_root in external_root.parents:
         errors.append("external author code must remain outside the main Git repository")
     if external_result["git_commit"] != str(external_cfg.get("git_commit", "")):
-        errors.append("external UABCD Git commit mismatch")
-    for label, path, expected in (
-        ("source", source_path, external_cfg.get("source_sha256")),
-        ("backbone", backbone_path, external_cfg.get("backbone_sha256")),
-    ):
-        if not path.is_file():
-            errors.append(f"missing external {label}: {path}")
-            continue
-        actual = sha256(path)
-        external_result[f"{label}_sha256"] = actual
-        if actual != str(expected):
-            errors.append(f"external {label} SHA-256 mismatch")
+        errors.append(f"external {external_cfg.get('name', 'method')} Git commit mismatch")
+
+    artifact_specs = external_cfg.get("artifacts")
+    if isinstance(artifact_specs, dict) and artifact_specs:
+        artifact_results: dict[str, Any] = {}
+        for label, raw_spec in artifact_specs.items():
+            spec = dict(raw_spec)
+            path = external_root / str(spec.get("path", ""))
+            expected = str(spec.get("sha256", ""))
+            artifact_result = {"path": str(path)}
+            if not path.is_file():
+                errors.append(f"missing external {label}: {path}")
+            else:
+                actual = sha256(path)
+                artifact_result["sha256"] = actual
+                if actual != expected:
+                    errors.append(f"external {label} SHA-256 mismatch")
+            artifact_results[str(label)] = artifact_result
+        external_result["artifacts"] = artifact_results
+    else:
+        source_path = external_root / str(external_cfg.get("source_path", ""))
+        backbone_path = external_root / str(external_cfg.get("backbone_path", ""))
+        external_result["source_path"] = str(source_path)
+        external_result["backbone_path"] = str(backbone_path)
+        for label, path, expected in (
+            ("source", source_path, external_cfg.get("source_sha256")),
+            ("backbone", backbone_path, external_cfg.get("backbone_sha256")),
+        ):
+            if not path.is_file():
+                errors.append(f"missing external {label}: {path}")
+                continue
+            actual = sha256(path)
+            external_result[f"{label}_sha256"] = actual
+            if actual != str(expected):
+                errors.append(f"external {label} SHA-256 mismatch")
 
     if data_cfg.get("selection_split") != "val":
         errors.append("selection_split must remain val")
