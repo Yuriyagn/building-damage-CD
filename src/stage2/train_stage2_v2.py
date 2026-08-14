@@ -25,9 +25,23 @@ if str(SRC_ROOT) not in sys.path:
 
 from config import load_config, train_params  # noqa: E402
 from models.build_model import build_model  # noqa: E402
-from stage2.common import write_csv, write_json  # noqa: E402
+from models.metadata_multitask import (  # noqa: E402
+    diagnostic_shared_parameters,
+    gradient_interaction,
+    unpack_model_output,
+)
+from stage2.common import read_jsonl, resolve_manifest, write_csv, write_json  # noqa: E402
 from stage2.datasets_v2 import Stage2V2Dataset  # noqa: E402
 from stage2.losses_v2 import build_stage2_v2_loss  # noqa: E402
+from stage2.metadata_multitask import (  # noqa: E402
+    DISASTER_CLASSES,
+    DisasterClassificationMeter,
+    disaster_class_counts,
+    encode_disaster_types,
+    inverse_sqrt_class_weights,
+    load_label_map,
+    validate_disaster_classes,
+)
 from stage2.metrics_v2 import Stage2V2MeterBundle  # noqa: E402
 
 
@@ -75,6 +89,17 @@ def code_state() -> dict[str, Any]:
         "source_tree_sha256": source_hash.hexdigest(),
         "source_file_count": len(source_files),
     }
+
+
+def model_state_sha256(model: torch.nn.Module) -> str:
+    digest = hashlib.sha256()
+    for name, tensor in sorted(model.state_dict().items()):
+        value = tensor.detach().cpu().contiguous()
+        digest.update(name.encode("utf-8") + b"\0")
+        digest.update(str(value.dtype).encode("ascii") + b"\0")
+        digest.update(str(tuple(value.shape)).encode("ascii") + b"\0")
+        digest.update(value.numpy().tobytes())
+    return digest.hexdigest()
 
 
 def audit_state() -> dict[str, Any]:
@@ -295,6 +320,28 @@ def _bundle_update(
     meter.update(grade, true, support)
 
 
+def _disaster_loss_for_batch(
+    disaster_logits: torch.Tensor | None,
+    batch: dict[str, Any],
+    criterion: torch.nn.Module | None,
+    device: torch.device,
+    label_map: dict[str, str] | None,
+) -> tuple[torch.Tensor | None, torch.Tensor | None]:
+    if disaster_logits is None:
+        if criterion is not None:
+            raise RuntimeError("metadata multitask config requires disaster_logits from the model")
+        return None, None
+    if criterion is None:
+        raise RuntimeError("model returned disaster_logits without a configured disaster criterion")
+    targets = encode_disaster_types(
+        [str(value) for value in batch["disaster_type"]],
+        sample_ids=[str(value) for value in batch["id"]],
+        label_map=label_map,
+        device=device,
+    )
+    return criterion(disaster_logits, targets), targets
+
+
 def train_one_epoch(
     model: torch.nn.Module,
     loader: DataLoader,
@@ -306,11 +353,19 @@ def train_one_epoch(
     gate_threshold: float,
     max_batches: int | None = None,
     gradient_accumulation_steps: int = 1,
+    disaster_criterion: torch.nn.Module | None = None,
+    disaster_weight: float = 0.0,
+    disaster_label_map: dict[str, str] | None = None,
 ) -> dict[str, float]:
     model.train()
     meter = Stage2V2MeterBundle()
     loss_sum = 0.0
     sample_count = 0
+    damage_loss_sum = 0.0
+    disaster_loss_sum = 0.0
+    disaster_meter = DisasterClassificationMeter()
+    disaster_sample_count = 0
+    gradient_metrics: dict[str, float] = {}
     accumulation_steps = max(1, int(gradient_accumulation_steps))
     total_batches = len(loader) if max_batches is None else min(len(loader), int(max_batches))
     optimizer.zero_grad(set_to_none=True)
@@ -320,8 +375,26 @@ def train_one_epoch(
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            logits = model(image)
-            loss = criterion(logits, target)
+            output = model(image)
+            logits, disaster_logits = unpack_model_output(output)
+            damage_loss = criterion(logits, target)
+            disaster_loss, disaster_targets = _disaster_loss_for_batch(
+                disaster_logits,
+                batch,
+                disaster_criterion,
+                device,
+                disaster_label_map,
+            )
+            loss = damage_loss
+            if disaster_loss is not None:
+                loss = loss + float(disaster_weight) * disaster_loss
+        if batch_index == 0 and disaster_loss is not None:
+            gradient_metrics = gradient_interaction(
+                damage_loss,
+                disaster_loss,
+                diagnostic_shared_parameters(model),
+                disaster_weight=disaster_weight,
+            )
         group_start = (batch_index // accumulation_steps) * accumulation_steps
         current_group_size = min(accumulation_steps, total_batches - group_start)
         scaler.scale(loss / max(current_group_size, 1)).backward()
@@ -332,10 +405,25 @@ def train_one_epoch(
             optimizer.zero_grad(set_to_none=True)
         batch_size = image.shape[0]
         loss_sum += float(loss.item()) * batch_size
+        damage_loss_sum += float(damage_loss.item()) * batch_size
+        if disaster_loss is not None and disaster_logits is not None and disaster_targets is not None:
+            disaster_loss_sum += float(disaster_loss.item()) * batch_size
+            disaster_sample_count += batch_size
+            disaster_meter.update(disaster_logits, disaster_targets)
         sample_count += batch_size
         _bundle_update(meter, logits, target, batch["prior"], gate_threshold)
     metrics = meter.compute()
     metrics["loss"] = loss_sum / max(sample_count, 1)
+    metrics["damage_loss"] = damage_loss_sum / max(sample_count, 1)
+    if disaster_sample_count:
+        metrics["disaster_loss"] = disaster_loss_sum / disaster_sample_count
+        metrics.update(
+            {
+                f"disaster_classification_{key}": value
+                for key, value in disaster_meter.compute().items()
+            }
+        )
+    metrics.update(gradient_metrics)
     return metrics
 
 
@@ -356,25 +444,52 @@ def evaluate(
     amp: bool,
     gate_threshold: float,
     max_batches: int | None = None,
+    disaster_criterion: torch.nn.Module | None = None,
+    disaster_weight: float = 0.0,
 ) -> dict[str, float]:
     model.eval()
     meter = Stage2V2MeterBundle()
     loss_sum = 0.0
     sample_count = 0
+    damage_loss_sum = 0.0
+    disaster_loss_sum = 0.0
+    disaster_meter = DisasterClassificationMeter()
+    disaster_sample_count = 0
     for batch_index, batch in enumerate(tqdm(loader, desc="val", leave=False)):
         if max_batches is not None and batch_index >= max_batches:
             break
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            logits = model(image)
-            loss = criterion(logits, target)
+            output = model(image)
+            logits, disaster_logits = unpack_model_output(output)
+            damage_loss = criterion(logits, target)
+            disaster_loss, disaster_targets = _disaster_loss_for_batch(
+                disaster_logits, batch, disaster_criterion, device, None
+            )
+            loss = damage_loss
+            if disaster_loss is not None:
+                loss = loss + float(disaster_weight) * disaster_loss
         batch_size = image.shape[0]
         loss_sum += float(loss.item()) * batch_size
+        damage_loss_sum += float(damage_loss.item()) * batch_size
+        if disaster_loss is not None and disaster_logits is not None and disaster_targets is not None:
+            disaster_loss_sum += float(disaster_loss.item()) * batch_size
+            disaster_sample_count += batch_size
+            disaster_meter.update(disaster_logits, disaster_targets)
         sample_count += batch_size
         _bundle_update(meter, logits, target, batch["prior"], gate_threshold)
     metrics = meter.compute()
     metrics["loss"] = loss_sum / max(sample_count, 1)
+    metrics["damage_loss"] = damage_loss_sum / max(sample_count, 1)
+    if disaster_sample_count:
+        metrics["disaster_loss"] = disaster_loss_sum / disaster_sample_count
+        metrics.update(
+            {
+                f"disaster_classification_{key}": value
+                for key, value in disaster_meter.compute().items()
+            }
+        )
     return metrics
 
 
@@ -438,6 +553,11 @@ def main() -> None:
     if args.ogsr_feature_root:
         cfg.setdefault("dataset", {})["ogsr_feature_root"] = args.ogsr_feature_root
     set_seed(seed)
+    deterministic = bool(train_cfg.get("deterministic", False))
+    if deterministic:
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+        torch.use_deterministic_algorithms(True, warn_only=True)
 
     output_dir = Path(args.output_dir)
     if output_dir.exists() and any(output_dir.iterdir()):
@@ -463,6 +583,11 @@ def main() -> None:
         max_batches = int(args.overfit_batches)
 
     data_root = Path(args.data_root)
+    dataset_cfg = dict(cfg.get("dataset", {}))
+    full_train_rows = read_jsonl(
+        resolve_manifest(data_root, str(dataset_cfg["train_manifest"]))
+    )
+    full_val_rows = read_jsonl(resolve_manifest(data_root, str(dataset_cfg["val_manifest"])))
     train_ds = make_dataset(
         cfg, data_root, "train", True, seed, limit, cache_items=bool(args.overfit_batches)
     )
@@ -472,7 +597,69 @@ def main() -> None:
     class_weights, class_weight_info = compute_class_weights(train_ds, cfg)
     write_json(output_dir / "class_weights.json", class_weight_info)
 
+    multitask_cfg = dict(cfg.get("multitask", {}))
+    multitask_enabled = bool(multitask_cfg.get("enabled", False))
+    disaster_weight = float(multitask_cfg.get("disaster_loss_weight", 0.0))
+    disaster_criterion: torch.nn.Module | None = None
+    disaster_label_map: dict[str, str] | None = None
+    multitask_info: dict[str, Any] = {"enabled": multitask_enabled}
+    if multitask_enabled:
+        validate_disaster_classes(multitask_cfg.get("disaster_classes"))
+        train_counts = disaster_class_counts(full_train_rows)
+        computed_weights = inverse_sqrt_class_weights(train_counts)
+        configured_weights = [float(value) for value in multitask_cfg.get("class_weights", [])]
+        if len(configured_weights) != len(DISASTER_CLASSES):
+            raise ValueError("multitask.class_weights must contain seven frozen values")
+        if not np.allclose(configured_weights, computed_weights, rtol=0.0, atol=1e-4):
+            raise ValueError(
+                "configured disaster class weights do not match inverse-sqrt R4 train counts: "
+                f"configured={configured_weights}, computed={computed_weights}"
+            )
+        encode_disaster_types(
+            [str(row.get("disaster_type", "")) for row in full_val_rows]
+        )
+        label_map_value = multitask_cfg.get("train_label_map")
+        if label_map_value:
+            label_map_path = Path(str(label_map_value))
+            if not label_map_path.is_absolute():
+                label_map_path = SRC_ROOT.parent / label_map_path
+        else:
+            label_map_path = None
+        disaster_label_map, label_map_info = load_label_map(label_map_path)
+        if disaster_label_map is not None:
+            true_by_id = {
+                str(row["id"]): str(row.get("disaster_type", "")) for row in full_train_rows
+            }
+            if set(disaster_label_map) != set(true_by_id):
+                missing = sorted(set(true_by_id) - set(disaster_label_map))
+                extra = sorted(set(disaster_label_map) - set(true_by_id))
+                raise ValueError(
+                    f"shuffled label map sample mismatch: missing={missing[:5]}, extra={extra[:5]}"
+                )
+            if any(disaster_label_map[key] == value for key, value in true_by_id.items()):
+                raise ValueError("shuffled disaster label map is not fully deranged")
+            if Counter(disaster_label_map.values()) != Counter(true_by_id.values()):
+                raise ValueError("shuffled disaster label map does not preserve class counts")
+        disaster_criterion = torch.nn.CrossEntropyLoss(
+            weight=torch.tensor(configured_weights, dtype=torch.float32, device=device)
+        )
+        multitask_info = {
+            "enabled": True,
+            "disaster_classes": list(DISASTER_CLASSES),
+            "disaster_loss_weight": disaster_weight,
+            "class_weight_strategy": "inverse_sqrt_frequency_normalized_mean_1",
+            "class_counts": train_counts,
+            "computed_class_weights": computed_weights,
+            "configured_class_weights": configured_weights,
+            "train_label_map": label_map_info,
+            "validation_uses_true_labels": True,
+        }
+    elif disaster_weight != 0.0:
+        raise ValueError("multitask disaster_loss_weight requires multitask.enabled=true")
+    write_json(output_dir / "multitask_info.json", multitask_info)
+
     model = build_model(cfg, no_pretrained=args.no_pretrained).to(device)
+    initial_model_sha256 = model_state_sha256(model)
     criterion = build_stage2_v2_loss(cfg, class_weights).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -546,6 +733,8 @@ def main() -> None:
             "eval_batch_size": eval_batch_size,
             "epochs": epochs,
             "amp": amp,
+            "deterministic": deterministic,
+            "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
             "seed": seed,
             "gate_threshold": gate_threshold,
             "sar_shuffle_mode": train_ds.permutation_info["mode"],
@@ -553,6 +742,8 @@ def main() -> None:
             "early_stopping": {"patience": patience, "min_epochs": min_epochs, "window": early_window},
             "checkpoint_policy": checkpoint_policy,
             "save_last_checkpoint": save_last_checkpoint,
+            "initial_model_state_sha256": initial_model_sha256,
+            "multitask": multitask_info,
             "code_state": code_state(),
             "data_audit": audit_state(),
             "cudnn": torch.backends.cudnn.version(),
@@ -571,9 +762,22 @@ def main() -> None:
             gate_threshold,
             max_batches=1,
             gradient_accumulation_steps=gradient_accumulation_steps,
+            disaster_criterion=disaster_criterion,
+            disaster_weight=disaster_weight,
+            disaster_label_map=disaster_label_map,
         )
         step_model_epoch(model)
-        val_metrics = evaluate(model, val_loader, criterion, device, amp, gate_threshold, max_batches=1)
+        val_metrics = evaluate(
+            model,
+            val_loader,
+            criterion,
+            device,
+            amp,
+            gate_threshold,
+            max_batches=1,
+            disaster_criterion=disaster_criterion,
+            disaster_weight=disaster_weight,
+        )
         payload = {"status": "ok", "train": train_metrics, "val": val_metrics}
         write_json(output_dir / "smoke_test.json", payload)
         print(json.dumps(payload, sort_keys=True), flush=True)
@@ -600,9 +804,22 @@ def main() -> None:
             gate_threshold,
             max_batches,
             gradient_accumulation_steps=gradient_accumulation_steps,
+            disaster_criterion=disaster_criterion,
+            disaster_weight=disaster_weight,
+            disaster_label_map=disaster_label_map,
         )
         step_model_epoch(model)
-        val_metrics = evaluate(model, val_loader, criterion, device, amp, gate_threshold, max_batches)
+        val_metrics = evaluate(
+            model,
+            val_loader,
+            criterion,
+            device,
+            amp,
+            gate_threshold,
+            max_batches,
+            disaster_criterion=disaster_criterion,
+            disaster_weight=disaster_weight,
+        )
         if scheduler is not None:
             scheduler.step()
         row: dict[str, Any] = {
@@ -659,6 +876,11 @@ def main() -> None:
                     "val_loss": val_metrics["loss"],
                     "val_bo_grade_macro_f1": row[primary_name],
                     "val_bo_damage_macro_f1": row["val_building_only_damage_macro_f1"],
+                    "train_disaster_loss": train_metrics.get("disaster_loss"),
+                    "val_disaster_present_macro_f1": val_metrics.get(
+                        "disaster_classification_present_class_macro_f1"
+                    ),
+                    "task_grad_cosine": train_metrics.get("task_grad_cosine"),
                     "smoothed_primary": smoothed,
                     "epochs_without_improvement": epochs_without_improvement,
                 },

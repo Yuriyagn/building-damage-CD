@@ -23,9 +23,18 @@ def summarize_event_generalization(
     if not rows:
         raise ValueError("event rows must not be empty")
 
+    def damage_macro(row: dict[str, Any]) -> float:
+        if "building_only_damage_macro_f1" in row:
+            return float(row["building_only_damage_macro_f1"])
+        return 0.5 * (
+            float(row["building_only_f1_damaged"])
+            + float(row["building_only_f1_destroyed"])
+        )
+
     event_values = np.asarray(
         [float(row["building_only_macro_f1_3class"]) for row in rows], dtype=np.float64
     )
+    event_damage_values = np.asarray([damage_macro(row) for row in rows], dtype=np.float64)
 
     def event_class_values(selected: list[dict[str, Any]]) -> np.ndarray:
         values = []
@@ -38,11 +47,13 @@ def summarize_event_generalization(
     cells = event_class_values(rows)
     rng = np.random.default_rng(bootstrap_seed)
     boot_event = np.empty(bootstrap_iterations, dtype=np.float64)
+    boot_event_damage = np.empty(bootstrap_iterations, dtype=np.float64)
     boot_event_class = np.empty(bootstrap_iterations, dtype=np.float64)
     for index in range(bootstrap_iterations):
         chosen = rng.integers(0, len(rows), size=len(rows))
         sampled = [rows[int(item)] for item in chosen]
         boot_event[index] = float(np.mean([float(row["building_only_macro_f1_3class"]) for row in sampled]))
+        boot_event_damage[index] = float(np.mean([damage_macro(row) for row in sampled]))
         sampled_cells = event_class_values(sampled)
         boot_event_class[index] = float(np.mean(sampled_cells)) if sampled_cells.size else 0.0
 
@@ -51,6 +62,10 @@ def summarize_event_generalization(
         "event_class_cell_count": int(cells.size),
         "event_macro_bo_f1": float(event_values.mean()),
         "event_macro_bo_f1_ci95": [float(x) for x in np.quantile(boot_event, [0.025, 0.975])],
+        "event_macro_bo_damage_f1": float(event_damage_values.mean()),
+        "event_macro_bo_damage_f1_ci95": [
+            float(x) for x in np.quantile(boot_event_damage, [0.025, 0.975])
+        ],
         "event_class_macro_f1": float(cells.mean()) if cells.size else 0.0,
         "event_class_macro_f1_ci95": [
             float(x) for x in np.quantile(boot_event_class, [0.025, 0.975])

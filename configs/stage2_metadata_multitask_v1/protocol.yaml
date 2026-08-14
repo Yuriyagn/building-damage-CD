@@ -1,0 +1,36 @@
+protocol: stage2_metadata_multitask_v1
+purpose: test whether visual disaster-type auxiliary supervision improves event-disjoint damage generalization
+data:
+  train_count: 1634
+  val_count: 290
+  train_event_count: 7
+  val_event_count: 4
+  test_used: false
+  test_manifest_configured: false
+  model_input: [pre_rgb, post_sar]
+  predicted_prior_is_model_input: false
+conditions:
+  M0:
+    config: configs/stage2_metadata_multitask_v1/m0_rgb_sar.yaml
+    disaster_loss_weight: 0.0
+  M1:
+    config: configs/stage2_metadata_multitask_v1/m1_rgb_sar_disaster_aux.yaml
+    disaster_loss_weight: 0.1
+  M2:
+    config: configs/stage2_metadata_multitask_v1/m2_rgb_sar_shuffled_disaster_aux.yaml
+    launch_policy: only_if_M1_passes_all_screening_gates
+seeds: [42, 3407, 2026]
+checkpoint_selection: validation_building_only_macro_f1_3class
+primary_metrics:
+  - building_only_damage_macro_f1
+  - event_macro_bo_f1
+screening_gates:
+  mean_damage_macro_delta_min: 0.01
+  mean_event_macro_delta_min: 0.01
+  positive_seed_count_min: 2
+  worst_event_mean_delta_min: -0.01
+  disaster_macro_f1_over_majority_min: 0.10
+bootstrap:
+  unit: paired_seed_then_paired_event
+  iterations: 10000
+  seed: 20260814
