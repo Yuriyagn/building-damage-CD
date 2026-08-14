@@ -8,7 +8,7 @@ import os
 import random
 import subprocess
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -16,7 +16,7 @@ from typing import Any
 import numpy as np
 import torch
 from PIL import Image
-from torch.utils.data import DataLoader, WeightedRandomSampler
+from torch.utils.data import DataLoader, Sampler, WeightedRandomSampler
 from tqdm import tqdm
 
 SRC_ROOT = Path(__file__).resolve().parents[1]
@@ -198,6 +198,88 @@ def build_sampler(dataset: Stage2V2Dataset, alpha: float, seed: int) -> Weighted
     weights = [counts[str(row.get("disaster_type", "") or "unknown")] ** (-alpha) for row in dataset.rows]
     generator = torch.Generator().manual_seed(seed)
     return WeightedRandomSampler(weights, num_samples=len(dataset), replacement=True, generator=generator)
+
+
+class EventClassBalancedSampler(Sampler[tuple[int, int]]):
+    """Sample an (event, class) group uniformly, then crop that class in one group image."""
+
+    def __init__(
+        self,
+        groups: dict[tuple[str, int], list[int]],
+        *,
+        num_samples: int,
+        seed: int,
+    ) -> None:
+        self.groups = {key: tuple(values) for key, values in sorted(groups.items())}
+        if not self.groups:
+            raise ValueError("event-class sampler has no eligible groups")
+        self.keys = tuple(self.groups)
+        self.num_samples = int(num_samples)
+        self.generator = torch.Generator().manual_seed(int(seed))
+
+    def __len__(self) -> int:
+        return self.num_samples
+
+    def __iter__(self):
+        group_choices = torch.randint(
+            len(self.keys), (self.num_samples,), generator=self.generator
+        ).tolist()
+        for group_index in group_choices:
+            key = self.keys[int(group_index)]
+            members = self.groups[key]
+            member_index = int(
+                torch.randint(len(members), (1,), generator=self.generator).item()
+            )
+            yield int(members[member_index]), int(key[1])
+
+
+def build_event_class_sampler(
+    dataset: Stage2V2Dataset,
+    *,
+    seed: int,
+    min_pixels_per_image: int,
+    min_images_per_group: int,
+    classes: list[int],
+) -> tuple[EventClassBalancedSampler, dict[str, Any]]:
+    groups: dict[tuple[str, int], list[int]] = defaultdict(list)
+    image_class_pixels: list[dict[str, Any]] = []
+    for index, row in enumerate(tqdm(dataset.rows, desc="event_class_groups", leave=False)):
+        target = dataset.load_target(row)
+        event_id = str(row.get("event_id", "") or "unknown")
+        counts = np.bincount(target.reshape(-1), minlength=4)
+        record = {"index": index, "event_id": event_id}
+        for target_class in classes:
+            pixels = int(counts[target_class])
+            record[f"class_{target_class}_pixels"] = pixels
+            if pixels >= min_pixels_per_image:
+                groups[(event_id, target_class)].append(index)
+        image_class_pixels.append(record)
+
+    eligible = {
+        key: values for key, values in groups.items() if len(values) >= min_images_per_group
+    }
+    sampler = EventClassBalancedSampler(
+        eligible, num_samples=len(dataset), seed=seed
+    )
+    info = {
+        "strategy": "event_class_balanced",
+        "sampling_unit": "event_class",
+        "num_samples_per_epoch": len(dataset),
+        "min_pixels_per_image": int(min_pixels_per_image),
+        "min_images_per_group": int(min_images_per_group),
+        "classes": classes,
+        "eligible_group_count": len(eligible),
+        "excluded_groups": [
+            {"event_id": key[0], "target_class": key[1], "image_count": len(values)}
+            for key, values in sorted(groups.items())
+            if key not in eligible
+        ],
+        "eligible_groups": [
+            {"event_id": key[0], "target_class": key[1], "image_count": len(values)}
+            for key, values in sorted(eligible.items())
+        ],
+    }
+    return sampler, info
 
 
 def _bundle_update(
@@ -402,7 +484,23 @@ def main() -> None:
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
     scaler = torch.amp.GradScaler("cuda", enabled=amp)
 
-    sampler = build_sampler(train_ds, float(train_cfg.get("disaster_sampling_alpha", 0.0)), seed)
+    sampling_strategy = str(train_cfg.get("sampling_strategy", "default")).lower()
+    sampler_info: dict[str, Any] = {"strategy": sampling_strategy}
+    if sampling_strategy == "event_class_balanced":
+        if float(train_cfg.get("disaster_sampling_alpha", 0.0)) > 0:
+            raise ValueError("event_class_balanced is incompatible with disaster_sampling_alpha > 0")
+        sampler, sampler_info = build_event_class_sampler(
+            train_ds,
+            seed=seed,
+            min_pixels_per_image=int(train_cfg.get("event_class_min_pixels_per_image", 64)),
+            min_images_per_group=int(train_cfg.get("event_class_min_images_per_group", 2)),
+            classes=[int(value) for value in train_cfg.get("event_class_classes", [1, 2, 3])],
+        )
+    elif sampling_strategy in {"default", "none", "disaster_balanced"}:
+        sampler = build_sampler(train_ds, float(train_cfg.get("disaster_sampling_alpha", 0.0)), seed)
+    else:
+        raise ValueError(f"unknown sampling_strategy: {sampling_strategy}")
+    write_json(output_dir / "sampler.json", sampler_info)
     generator = torch.Generator().manual_seed(seed)
     train_loader = DataLoader(
         train_ds,

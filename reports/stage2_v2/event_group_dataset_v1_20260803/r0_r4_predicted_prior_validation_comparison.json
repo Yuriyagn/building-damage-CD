@@ -1,0 +1,188 @@
+{
+  "protocol": "stage2_v2_event_group_r0_r4_v1",
+  "selection_rule": "best validation BO three-grade macro F1 checkpoint",
+  "test_used_for_selection": false,
+  "complete": true,
+  "missing": [],
+  "records": [
+    {
+      "variant": "r0",
+      "seed": 42,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R0_event_group_predicted_prior/seed_42/run_20260803_202508",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 4,
+      "epochs_completed": 40,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.3069951124803572,
+      "val_building_only_damage_macro_f1": 0.04118108529601834,
+      "val_building_only_f1_damaged": 0.04728621768406852,
+      "val_building_only_f1_destroyed": 0.035075952907968166,
+      "val_building_only_damage_binary_f1": 0.06736915868286879,
+      "val_predicted_gate_macro_f1_4class": 0.42469376107014994
+    },
+    {
+      "variant": "r0",
+      "seed": 3407,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R0_event_group_predicted_prior/seed_3407/run_20260803_210418",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 13,
+      "epochs_completed": 44,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.3086028962004595,
+      "val_building_only_damage_macro_f1": 0.06277673653003371,
+      "val_building_only_f1_damaged": 0.10061691000883605,
+      "val_building_only_f1_destroyed": 0.02493656305123137,
+      "val_building_only_damage_binary_f1": 0.0727921773470248,
+      "val_predicted_gate_macro_f1_4class": 0.4204308737823764
+    },
+    {
+      "variant": "r0",
+      "seed": 2026,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R0_event_group_predicted_prior/seed_2026/run_20260803_214828",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 11,
+      "epochs_completed": 42,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.31373030050038203,
+      "val_building_only_damage_macro_f1": 0.06782946436342296,
+      "val_building_only_f1_damaged": 0.07004165361876631,
+      "val_building_only_f1_destroyed": 0.06561727510807962,
+      "val_building_only_damage_binary_f1": 0.10045016652721002,
+      "val_predicted_gate_macro_f1_4class": 0.42140020273723466
+    },
+    {
+      "variant": "r4",
+      "seed": 42,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R4_bright_event_group_predicted_prior/seed_42/run_20260803_202508",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 19,
+      "epochs_completed": 45,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.37173102212095466,
+      "val_building_only_damage_macro_f1": 0.1081816621006354,
+      "val_building_only_f1_damaged": 0.04629429811889614,
+      "val_building_only_f1_destroyed": 0.17006902608237465,
+      "val_building_only_damage_binary_f1": 0.16213855810014774,
+      "val_predicted_gate_macro_f1_4class": 0.4534404129959399
+    },
+    {
+      "variant": "r4",
+      "seed": 3407,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R4_bright_event_group_predicted_prior/seed_3407/run_20260803_211450",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 8,
+      "epochs_completed": 54,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.3521443199596028,
+      "val_building_only_damage_macro_f1": 0.07046550553601565,
+      "val_building_only_f1_damaged": 0.0997340016978615,
+      "val_building_only_f1_destroyed": 0.0411970093741698,
+      "val_building_only_damage_binary_f1": 0.09974486028806519,
+      "val_predicted_gate_macro_f1_4class": 0.43944556398377543
+    },
+    {
+      "variant": "r4",
+      "seed": 2026,
+      "run_dir": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_r0_r4_v1/R4_bright_event_group_predicted_prior/seed_2026/run_20260803_221402",
+      "selected_checkpoint": "best_bo_grade_macro_f1.pth",
+      "selected_epoch": 47,
+      "epochs_completed": 72,
+      "stopped_early": true,
+      "val_building_only_macro_f1_3class": 0.3242831119257524,
+      "val_building_only_damage_macro_f1": 0.06170310507445029,
+      "val_building_only_f1_damaged": 0.027308496209717616,
+      "val_building_only_f1_destroyed": 0.09609771393918295,
+      "val_building_only_damage_binary_f1": 0.10214563364874625,
+      "val_predicted_gate_macro_f1_4class": 0.42947602814003705
+    }
+  ],
+  "aggregates": {
+    "r0": {
+      "n": 3,
+      "metrics": {
+        "val_building_only_macro_f1_3class": {
+          "mean": 0.3097761030603996,
+          "std": 0.00351752756470071
+        },
+        "val_building_only_damage_macro_f1": {
+          "mean": 0.05726242872982501,
+          "std": 0.014154141429864412
+        },
+        "val_building_only_f1_damaged": {
+          "mean": 0.07264826043722362,
+          "std": 0.026760726546364088
+        },
+        "val_building_only_f1_destroyed": {
+          "mean": 0.04187659702242638,
+          "std": 0.021175850718251815
+        },
+        "val_building_only_damage_binary_f1": {
+          "mean": 0.0802038341857012,
+          "std": 0.017742259236637976
+        },
+        "val_predicted_gate_macro_f1_4class": {
+          "mean": 0.4221749458632537,
+          "std": 0.002234551899274339
+        }
+      }
+    },
+    "r4": {
+      "n": 3,
+      "metrics": {
+        "val_building_only_macro_f1_3class": {
+          "mean": 0.3493861513354366,
+          "std": 0.023843902073538557
+        },
+        "val_building_only_damage_macro_f1": {
+          "mean": 0.08011675757036711,
+          "std": 0.024696640767157288
+        },
+        "val_building_only_f1_damaged": {
+          "mean": 0.057778932008825085,
+          "std": 0.03755377574881876
+        },
+        "val_building_only_f1_destroyed": {
+          "mean": 0.10245458313190914,
+          "std": 0.06467075468911763
+        },
+        "val_building_only_damage_binary_f1": {
+          "mean": 0.12134301734565306,
+          "std": 0.03535036120425174
+        },
+        "val_predicted_gate_macro_f1_4class": {
+          "mean": 0.44078733503991746,
+          "std": 0.012038405108476034
+        }
+      }
+    }
+  },
+  "paired_deltas": [
+    {
+      "seed": 42,
+      "delta_r4_minus_r0__val_building_only_macro_f1_3class": 0.06473590964059744,
+      "delta_r4_minus_r0__val_building_only_damage_macro_f1": 0.06700057680461706,
+      "delta_r4_minus_r0__val_building_only_f1_damaged": -0.000991919565172382,
+      "delta_r4_minus_r0__val_building_only_f1_destroyed": 0.13499307317440648,
+      "delta_r4_minus_r0__val_building_only_damage_binary_f1": 0.09476939941727895,
+      "delta_r4_minus_r0__val_predicted_gate_macro_f1_4class": 0.028746651925789957
+    },
+    {
+      "seed": 3407,
+      "delta_r4_minus_r0__val_building_only_macro_f1_3class": 0.04354142375914333,
+      "delta_r4_minus_r0__val_building_only_damage_macro_f1": 0.007688769005981935,
+      "delta_r4_minus_r0__val_building_only_f1_damaged": -0.0008829083109745534,
+      "delta_r4_minus_r0__val_building_only_f1_destroyed": 0.016260446322938427,
+      "delta_r4_minus_r0__val_building_only_damage_binary_f1": 0.02695268294104039,
+      "delta_r4_minus_r0__val_predicted_gate_macro_f1_4class": 0.01901469020139901
+    },
+    {
+      "seed": 2026,
+      "delta_r4_minus_r0__val_building_only_macro_f1_3class": 0.010552811425370345,
+      "delta_r4_minus_r0__val_building_only_damage_macro_f1": -0.006126359288972677,
+      "delta_r4_minus_r0__val_building_only_f1_damaged": -0.04273315740904869,
+      "delta_r4_minus_r0__val_building_only_f1_destroyed": 0.030480438831103338,
+      "delta_r4_minus_r0__val_building_only_damage_binary_f1": 0.0016954671215362316,
+      "delta_r4_minus_r0__val_predicted_gate_macro_f1_4class": 0.008075825402802383
+    }
+  ]
+}

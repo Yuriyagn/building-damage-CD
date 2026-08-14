@@ -24,10 +24,15 @@ if str(REPO_ROOT) not in sys.path:
 from stage2.datasets import Stage2DamageDataset  # noqa: E402
 from stage2.datasets_v2 import build_derangement  # noqa: E402
 from stage2.losses_v2 import BuildingOnlyGradeBinaryAuxLoss, BuildingOnlyGradeLoss  # noqa: E402
-from stage2.metrics_v2 import Stage2V2MeterBundle  # noqa: E402
+from stage2.metrics_v2 import Stage2V2MeterBundle, summarize_event_generalization  # noqa: E402
 from stage2.summarize_stage2_v2 import infer_run, paired_bootstrap  # noqa: E402
 from stage2.test_stage2_v2 import decode_grade_logits  # noqa: E402
-from stage2.train_stage2_v2 import audit_state, checkpoint_metrics_for_policy, step_model_epoch  # noqa: E402
+from stage2.train_stage2_v2 import (  # noqa: E402
+    EventClassBalancedSampler,
+    audit_state,
+    checkpoint_metrics_for_policy,
+    step_model_epoch,
+)
 from models.external_uabcd import UABCDInputAdapter  # noqa: E402
 from models.external_ssfcnet import SSFCNetInputAdapter  # noqa: E402
 from models.external_fsgnet import FSGNetInputAdapter  # noqa: E402
@@ -66,6 +71,94 @@ class BuildingOnlyLossTest(unittest.TestCase):
         self.assertGreater(float(logits.grad.abs().sum()), 0.0)
         background = (target == 0).unsqueeze(1).expand_as(logits)
         self.assertTrue(torch.all(logits.grad[background] == 0))
+
+
+class EventShortcutInputTest(unittest.TestCase):
+    def _dataset(self, root: Path, input_mode: str) -> Stage2DamageDataset:
+        (root / "images").mkdir(parents=True, exist_ok=True)
+        (root / "masks").mkdir(parents=True, exist_ok=True)
+        pre = np.full((4, 4, 3), 128, dtype=np.uint8)
+        sar = np.full((4, 4), 64, dtype=np.uint8)
+        mask = np.zeros((4, 4), dtype=np.uint8)
+        mask[1:3, 1:3] = 2
+        Image.fromarray(pre).save(root / "images" / "pre.png")
+        Image.fromarray(sar).save(root / "images" / "sar.png")
+        Image.fromarray(mask).save(root / "masks" / "mask.png")
+        manifest = root / "manifest.jsonl"
+        manifest.write_text(
+            json.dumps(
+                {
+                    "id": "sample",
+                    "event_id": "event",
+                    "pre_image": "images/pre.png",
+                    "post_sar": "images/sar.png",
+                    "mask_multiclass": "masks/mask.png",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        return Stage2DamageDataset(root, manifest, train=False, prior_type="none", input_mode=input_mode)
+
+    def test_pre_only_zeros_non_pre_channels(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_name:
+            image = self._dataset(Path(tmp_name), "pre_only")[0]["image"]
+        self.assertEqual(tuple(image.shape), (6, 4, 4))
+        self.assertGreater(float(image[:3].sum()), 0.0)
+        self.assertEqual(float(image[3:].abs().sum()), 0.0)
+
+    def test_background_only_masks_all_building_pixels(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_name:
+            item = self._dataset(Path(tmp_name), "pre_sar_background_only")[0]
+        image = item["image"]
+        building = item["mask"] > 0
+        self.assertEqual(tuple(image.shape), (6, 4, 4))
+        self.assertEqual(float(image[:, building].abs().sum()), 0.0)
+        self.assertGreater(float(image[:, ~building].abs().sum()), 0.0)
+
+
+class EventClassSamplerTest(unittest.TestCase):
+    def test_sampler_draws_only_from_selected_event_class_group(self) -> None:
+        groups = {("event_a", 2): [0, 1], ("event_b", 3): [2]}
+        draws = list(EventClassBalancedSampler(groups, num_samples=100, seed=42))
+        self.assertEqual(len(draws), 100)
+        self.assertTrue({target_class for _, target_class in draws} == {2, 3})
+        for index, target_class in draws:
+            if target_class == 2:
+                self.assertIn(index, {0, 1})
+            else:
+                self.assertEqual(index, 2)
+
+
+class EventGeneralizationSummaryTest(unittest.TestCase):
+    def test_event_class_macro_excludes_absent_cells(self) -> None:
+        rows = [
+            {
+                "event_id": "a",
+                "building_only_macro_f1_3class": 0.3,
+                "building_only_f1_intact": 0.6,
+                "building_only_f1_damaged": 0.3,
+                "building_only_f1_destroyed": 0.0,
+                "building_only_support_intact": 10,
+                "building_only_support_damaged": 5,
+                "building_only_support_destroyed": 0,
+            },
+            {
+                "event_id": "b",
+                "building_only_macro_f1_3class": 0.6,
+                "building_only_f1_intact": 0.9,
+                "building_only_f1_damaged": 0.0,
+                "building_only_f1_destroyed": 0.6,
+                "building_only_support_intact": 10,
+                "building_only_support_damaged": 0,
+                "building_only_support_destroyed": 5,
+            },
+        ]
+        summary = summarize_event_generalization(rows, bootstrap_iterations=100, bootstrap_seed=1)
+        self.assertAlmostEqual(summary["event_macro_bo_f1"], 0.45)
+        self.assertAlmostEqual(summary["event_class_macro_f1"], 0.6)
+        self.assertEqual(summary["event_class_cell_count"], 4)
+        self.assertEqual(summary["worst_event_id"], "a")
 
 
 class FixedDerangementTest(unittest.TestCase):

@@ -163,22 +163,61 @@ def main() -> None:
     fig.savefig(args.out_dir / "test_class_concentration.png", dpi=180, bbox_inches="tight")
     plt.close(fig)
 
-    lines = ["# Strict-v1 event/class distribution", ""]
+    lines = [
+        "# Strict-v1 event × damage-class distribution",
+        "",
+        "The tables use building pixels only. `within-event composition` answers what each event contains; "
+        "`contribution to split class` answers how strongly each class is tied to a particular event.",
+        "",
+    ]
     for split in ("train", "val", "test"):
-        lines.extend([f"## {split.title()}", "", "| event | images | intact | damaged | destroyed |", "|---|---:|---:|---:|---:|"])
-        for row in [item for item in records if item["split"] == split]:
+        split_rows = [item for item in records if item["split"] == split]
+        lines.extend(
+            [
+                f"## {split.title()}",
+                "",
+                "### Within-event composition",
+                "",
+                "| event | images | intact | damaged | destroyed |",
+                "|---|---:|---:|---:|---:|",
+            ]
+        )
+        for row in split_rows:
             lines.append(
                 f"| {row['event_id']} | {row['images']} | {pct(float(row['intact_share_within_event']))} | "
                 f"{pct(float(row['damaged_share_within_event']))} | {pct(float(row['destroyed_share_within_event']))} |"
             )
-        lines.append("")
-    lines.extend(["## Test concentration", "", "| class | top event | top-1 share | HHI | effective events |", "|---|---|---:|---:|---:|"])
-    for name in ("intact", "damaged", "destroyed"):
-        item = concentration["test"][name]
-        lines.append(
-            f"| {name} | {item['top_event']} | {pct(float(item['top1_share']))} | "
-            f"{float(item['hhi']):.4f} | {float(item['effective_event_count']):.2f} |"
+        lines.extend(
+            [
+                "",
+                "### Contribution to split class",
+                "",
+                "| event | intact contribution | damaged contribution | destroyed contribution |",
+                "|---|---:|---:|---:|",
+            ]
         )
+        for row in split_rows:
+            lines.append(
+                f"| {row['event_id']} | {pct(float(row['intact_share_of_split_class']))} | "
+                f"{pct(float(row['damaged_share_of_split_class']))} | "
+                f"{pct(float(row['destroyed_share_of_split_class']))} |"
+            )
+        lines.extend(
+            [
+                "",
+                "### Class concentration",
+                "",
+                "| class | top event | top-1 share | HHI | effective events |",
+                "|---|---|---:|---:|---:|",
+            ]
+        )
+        for name in ("intact", "damaged", "destroyed"):
+            item = concentration[split][name]
+            lines.append(
+                f"| {name} | {item['top_event']} | {pct(float(item['top1_share']))} | "
+                f"{float(item['hhi']):.4f} | {float(item['effective_event_count']):.2f} |"
+            )
+        lines.append("")
     (args.out_dir / "distribution_summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 

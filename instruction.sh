@@ -9,7 +9,11 @@ if [[ ! -d "${DEFAULT_DATASET_ROOT}" && -d "${SCRIPT_DIR}/../datasets" ]]; then
   DEFAULT_DATASET_ROOT="$(cd "${SCRIPT_DIR}/../datasets" && pwd)"
 fi
 export DATASET_ROOT="${DATASET_ROOT:-${DEFAULT_DATASET_ROOT}}"
-export STAGE1_DATA_ROOT="${STAGE1_DATA_ROOT:-${DATASET_ROOT}/DisasterM3_stage1_optical_building}"
+DEFAULT_STAGE1_DATA_ROOT="${DATASET_ROOT}/DisasterM3_stage1_optical_building"
+if [[ ! -d "${DEFAULT_STAGE1_DATA_ROOT}" && -d "${DATASET_ROOT}/_archive/DisasterM3_stage1_optical_building" ]]; then
+  DEFAULT_STAGE1_DATA_ROOT="${DATASET_ROOT}/_archive/DisasterM3_stage1_optical_building"
+fi
+export STAGE1_DATA_ROOT="${STAGE1_DATA_ROOT:-${DEFAULT_STAGE1_DATA_ROOT}}"
 export DATA_ROOT="${DATA_ROOT:-${STAGE1_DATA_ROOT}}"
 export PRACTICE_ROOT="${PRACTICE_ROOT:-${DATASET_ROOT}/DisasterM3_aria2_building_damage_practice}"
 export STAGE2_DATA_ROOT="${STAGE2_DATA_ROOT:-${DATASET_ROOT}/DisasterM3_optical_sar_damage_minimal_v0.2}"

@@ -1,0 +1,69 @@
+{
+  "protocol": "stage2_v2_event_group_v1",
+  "created": "2026-08-03",
+  "source_manifest_protocol": "stage2_v2_clean_human_reviewed_20260624",
+  "source_protocol_frozen_as": "strict_v1_directory_split",
+  "event_identity_field": "event_group_id",
+  "identity_fields": [
+    "pre_image",
+    "post_sar",
+    "mask_multiclass"
+  ],
+  "split_event_groups": {
+    "train": [
+      "beirut_explosion_2020",
+      "hawaii_wildfire",
+      "la_palma_volcano",
+      "libya_flood",
+      "myanmar_hurricane",
+      "turkey_eq_2023",
+      "ukraine_conflict"
+    ],
+    "val": [
+      "bata_explosion",
+      "haiti_earthquake",
+      "marshall_wildfire",
+      "morocco_earthquake"
+    ],
+    "test": [
+      "mexico_hurricane",
+      "noto_earthquake",
+      "nyiragongo_2021"
+    ]
+  },
+  "assignment_rationale": [
+    "Collapse all Turkey earthquake source directories into one real-disaster event group.",
+    "Collapse current rwanda_volcano and BRIGHT congo-volcano into the Nyiragongo 2021 event group.",
+    "Move the complete Turkey event group to train so train retains earthquake coverage while val and test remain balanced at 290 current samples each.",
+    "Keep every event_group_id in exactly one split and preserve the former strict-v1 split in directory_split_v1 for historical traceability.",
+    "Treat the resulting test as historically observed rather than a pristine untouched final test because earlier work inspected the source test events."
+  ],
+  "bright_supplement": {
+    "name": "BRIGHT_supplement_v1",
+    "allowed_source_events": [
+      "beirut-explosion",
+      "hawaii-wildfire",
+      "libya-flood"
+    ],
+    "target_split": "train",
+    "require_nonempty_building_mask": true,
+    "exclude_any_decoded_pre_match": true,
+    "require_decoded_post_match_confirmation_for_overlap_audit": true,
+    "exclude_event_groups_present_in_val_or_test": true,
+    "excluded_source_events": {
+      "bata-explosion": "event group reserved for validation",
+      "congo-volcano": "event group reserved for test and aliases current rwanda_volcano",
+      "haiti-earthquake": "event group reserved for validation",
+      "la_palma-volcano": "does not improve damaged/destroyed event-class support after deduplication",
+      "marshall-wildfire": "event group reserved for validation",
+      "morocco-earthquake": "event group reserved for validation",
+      "noto-earthquake": "event group reserved for test",
+      "turkey-earthquake": "same real disaster spans former strict-v1 train/val/test directories"
+    }
+  },
+  "evaluation_status": {
+    "strict_v1": "frozen historical directory-level split baseline",
+    "event_group_v1_test": "historically observed diagnostic test; not pristine unseen-disaster evidence",
+    "training_authorized": false
+  }
+}

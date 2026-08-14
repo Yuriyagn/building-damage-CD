@@ -1,0 +1,576 @@
+{
+  "counts": {
+    "no_prior_test": 290,
+    "no_prior_train": 1634,
+    "no_prior_val": 290,
+    "oracle_prior_test": 290,
+    "oracle_prior_train": 1634,
+    "oracle_prior_val": 290,
+    "predicted_prior_test": 290,
+    "predicted_prior_train": 1634,
+    "predicted_prior_val": 290
+  },
+  "data_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2",
+  "error_count": 0,
+  "errors": [],
+  "examples": {
+    "no_prior_test": [
+      {
+        "id": "strictv1__test__mexico_hurricane_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "id": "strictv1__test__mexico_hurricane_00000003",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "no_prior_train": [
+      {
+        "id": "brightv1__beirut-explosion_00000000",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "id": "brightv1__beirut-explosion_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "no_prior_val": [
+      {
+        "id": "strictv1__test__bata_explosion_0",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "id": "strictv1__test__bata_explosion_1",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "oracle_prior_test": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          1
+        ],
+        "id": "strictv1__test__mexico_hurricane_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          1
+        ],
+        "id": "strictv1__test__mexico_hurricane_00000003",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "oracle_prior_train": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "brightv1__beirut-explosion_00000000",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "brightv1__beirut-explosion_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "oracle_prior_val": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          1
+        ],
+        "id": "strictv1__test__bata_explosion_0",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          1
+        ],
+        "id": "strictv1__test__bata_explosion_1",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ]
+      }
+    ],
+    "predicted_prior_test": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "strictv1__test__mexico_hurricane_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 1.0,
+        "predicted_prob_min": 0.0,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "strictv1__test__mexico_hurricane_00000003",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 1.0,
+        "predicted_prob_min": 0.0,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      }
+    ],
+    "predicted_prior_train": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "brightv1__beirut-explosion_00000000",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 1.0,
+        "predicted_prob_min": 5.960464477539063e-08,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "brightv1__beirut-explosion_00000001",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 0.99951171875,
+        "predicted_prob_min": 0.0,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      }
+    ],
+    "predicted_prior_val": [
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "strictv1__test__bata_explosion_0",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 1.0,
+        "predicted_prob_min": 5.960464477539063e-08,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "building_prior_binary_shape": [
+          1024,
+          1024
+        ],
+        "building_prior_binary_values": [
+          0,
+          255
+        ],
+        "id": "strictv1__test__bata_explosion_1",
+        "mask_shape": [
+          1024,
+          1024
+        ],
+        "mask_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "post_sar_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "pre_shape": [
+          1024,
+          1024,
+          3
+        ],
+        "predicted_prob_max": 1.0,
+        "predicted_prob_min": 0.0,
+        "predicted_prob_shape": [
+          1024,
+          1024
+        ]
+      }
+    ]
+  },
+  "limit_per_split": 2,
+  "manifest_root": "manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803",
+  "status": "pass"
+}

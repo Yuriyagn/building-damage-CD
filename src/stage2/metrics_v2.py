@@ -10,6 +10,72 @@ from skimage.measure import label
 from .metrics import Stage2DamageMeter
 
 
+GRADE_NAMES = ("intact", "damaged", "destroyed")
+
+
+def summarize_event_generalization(
+    rows: list[dict[str, Any]],
+    *,
+    bootstrap_iterations: int = 10_000,
+    bootstrap_seed: int = 20260803,
+) -> dict[str, Any]:
+    """Aggregate event-level metrics without treating pixels as independent samples."""
+    if not rows:
+        raise ValueError("event rows must not be empty")
+
+    event_values = np.asarray(
+        [float(row["building_only_macro_f1_3class"]) for row in rows], dtype=np.float64
+    )
+
+    def event_class_values(selected: list[dict[str, Any]]) -> np.ndarray:
+        values = []
+        for row in selected:
+            for name in GRADE_NAMES:
+                if float(row.get(f"building_only_support_{name}", 0.0)) > 0:
+                    values.append(float(row[f"building_only_f1_{name}"]))
+        return np.asarray(values, dtype=np.float64)
+
+    cells = event_class_values(rows)
+    rng = np.random.default_rng(bootstrap_seed)
+    boot_event = np.empty(bootstrap_iterations, dtype=np.float64)
+    boot_event_class = np.empty(bootstrap_iterations, dtype=np.float64)
+    for index in range(bootstrap_iterations):
+        chosen = rng.integers(0, len(rows), size=len(rows))
+        sampled = [rows[int(item)] for item in chosen]
+        boot_event[index] = float(np.mean([float(row["building_only_macro_f1_3class"]) for row in sampled]))
+        sampled_cells = event_class_values(sampled)
+        boot_event_class[index] = float(np.mean(sampled_cells)) if sampled_cells.size else 0.0
+
+    out: dict[str, Any] = {
+        "event_count": len(rows),
+        "event_class_cell_count": int(cells.size),
+        "event_macro_bo_f1": float(event_values.mean()),
+        "event_macro_bo_f1_ci95": [float(x) for x in np.quantile(boot_event, [0.025, 0.975])],
+        "event_class_macro_f1": float(cells.mean()) if cells.size else 0.0,
+        "event_class_macro_f1_ci95": [
+            float(x) for x in np.quantile(boot_event_class, [0.025, 0.975])
+        ],
+        "worst_event_bo_f1": float(event_values.min()),
+        "worst_event_id": str(rows[int(event_values.argmin())].get("event_id", "unknown")),
+        "bootstrap_unit": "event",
+        "bootstrap_iterations": int(bootstrap_iterations),
+        "bootstrap_seed": int(bootstrap_seed),
+    }
+    for name in ("damaged", "destroyed"):
+        values = np.asarray(
+            [
+                float(row[f"building_only_f1_{name}"])
+                for row in rows
+                if float(row.get(f"building_only_support_{name}", 0.0)) > 0
+            ],
+            dtype=np.float64,
+        )
+        out[f"{name}_event_count"] = int(values.size)
+        out[f"{name}_event_mean_f1"] = float(values.mean()) if values.size else 0.0
+        out[f"{name}_event_std_f1"] = float(values.std(ddof=0)) if values.size else 0.0
+    return out
+
+
 def _prefix_metrics(prefix: str, metrics: dict[str, float], keys: set[str] | None = None) -> dict[str, float]:
     return {
         f"{prefix}_{key}": float(value)

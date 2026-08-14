@@ -115,6 +115,7 @@ class Stage2DamageMeter:
             out[f"building_only_f1_{name}"] = f1
             out[f"building_only_precision_{name}"] = precision
             out[f"building_only_recall_{name}"] = recall
+            out[f"building_only_support_{name}"] = tp + fn
         out["building_only_miou_3class"] = float(np.mean(building_ious)) if building_ious else 0.0
         out["building_only_macro_f1_3class"] = float(np.mean(building_f1s)) if building_f1s else 0.0
         out.update(self._binary_metrics("building_only_damage_binary", self.building_only_damage))
@@ -163,4 +164,3 @@ class GroupedStage2Meters:
         for value, meter in sorted(self.groups[key].items()):
             out.append({key: value, **meter.compute()})
         return out
-

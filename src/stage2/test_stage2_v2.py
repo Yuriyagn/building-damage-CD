@@ -21,7 +21,12 @@ from config import load_config  # noqa: E402
 from models.build_model import build_model  # noqa: E402
 from stage2.common import read_jsonl, resolve_manifest, write_csv, write_json  # noqa: E402
 from stage2.datasets_v2 import Stage2V2Dataset  # noqa: E402
-from stage2.metrics_v2 import CCSurrogateMeter, GroupedV2Meters, Stage2V2MeterBundle  # noqa: E402
+from stage2.metrics_v2 import (  # noqa: E402
+    CCSurrogateMeter,
+    GroupedV2Meters,
+    Stage2V2MeterBundle,
+    summarize_event_generalization,
+)
 
 
 COLORS = {
@@ -249,11 +254,13 @@ def main() -> None:
             "sar_shuffle_mode": dataset.permutation_info["mode"],
         }
     )
+    per_event_rows = grouped.rows("event_id")
     write_json(output_dir / "metrics.json", metrics)
+    write_json(output_dir / "event_generalization.json", summarize_event_generalization(per_event_rows))
     write_csv(output_dir / "sample_metrics.csv", sample_rows)
     write_csv(output_dir / "per_disaster_metrics.csv", grouped.rows("disaster_type"))
     write_csv(output_dir / "per_region_metrics.csv", grouped.rows("country_or_region"))
-    write_csv(output_dir / "per_event_metrics.csv", grouped.rows("event_id"))
+    write_csv(output_dir / "per_event_metrics.csv", per_event_rows)
     write_csv(output_dir / "per_event_familiarity_metrics.csv", grouped.rows("event_familiarity"))
     print(json.dumps(metrics, sort_keys=True), flush=True)
 

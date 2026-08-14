@@ -1,0 +1,22 @@
+{
+  "audit_root": "/home/yr/code/Building damage change detection/stage1_optical_building/outputs/stage2/event_group_dataset_v1_20260803/bright_near_overlap",
+  "candidate_scope": "BRIGHT_supplement_v1 train candidates versus event-group-v1 val/test",
+  "reviewed_at": "2026-08-03",
+  "automatic_candidate_counts": {
+    "high": 0,
+    "medium": 3,
+    "low": 0
+  },
+  "review_decision_counts": {
+    "not_overlap": 3,
+    "confirmed_overlap": 0
+  },
+  "removed_supplement_samples": 0,
+  "status": "pass_after_human_review",
+  "evidence": [
+    "All three retained pairs were train-test medium-risk candidates produced by patch similarity.",
+    "Two pairs had zero RANSAC inliers and one had only two; none had stable local geometry.",
+    "Visual review found different geography, road/building layouts, and land cover. Diagonal no-data boundaries caused the false-positive retrievals."
+  ],
+  "visual_review_sheet": "/home/yr/code/Building damage change detection/stage1_optical_building/reports/stage2_v2/event_group_dataset_v1_20260803/near_overlap_review/pre_event_candidates.png"
+}

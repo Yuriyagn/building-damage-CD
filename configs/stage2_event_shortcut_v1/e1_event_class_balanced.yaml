@@ -1,0 +1,64 @@
+protocol_id: stage2_event_shortcut_v1
+experiment_name: S2ES_E1_event_class_balanced
+
+dataset:
+  train_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/train.jsonl
+  val_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/val.jsonl
+  test_manifest: manifests/stage2_v2_clean_human_reviewed_20260624/predicted_prior/test.jsonl
+  prior_type: predicted
+  input_mode: pre_sar_prior
+  sar_shuffle_mode: paired
+  sar_singleton_policy: error
+  crop_size: 512
+  gate_threshold: 0.6
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 3
+  class_names: [intact, damaged, destroyed]
+  loss_support: gt_building
+
+model:
+  name: unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  in_channels: 6
+  out_channels: 3
+
+loss:
+  name: building_only_ce_binary_aux
+  binary_aux_weight: 0.3
+  binary_pos_weight: 1.0
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+
+train:
+  batch_size: 8
+  eval_batch_size: 4
+  epochs: 40
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  amp: true
+  sampling_strategy: event_class_balanced
+  event_class_classes: [1, 2, 3]
+  event_class_min_pixels_per_image: 64
+  event_class_min_images_per_group: 2
+  disaster_sampling_alpha: 0.0
+  early_stopping_window: 3
+  early_stopping_patience: 10
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 12
+  checkpoint_policy: primary_only
+  save_last_checkpoint: false
+  seed: 42

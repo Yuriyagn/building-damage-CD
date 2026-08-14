@@ -50,6 +50,9 @@ class Stage2DamageDataset(Dataset):
     optical RGB image:
 
     - pre_prior: [pre_R, pre_G, pre_B, 0, prior, 0]
+    - pre_only: [pre_R, pre_G, pre_B, 0, 0, 0]
+    - pre_sar_background_only:
+      [pre_RGB outside GT buildings, SAR outside GT buildings, 0, 0]
     - pre_sar_prior: [pre_R, pre_G, pre_B, SAR, prior, SAR * prior]
     - pre_sar_texture_prior:
       [pre_R, pre_G, pre_B, SAR, SAR_grad, prior, SAR * prior, SAR_grad * prior]
@@ -104,7 +107,10 @@ class Stage2DamageDataset(Dataset):
     def __len__(self) -> int:
         return len(self.rows)
 
-    def __getitem__(self, index: int) -> dict[str, Any]:
+    def __getitem__(self, index: int | tuple[int, int]) -> dict[str, Any]:
+        forced_crop_class: int | None = None
+        if isinstance(index, tuple):
+            index, forced_crop_class = int(index[0]), int(index[1])
         row = self.rows[index]
         sar = self.load_sar(row)
         target = self.load_target(row)
@@ -114,7 +120,13 @@ class Stage2DamageDataset(Dataset):
 
         if self.train and self.crop_size:
             sar, prior, target, pre, ogsr_features = self._crop(
-                sar, prior, target, self.crop_size, pre, ogsr_features
+                sar,
+                prior,
+                target,
+                self.crop_size,
+                pre,
+                ogsr_features,
+                forced_target_class=forced_crop_class,
             )
         if self.train:
             sar, prior, target, pre, ogsr_features = self._augment(sar, prior, target, pre, ogsr_features)
@@ -127,6 +139,23 @@ class Stage2DamageDataset(Dataset):
             image = np.stack([np.zeros_like(sar_f), prior_f, np.zeros_like(sar_f)], axis=0)
         elif normalized_mode in {"sar_only", "no_prior"}:
             image = np.stack([sar_f, np.zeros_like(sar_f), np.zeros_like(sar_f)], axis=0)
+        elif normalized_mode in {"pre_only", "pre_optical_only"}:
+            pre_f = self._pre_float_chw(pre)
+            zeros = np.zeros_like(sar_f)[None, :, :]
+            image = np.concatenate([pre_f, zeros, zeros, zeros], axis=0)
+        elif normalized_mode in {"pre_sar_background_only", "background_only"}:
+            pre_f = self._pre_float_chw(pre)
+            background = (target == 0).astype(np.float32)
+            zeros = np.zeros_like(sar_f)[None, :, :]
+            image = np.concatenate(
+                [
+                    pre_f * background[None, :, :],
+                    (sar_f * background)[None, :, :],
+                    zeros,
+                    zeros,
+                ],
+                axis=0,
+            )
         elif normalized_mode in {"pre_prior", "pre_prior_only", "pre_zero_sar_prior"}:
             pre_f = self._pre_float_chw(pre)
             image = np.concatenate(
@@ -375,11 +404,20 @@ class Stage2DamageDataset(Dataset):
         size: int,
         pre: np.ndarray | None = None,
         ogsr_features: np.ndarray | None = None,
+        forced_target_class: int | None = None,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray | None, np.ndarray | None]:
         h, w = target.shape
         if h <= size or w <= size:
             return sar, prior, target, pre, ogsr_features
-        y, x = self._choose_crop_origin(target, size)
+        if forced_target_class is None:
+            y, x = self._choose_crop_origin(target, size)
+        else:
+            origin = self._origin_for_target(target, size, forced_target_class)
+            if origin is None:
+                raise RuntimeError(
+                    f"forced crop class {forced_target_class} is absent from the selected sample"
+                )
+            y, x = origin
         return (
             sar[y : y + size, x : x + size],
             prior[y : y + size, x : x + size],

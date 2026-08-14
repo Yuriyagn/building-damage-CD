@@ -1,0 +1,55 @@
+protocol_id: stage2_event_shortcut_v1
+date: 2026-08-03
+purpose: diagnose whether Stage-2 models exploit event-correlated shortcuts
+
+data:
+  root: DisasterM3_optical_sar_damage_minimal_v0.2
+  base_manifest: manifests/stage2_v2_clean_human_reviewed_20260624
+  d1_d2_selection_split: strict_clean_val
+  d4_source_split: strict_clean_train_only
+  formal_test_embargoed: true
+
+common_training:
+  model: unet_resnet34
+  seed: 42
+  crop_size: 512
+  effective_batch_size: 8
+  max_epochs: 40
+  loss: building_only_weighted_ce_plus_binary_aux_0p3
+  primary_checkpoint: best_bo_grade_macro_f1.pth
+
+diagnostics:
+  D1:
+    input: pre_event_optical_only
+    interpretation: negative control for region, building-style, and source shortcuts
+  D2:
+    input: pre_and_post_context_outside_gt_buildings_only
+    interpretation: negative control for background and event-context leakage
+  D3:
+    input: metadata priors without images
+    interpretation: quantifies label predictability from global, disaster, and event priors
+  D4:
+    input: full E0 input
+    folds: leave each strict-train event out once
+    interpretation: measures dependence on each independent training event
+
+required_metrics:
+  - global_building_only_macro_f1
+  - event_macro_bo_f1
+  - event_class_macro_f1
+  - worst_event_bo_f1
+  - per_event_metrics
+  - damaged_event_std_f1
+  - destroyed_event_std_f1
+  - event_bootstrap_ci95
+
+advancement_gate:
+  technical:
+    smoke_required: true
+    overfit_batches: 2
+    overfit_epochs: 30
+    overfit_min_relative_loss_reduction: 0.30
+  scientific:
+    no_single_scalar_pass_fail: true
+    compare_against_e0_reference: true
+    shortcut_evidence_requires_d1_or_d2_above_metadata_prior: true

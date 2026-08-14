@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-08-03T19:41:45+08:00",
+  "checks": {
+    "no_prior": {
+      "bright_train": "pass",
+      "current_train": "pass",
+      "current_val": "pass",
+      "current_test": "pass"
+    },
+    "oracle_prior": {
+      "bright_train": "pass",
+      "current_train": "pass",
+      "current_val": "pass",
+      "current_test": "pass"
+    }
+  },
+  "input_mode": "pre_sar_prior",
+  "loader": "stage2.datasets_v2.Stage2V2Dataset",
+  "manifest_root": "manifests/stage2_v2_event_group_bright_r4_v1_20260803",
+  "observed_image_shape": [
+    6,
+    1024,
+    1024
+  ],
+  "observed_mask_shape": [
+    1024,
+    1024
+  ],
+  "observed_mask_values_subset": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "predicted_prior": "not_checked_manifest_intentionally_absent_pending_frozen_O1_generation",
+  "sar_shuffle_mode": "paired",
+  "status": "pass"
+}

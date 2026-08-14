@@ -1,0 +1,12 @@
+{
+  "candidate_count": 262,
+  "candidate_footprint_coverage": 1.0,
+  "internal_exact_footprint_duplicate_groups": [],
+  "limitation": "The minimal PNG package strips georeferencing. Footprints are inherited only for current samples with a decoded-identical labeled BRIGHT pair; image-based near-overlap audit remains required.",
+  "new_val_test_footprint_coverage": 0.603448275862069,
+  "new_val_test_known_footprint_count": 350,
+  "new_val_test_sample_count": 580,
+  "projected_bbox_overlap_count": 0,
+  "projected_bbox_overlaps": [],
+  "status": "partial_pass_due_to_missing_current_png_georeferencing"
+}

@@ -1,0 +1,34 @@
+{
+  "bright_exact_pair_overlap_count": 1121,
+  "bright_exclusion_counts": {
+    "decoded_pre_match_with_current_strict_union": 8,
+    "empty_building_annotation": 11
+  },
+  "bright_labeled_count": 3029,
+  "bright_supplement_count": 262,
+  "bright_supplement_event_counts": {
+    "beirut-explosion": 116,
+    "hawaii-wildfire": 56,
+    "libya-flood": 90
+  },
+  "combined_manifest_root": "/home/yr/code/Building damage change detection/stage1_optical_building/manifests/stage2_v2_event_group_bright_r4_v1_20260803",
+  "combined_split_counts": {
+    "test": 290,
+    "train": 1634,
+    "val": 290
+  },
+  "current_split_counts": {
+    "test": 290,
+    "train": 1372,
+    "val": 290
+  },
+  "derived_root": "/home/yr/code/Building damage change detection/outputs/dataset_versions/BRIGHT_supplement_v1_20260803",
+  "event_manifest_root": "/home/yr/code/Building damage change detection/stage1_optical_building/manifests/stage2_v2_event_group_v1_20260803",
+  "footprint_audit_status": "partial_pass_due_to_missing_current_png_georeferencing",
+  "mapping_sha256": "3d8a63f65d34bcd38a19207707c9dafca9934205399502e42aebffd852429949",
+  "protocol": "stage2_v2_event_group_v1",
+  "source_manifest_root": "/home/yr/code/Building damage change detection/stage1_optical_building/manifests/stage2_v2_clean_human_reviewed_20260624",
+  "split_plan_sha256": "5d085665a4ff8e398ebc3a0ce505858d32b812f3dc585d2148ffe7ac21e447d4",
+  "supplement_manifest_root": "/home/yr/code/Building damage change detection/stage1_optical_building/manifests/BRIGHT_supplement_v1_20260803",
+  "training_eligible": false
+}

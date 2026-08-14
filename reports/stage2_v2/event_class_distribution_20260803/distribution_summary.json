@@ -1,0 +1,101 @@
+{
+  "manifest_root": "/home/yr/code/Building damage change detection/stage1_optical_building/manifests/stage2_v2_clean_human_reviewed_20260624",
+  "data_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2",
+  "split_totals": {
+    "train": {
+      "events": 7,
+      "images": 1207,
+      "background_pixels": 1100231827,
+      "intact_pixels": 118386873,
+      "damaged_pixels": 23981562,
+      "destroyed_pixels": 23030970,
+      "intact_building_share": 0.715763596610278,
+      "damaged_building_share": 0.14499182750989945,
+      "destroyed_building_share": 0.13924457587982253
+    },
+    "val": {
+      "events": 5,
+      "images": 357,
+      "background_pixels": 322292171,
+      "intact_pixels": 42747854,
+      "damaged_pixels": 5613482,
+      "destroyed_pixels": 3688125,
+      "intact_building_share": 0.8212929236673555,
+      "damaged_building_share": 0.10784899386374049,
+      "destroyed_building_share": 0.07085808246890395
+    },
+    "test": {
+      "events": 5,
+      "images": 388,
+      "background_pixels": 329664617,
+      "intact_pixels": 46982695,
+      "damaged_pixels": 24345234,
+      "destroyed_pixels": 5854942,
+      "intact_building_share": 0.608719193666688,
+      "damaged_building_share": 0.315422757466485,
+      "destroyed_building_share": 0.07585804886682694
+    }
+  },
+  "concentration": {
+    "train": {
+      "intact": {
+        "top_event": "spain_la_palma_volcano",
+        "top1_share": 0.49674653540346486,
+        "hhi": 0.3969797410460637,
+        "effective_event_count": 2.51902023353873
+      },
+      "damaged": {
+        "top_event": "ukraine_conflict",
+        "top1_share": 0.8851214945882174,
+        "hhi": 0.7868890970987397,
+        "effective_event_count": 1.270827113613596
+      },
+      "destroyed": {
+        "top_event": "spain_la_palma_volcano",
+        "top1_share": 0.9176441113856689,
+        "hhi": 0.8437804409922307,
+        "effective_event_count": 1.1851424273642386
+      }
+    },
+    "val": {
+      "intact": {
+        "top_event": "turkey_earthquake4",
+        "top1_share": 0.440444519156447,
+        "hhi": 0.29902573664568566,
+        "effective_event_count": 3.3441937514057387
+      },
+      "damaged": {
+        "top_event": "turkey_earthquake4",
+        "top1_share": 0.9047311454815389,
+        "hhi": 0.8219135963475144,
+        "effective_event_count": 1.216672901438643
+      },
+      "destroyed": {
+        "top_event": "turkey_earthquake4",
+        "top1_share": 0.8473481782748686,
+        "hhi": 0.7293450311069481,
+        "effective_event_count": 1.3710931827180215
+      }
+    },
+    "test": {
+      "intact": {
+        "top_event": "turkey_earthquake1",
+        "top1_share": 0.4763954685868914,
+        "hhi": 0.3088730834339188,
+        "effective_event_count": 3.2375757346105654
+      },
+      "damaged": {
+        "top_event": "mexico_hurricane",
+        "top1_share": 0.8508597206336156,
+        "hhi": 0.7337024901961993,
+        "effective_event_count": 1.3629502603059043
+      },
+      "destroyed": {
+        "top_event": "mexico_hurricane",
+        "top1_share": 0.31752048098853924,
+        "hhi": 0.24059162175606807,
+        "effective_event_count": 4.156420712828827
+      }
+    }
+  }
+}

@@ -1,15 +1,46 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environments and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
 
 outputs/
 logs/
 reports/stage1_baseline/raw_outputs/
 reports/stage1_baseline/visualizations/
 
+# Large/raw review artifacts; keep the compact review notes and JSON summaries.
+reports/stage2_v2/event_group_dataset_v1_20260803/near_overlap_review/pre_event_candidates.png
+# Historical pre-training readiness snapshot was superseded after priors/runs completed.
+reports/stage2_v2/event_group_dataset_v1_20260803/READINESS.json
+
 pretrained/*.pth
 *.pth
 *.pt
 *.ckpt
+
+# Datasets and generated data views are never part of the source repository.
+data/
+datasets/
+external/
+*_reproduction_*/
+
+# Rebuildable per-sample manifests from the event-group/BRIGHT workflows.
+# Source configs, builders and compact audit reports remain tracked.
+manifests/BRIGHT_supplement_v1_20260803/
+manifests/stage2_event_shortcut_v1/
+manifests/stage2_v2_event_group_v1_20260803/
+manifests/stage2_v2_event_group_bright_r4_v1_20260803/
+manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/
 
 .DS_Store

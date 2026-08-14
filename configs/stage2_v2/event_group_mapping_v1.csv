@@ -1,0 +1,30 @@
+source_dataset,source_event_name,canonical_event_name,event_group_id,subevent_id,evidence,review_status
+disasterm3_minimal_v0.2,bata_explosion,Bata explosion,bata_explosion,bata_explosion,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,beriut_explosion,Beirut explosion,beirut_explosion_2020,beriut_explosion,direct event identity with spelling normalization,direct_mapping
+disasterm3_minimal_v0.2,haiti_earthquake,Haiti earthquake,haiti_earthquake,haiti_earthquake,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,hawaii_wildfire,Hawaii wildfire,hawaii_wildfire,hawaii_wildfire,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,libya_flood,Libya flood,libya_flood,libya_flood,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,marshall_wildfire,Marshall wildfire,marshall_wildfire,marshall_wildfire,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,mexico_hurricane,Mexico hurricane,mexico_hurricane,mexico_hurricane,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,morocco_earthquake,Morocco earthquake,morocco_earthquake,morocco_earthquake,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,myanmar_hurricane,Myanmar hurricane,myanmar_hurricane,myanmar_hurricane,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,noto_earthquake,Noto earthquake,noto_earthquake,noto_earthquake,direct one-to-one normalization,direct_mapping
+disasterm3_minimal_v0.2,rwanda_volcano,Nyiragongo eruption,nyiragongo_2021,rwanda_volcano,80 decoded-identical pre/post pairs with BRIGHT congo-volcano,user_accepted_20260803
+disasterm3_minimal_v0.2,la_palma_volcano,La Palma volcano,la_palma_volcano,la_palma_volcano,strict-v1 exact-content audit proved Spain/La Palma aliases,direct_mapping
+disasterm3_minimal_v0.2,spain_volcano,La Palma volcano,la_palma_volcano,spain_volcano,strict-v1 exact-content audit proved Spain/La Palma aliases,direct_mapping
+disasterm3_minimal_v0.2,turkey_earthquake1,Turkey earthquake,turkey_eq_2023,turkey_earthquake1,same real disaster as Turkey earthquake 3/4/5,user_accepted_20260803
+disasterm3_minimal_v0.2,turkey_earthquake3,Turkey earthquake,turkey_eq_2023,turkey_earthquake3,same real disaster as Turkey earthquake 1/4/5,user_accepted_20260803
+disasterm3_minimal_v0.2,turkey_earthquake4,Turkey earthquake,turkey_eq_2023,turkey_earthquake4,same real disaster as Turkey earthquake 1/3/5,user_accepted_20260803
+disasterm3_minimal_v0.2,turkey_earthquake5,Turkey earthquake,turkey_eq_2023,turkey_earthquake5,same real disaster as Turkey earthquake 1/3/4,user_accepted_20260803
+disasterm3_minimal_v0.2,ukraine_conflict,Ukraine conflict,ukraine_conflict,ukraine_conflict,direct one-to-one normalization,direct_mapping
+bright_cvprw26,bata-explosion,Bata explosion,bata_explosion,bata-explosion,direct one-to-one normalization,direct_mapping
+bright_cvprw26,beirut-explosion,Beirut explosion,beirut_explosion_2020,beirut-explosion,same real disaster as current Beirut explosion,direct_mapping
+bright_cvprw26,congo-volcano,Nyiragongo eruption,nyiragongo_2021,congo-volcano,80 decoded-identical pre/post pairs with current rwanda_volcano,user_accepted_20260803
+bright_cvprw26,haiti-earthquake,Haiti earthquake,haiti_earthquake,haiti-earthquake,direct one-to-one normalization,direct_mapping
+bright_cvprw26,hawaii-wildfire,Hawaii wildfire,hawaii_wildfire,hawaii-wildfire,same real disaster as current Hawaii wildfire,direct_mapping
+bright_cvprw26,la_palma-volcano,La Palma volcano,la_palma_volcano,la_palma-volcano,same real disaster as current La Palma volcano,direct_mapping
+bright_cvprw26,libya-flood,Libya flood,libya_flood,libya-flood,same real disaster as current Libya flood,direct_mapping
+bright_cvprw26,marshall-wildfire,Marshall wildfire,marshall_wildfire,marshall-wildfire,direct one-to-one normalization,direct_mapping
+bright_cvprw26,morocco-earthquake,Morocco earthquake,morocco_earthquake,morocco-earthquake,direct one-to-one normalization,direct_mapping
+bright_cvprw26,noto-earthquake,Noto earthquake,noto_earthquake,noto-earthquake,direct one-to-one normalization,direct_mapping
+bright_cvprw26,turkey-earthquake,Turkey earthquake,turkey_eq_2023,turkey-earthquake,same real disaster as current Turkey earthquake 1/3/4/5,user_accepted_20260803

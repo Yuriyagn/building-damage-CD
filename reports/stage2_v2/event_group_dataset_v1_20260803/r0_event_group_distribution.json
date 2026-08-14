@@ -1,0 +1,402 @@
+{
+  "test": {
+    "building_class_share": {
+      "damaged": 0.5422360526517863,
+      "destroyed": 0.08269984838673644,
+      "intact": 0.3750640989614772
+    },
+    "class_pixels": {
+      "background": 265422217,
+      "damaged": 20965461,
+      "destroyed": 3197575,
+      "intact": 14501787
+    },
+    "concentration": {
+      "damaged": {
+        "effective_event_count": 1.0242886466051226,
+        "hhi": 0.9762873027191854,
+        "top1_share": 0.9880240172157435,
+        "top_event": "mexico_hurricane"
+      },
+      "destroyed": {
+        "effective_event_count": 2.3083468682439485,
+        "hhi": 0.4332104562607351,
+        "top1_share": 0.5813980907406394,
+        "top_event": "mexico_hurricane"
+      },
+      "intact": {
+        "effective_event_count": 2.667180019861623,
+        "hhi": 0.37492782360145355,
+        "top1_share": 0.49960111812426977,
+        "top_event": "nyiragongo_2021"
+      }
+    },
+    "event_groups": 3,
+    "events": {
+      "mexico_hurricane": {
+        "building_class_share": {
+          "damaged": 0.7870996073541435,
+          "destroyed": 0.07064023229690948,
+          "intact": 0.14226016034894692
+        },
+        "class_pixels": {
+          "background": 154037718,
+          "damaged": 20714379,
+          "destroyed": 1859064,
+          "intact": 3743911
+        },
+        "images": 172,
+        "images_with_class": {
+          "background": 172,
+          "damaged": 157,
+          "destroyed": 55,
+          "intact": 147
+        }
+      },
+      "noto_earthquake": {
+        "building_class_share": {
+          "damaged": 0.0474150552068551,
+          "destroyed": 0.11293902972754037,
+          "intact": 0.8396459150656045
+        },
+        "class_pixels": {
+          "background": 23079347,
+          "damaged": 198367,
+          "destroyed": 472495,
+          "intact": 3512767
+        },
+        "images": 26,
+        "images_with_class": {
+          "background": 26,
+          "damaged": 26,
+          "destroyed": 26,
+          "intact": 26
+        }
+      },
+      "nyiragongo_2021": {
+        "building_class_share": {
+          "damaged": 0.006457132917842584,
+          "destroyed": 0.10607949200376293,
+          "intact": 0.8874633750783945
+        },
+        "class_pixels": {
+          "background": 88305152,
+          "damaged": 52715,
+          "destroyed": 866016,
+          "intact": 7245109
+        },
+        "images": 92,
+        "images_with_class": {
+          "background": 92,
+          "damaged": 13,
+          "destroyed": 19,
+          "intact": 88
+        }
+      }
+    },
+    "images": 290,
+    "minimum_positive_event_class_pixels": 52715,
+    "nonempty_event_class_cells": 9,
+    "total_event_class_cells": 9
+  },
+  "train": {
+    "building_class_share": {
+      "damaged": 0.14046382875613378,
+      "destroyed": 0.12476097300113827,
+      "intact": 0.734775198242728
+    },
+    "class_pixels": {
+      "background": 1207696943,
+      "damaged": 32440027,
+      "destroyed": 28813463,
+      "intact": 169695839
+    },
+    "concentration": {
+      "damaged": {
+        "effective_event_count": 1.9996933384087265,
+        "hhi": 0.5000766771547875,
+        "top1_share": 0.6543334874536325,
+        "top_event": "ukraine_conflict"
+      },
+      "destroyed": {
+        "effective_event_count": 1.7174328664947227,
+        "hhi": 0.5822643897813591,
+        "top1_share": 0.7334846908197047,
+        "top_event": "la_palma_volcano"
+      },
+      "intact": {
+        "effective_event_count": 3.2382841326201715,
+        "hhi": 0.30880551521922095,
+        "top1_share": 0.34655103711765145,
+        "top_event": "la_palma_volcano"
+      }
+    },
+    "event_groups": 7,
+    "events": {
+      "beirut_explosion_2020": {
+        "building_class_share": {
+          "damaged": 0.49491327557315273,
+          "destroyed": 0.27067056163012165,
+          "intact": 0.23441616279672559
+        },
+        "class_pixels": {
+          "background": 4806119,
+          "damaged": 735113,
+          "destroyed": 402037,
+          "intact": 348187
+        },
+        "images": 6,
+        "images_with_class": {
+          "background": 6,
+          "damaged": 6,
+          "destroyed": 6,
+          "intact": 6
+        }
+      },
+      "hawaii_wildfire": {
+        "building_class_share": {
+          "damaged": 0.056134762773032316,
+          "destroyed": 0.8004641643906093,
+          "intact": 0.14340107283635842
+        },
+        "class_pixels": {
+          "background": 2617036,
+          "damaged": 29678,
+          "destroyed": 423199,
+          "intact": 75815
+        },
+        "images": 3,
+        "images_with_class": {
+          "background": 3,
+          "damaged": 3,
+          "destroyed": 3,
+          "intact": 3
+        }
+      },
+      "la_palma_volcano": {
+        "building_class_share": {
+          "damaged": 0.003217186002639908,
+          "destroyed": 0.26351740873310764,
+          "intact": 0.7332654052642524
+        },
+        "class_pixels": {
+          "background": 619199669,
+          "damaged": 258020,
+          "destroyed": 21134234,
+          "intact": 58808269
+        },
+        "images": 667,
+        "images_with_class": {
+          "background": 667,
+          "damaged": 41,
+          "destroyed": 157,
+          "intact": 582
+        }
+      },
+      "libya_flood": {
+        "building_class_share": {
+          "damaged": 0.4347914473318148,
+          "destroyed": 0.046502712632679785,
+          "intact": 0.5187058400355055
+        },
+        "class_pixels": {
+          "background": 6106139,
+          "damaged": 992398,
+          "destroyed": 106141,
+          "intact": 1183930
+        },
+        "images": 8,
+        "images_with_class": {
+          "background": 8,
+          "damaged": 8,
+          "destroyed": 8,
+          "intact": 8
+        }
+      },
+      "myanmar_hurricane": {
+        "building_class_share": {
+          "damaged": 0.08854424818066106,
+          "destroyed": 0.006283160926175246,
+          "intact": 0.9051725908931637
+        },
+        "class_pixels": {
+          "background": 74876802,
+          "damaged": 612029,
+          "destroyed": 43430,
+          "intact": 6256667
+        },
+        "images": 78,
+        "images_with_class": {
+          "background": 78,
+          "damaged": 45,
+          "destroyed": 9,
+          "intact": 78
+        }
+      },
+      "turkey_eq_2023": {
+        "building_class_share": {
+          "damaged": 0.11815458304045916,
+          "destroyed": 0.08243461059382985,
+          "intact": 0.7994108063657109
+        },
+        "class_pixels": {
+          "background": 120268835,
+          "damaged": 8586193,
+          "destroyed": 5990453,
+          "intact": 58092503
+        },
+        "images": 184,
+        "images_with_class": {
+          "background": 184,
+          "damaged": 184,
+          "destroyed": 184,
+          "intact": 184
+        }
+      },
+      "ukraine_conflict": {
+        "building_class_share": {
+          "damaged": 0.31742587257475147,
+          "destroyed": 0.010676805306716287,
+          "intact": 0.6718973221185323
+        },
+        "class_pixels": {
+          "background": 379822343,
+          "damaged": 21226596,
+          "destroyed": 713969,
+          "intact": 44930468
+        },
+        "images": 426,
+        "images_with_class": {
+          "background": 426,
+          "damaged": 351,
+          "destroyed": 140,
+          "intact": 426
+        }
+      }
+    },
+    "images": 1372,
+    "minimum_positive_event_class_pixels": 29678,
+    "nonempty_event_class_cells": 21,
+    "total_event_class_cells": 21
+  },
+  "val": {
+    "building_class_share": {
+      "damaged": 0.021376563725075782,
+      "destroyed": 0.0225041305945398,
+      "intact": 0.9561193056803844
+    },
+    "class_pixels": {
+      "background": 279069455,
+      "damaged": 534790,
+      "destroyed": 562999,
+      "intact": 23919796
+    },
+    "concentration": {
+      "damaged": {
+        "effective_event_count": 2.68911089663409,
+        "hhi": 0.3718701230401771,
+        "top1_share": 0.5238056059387797,
+        "top_event": "bata_explosion"
+      },
+      "destroyed": {
+        "effective_event_count": 2.0537970875596927,
+        "hhi": 0.4869030178576176,
+        "top1_share": 0.586439762770449,
+        "top_event": "marshall_wildfire"
+      },
+      "intact": {
+        "effective_event_count": 2.980951467801531,
+        "hhi": 0.3354633615479509,
+        "top1_share": 0.4052190077206344,
+        "top_event": "haiti_earthquake"
+      }
+    },
+    "event_groups": 4,
+    "events": {
+      "bata_explosion": {
+        "building_class_share": {
+          "damaged": 0.22736687975429448,
+          "destroyed": 0.1723582923986481,
+          "intact": 0.6002748278470574
+        },
+        "class_pixels": {
+          "background": 12399444,
+          "damaged": 280126,
+          "destroyed": 212353,
+          "intact": 739565
+        },
+        "images": 13,
+        "images_with_class": {
+          "background": 13,
+          "damaged": 13,
+          "destroyed": 13,
+          "intact": 13
+        }
+      },
+      "haiti_earthquake": {
+        "building_class_share": {
+          "damaged": 0.014845867099507035,
+          "destroyed": 0.0013615917845317287,
+          "intact": 0.9837925411159613
+        },
+        "class_pixels": {
+          "background": 60402153,
+          "damaged": 146268,
+          "destroyed": 13415,
+          "intact": 9692756
+        },
+        "images": 67,
+        "images_with_class": {
+          "background": 67,
+          "damaged": 28,
+          "destroyed": 5,
+          "intact": 67
+        }
+      },
+      "marshall_wildfire": {
+        "building_class_share": {
+          "damaged": 0.006903961505503922,
+          "destroyed": 0.062179722591033645,
+          "intact": 0.9309163159034625
+        },
+        "class_pixels": {
+          "background": 64944742,
+          "damaged": 36659,
+          "destroyed": 330165,
+          "intact": 4943026
+        },
+        "images": 67,
+        "images_with_class": {
+          "background": 67,
+          "damaged": 17,
+          "destroyed": 23,
+          "intact": 67
+        }
+      },
+      "morocco_earthquake": {
+        "building_class_share": {
+          "damaged": 0.008319019321249106,
+          "destroyed": 0.000819412444400326,
+          "intact": 0.9908615682343506
+        },
+        "class_pixels": {
+          "background": 141323116,
+          "damaged": 71737,
+          "destroyed": 7066,
+          "intact": 8544449
+        },
+        "images": 143,
+        "images_with_class": {
+          "background": 143,
+          "damaged": 13,
+          "destroyed": 2,
+          "intact": 143
+        }
+      }
+    },
+    "images": 290,
+    "minimum_positive_event_class_pixels": 7066,
+    "nonempty_event_class_cells": 12,
+    "total_event_class_cells": 12
+  }
+}

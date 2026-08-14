@@ -101,7 +101,7 @@ class Stage2V2Dataset(Stage2DamageDataset):
         self.sar_permutation = mapping
         self.permutation_info = info
         self.cache_items = bool(cache_items)
-        self._item_cache: dict[int, dict[str, Any]] = {}
+        self._item_cache: dict[int | tuple[int, int], dict[str, Any]] = {}
         self._sar_source_ids: list[str] = []
         remapped_rows: list[dict[str, Any]] = []
         for target_index, source_index in enumerate(mapping):
@@ -112,12 +112,13 @@ class Stage2V2Dataset(Stage2DamageDataset):
             remapped_rows.append(target)
         self.rows = remapped_rows
 
-    def __getitem__(self, index: int) -> dict[str, Any]:
+    def __getitem__(self, index: int | tuple[int, int]) -> dict[str, Any]:
         if index in self._item_cache:
             return self._item_cache[index]
         item = super().__getitem__(index)
-        item["sar_source_id"] = self._sar_source_ids[index]
-        item["sar_is_paired"] = bool(self.sar_permutation[index] == index)
+        row_index = int(index[0]) if isinstance(index, tuple) else int(index)
+        item["sar_source_id"] = self._sar_source_ids[row_index]
+        item["sar_is_paired"] = bool(self.sar_permutation[row_index] == row_index)
         if self.cache_items:
             self._item_cache[index] = item
         return item

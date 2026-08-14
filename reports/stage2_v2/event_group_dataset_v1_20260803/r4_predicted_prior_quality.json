@@ -1,0 +1,26 @@
+{
+  "evaluation_scope": "262 BRIGHT supplement train samples only",
+  "model": "O1_unet_resnet34_freq",
+  "selection_or_tuning_performed": false,
+  "threshold": 0.6,
+  "per_event": {
+    "beirut_explosion_2020": {
+      "building_f1": 0.7787779787771313,
+      "building_iou": 0.6377038452003209
+    },
+    "hawaii_wildfire": {
+      "building_f1": 0.6983256238120296,
+      "building_iou": 0.5364825770459714
+    },
+    "libya_flood": {
+      "building_f1": 0.848923962829599,
+      "building_iou": 0.7375046785931202
+    }
+  },
+  "overall": {
+    "building_f1": 0.7897789866990677,
+    "building_iou": 0.6525907070022771,
+    "sample_count": 262
+  },
+  "status": "pass_non_degenerate_frozen_prior"
+}

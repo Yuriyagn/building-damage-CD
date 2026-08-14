@@ -1,0 +1,486 @@
+{
+  "content_hash_audit": {
+    "algorithm": "SHA-256 over complete file bytes; full-sample identity requires pre_image, post_sar, and mask_multiclass to all match",
+    "fields": {
+      "mask_multiclass": {
+        "cross_split_group_count": 0,
+        "duplicate_group_count": 0,
+        "duplicate_row_excess": 0,
+        "group_details_truncated": false,
+        "groups": [],
+        "hashed_file_count": 2214,
+        "within_split_group_count": 0
+      },
+      "post_sar": {
+        "cross_split_group_count": 0,
+        "duplicate_group_count": 0,
+        "duplicate_row_excess": 0,
+        "group_details_truncated": false,
+        "groups": [],
+        "hashed_file_count": 2214,
+        "within_split_group_count": 0
+      },
+      "pre_image": {
+        "cross_split_group_count": 0,
+        "duplicate_group_count": 0,
+        "duplicate_row_excess": 0,
+        "group_details_truncated": false,
+        "groups": [],
+        "hashed_file_count": 2214,
+        "within_split_group_count": 0
+      }
+    },
+    "full_sample": {
+      "cross_split_group_count": 0,
+      "duplicate_group_count": 0,
+      "duplicate_row_excess": 0,
+      "group_details_truncated": false,
+      "groups": [],
+      "within_split_group_count": 0
+    },
+    "unique_physical_files_hashed": 6642
+  },
+  "data_root": "/home/yr/code/Building damage change detection/datasets/DisasterM3_optical_sar_damage_minimal_v0.2",
+  "hard_error_count": 0,
+  "hard_errors": [],
+  "manifest_root": "manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803",
+  "overlaps": {
+    "train_vs_test": {
+      "id_collision_content": [],
+      "metadata": {
+        "country_or_region": [],
+        "disaster_type": [
+          "earthquake",
+          "hurricane",
+          "volcano"
+        ],
+        "event_id": []
+      },
+      "sample_or_path": {
+        "id": [],
+        "mask_multiclass": [],
+        "post_sar": [],
+        "pre_image": []
+      }
+    },
+    "train_vs_val": {
+      "id_collision_content": [],
+      "metadata": {
+        "country_or_region": [
+          "United States"
+        ],
+        "disaster_type": [
+          "earthquake",
+          "explosion",
+          "fire"
+        ],
+        "event_id": []
+      },
+      "sample_or_path": {
+        "id": [],
+        "mask_multiclass": [],
+        "post_sar": [],
+        "pre_image": []
+      }
+    },
+    "val_vs_test": {
+      "id_collision_content": [],
+      "metadata": {
+        "country_or_region": [],
+        "disaster_type": [
+          "earthquake"
+        ],
+        "event_id": []
+      },
+      "sample_or_path": {
+        "id": [],
+        "mask_multiclass": [],
+        "post_sar": [],
+        "pre_image": []
+      }
+    }
+  },
+  "require_event_disjoint": true,
+  "skip_mask_stats": false,
+  "splits": {
+    "test": {
+      "building_class_share": {
+        "damaged": 0.5422360526517863,
+        "destroyed": 0.08269984838673644,
+        "intact": 0.3750640989614772
+      },
+      "class_pixels": {
+        "background": 265422217,
+        "damaged": 20965461,
+        "destroyed": 3197575,
+        "intact": 14501787
+      },
+      "duplicate_ids": [],
+      "events": {
+        "mexico_hurricane": {
+          "building_class_share": {
+            "damaged": 0.7870996073541435,
+            "destroyed": 0.07064023229690948,
+            "intact": 0.14226016034894692
+          },
+          "class_pixels": {
+            "background": 154037718,
+            "damaged": 20714379,
+            "destroyed": 1859064,
+            "intact": 3743911
+          },
+          "sample_count": 172
+        },
+        "noto_earthquake": {
+          "building_class_share": {
+            "damaged": 0.0474150552068551,
+            "destroyed": 0.11293902972754037,
+            "intact": 0.8396459150656045
+          },
+          "class_pixels": {
+            "background": 23079347,
+            "damaged": 198367,
+            "destroyed": 472495,
+            "intact": 3512767
+          },
+          "sample_count": 26
+        },
+        "nyiragongo_2021": {
+          "building_class_share": {
+            "damaged": 0.006457132917842584,
+            "destroyed": 0.10607949200376293,
+            "intact": 0.8874633750783945
+          },
+          "class_pixels": {
+            "background": 88305152,
+            "damaged": 52715,
+            "destroyed": 866016,
+            "intact": 7245109
+          },
+          "sample_count": 92
+        }
+      },
+      "full_image_class_share": {
+        "background": 0.8728494874362288,
+        "damaged": 0.06894559202523066,
+        "destroyed": 0.010515328111319706,
+        "intact": 0.04768959242722084
+      },
+      "images_with_class": {
+        "background": 290,
+        "damaged": 196,
+        "destroyed": 100,
+        "intact": 261
+      },
+      "invalid_masks": [],
+      "manifest": "manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/stage2_master_test.jsonl",
+      "metadata_counts": {
+        "country_or_region": {
+          "Japan": 26,
+          "Mexico": 172,
+          "Rwanda": 92
+        },
+        "disaster_type": {
+          "earthquake": 26,
+          "hurricane": 172,
+          "volcano": 92
+        },
+        "event_id": {
+          "mexico_hurricane": 172,
+          "noto_earthquake": 26,
+          "nyiragongo_2021": 92
+        },
+        "qc_label": {
+          "unknown": 290
+        }
+      },
+      "missing_id_count": 0,
+      "sample_count": 290,
+      "unique_id_count": 290
+    },
+    "train": {
+      "building_class_share": {
+        "damaged": 0.13529832108814785,
+        "destroyed": 0.11513168666827078,
+        "intact": 0.7495699922435813
+      },
+      "class_pixels": {
+        "background": 1417255851,
+        "damaged": 40064178,
+        "destroyed": 34092488,
+        "intact": 221960667
+      },
+      "duplicate_ids": [],
+      "events": {
+        "beirut_explosion_2020": {
+          "building_class_share": {
+            "damaged": 0.05458893490037196,
+            "destroyed": 0.01609657396881335,
+            "intact": 0.9293144911308147
+          },
+          "class_pixels": {
+            "background": 88108917,
+            "damaged": 2173587,
+            "destroyed": 640923,
+            "intact": 37002845
+          },
+          "sample_count": 122
+        },
+        "hawaii_wildfire": {
+          "building_class_share": {
+            "damaged": 0.10559012331649331,
+            "destroyed": 0.5871021193554592,
+            "intact": 0.3073077573280475
+          },
+          "class_pixels": {
+            "background": 54051863,
+            "damaged": 825094,
+            "destroyed": 4587687,
+            "intact": 2401340
+          },
+          "sample_count": 59
+        },
+        "la_palma_volcano": {
+          "building_class_share": {
+            "damaged": 0.003217186002639908,
+            "destroyed": 0.26351740873310764,
+            "intact": 0.7332654052642524
+          },
+          "class_pixels": {
+            "background": 619199669,
+            "damaged": 258020,
+            "destroyed": 21134234,
+            "intact": 58808269
+          },
+          "sample_count": 667
+        },
+        "libya_flood": {
+          "building_class_share": {
+            "damaged": 0.2923396417885455,
+            "destroyed": 0.044968205506648505,
+            "intact": 0.662692152704806
+          },
+          "class_pixels": {
+            "background": 80927422,
+            "damaged": 6382659,
+            "destroyed": 981792,
+            "intact": 14468575
+          },
+          "sample_count": 98
+        },
+        "myanmar_hurricane": {
+          "building_class_share": {
+            "damaged": 0.08854424818066106,
+            "destroyed": 0.006283160926175246,
+            "intact": 0.9051725908931637
+          },
+          "class_pixels": {
+            "background": 74876802,
+            "damaged": 612029,
+            "destroyed": 43430,
+            "intact": 6256667
+          },
+          "sample_count": 78
+        },
+        "turkey_eq_2023": {
+          "building_class_share": {
+            "damaged": 0.11815458304045916,
+            "destroyed": 0.08243461059382985,
+            "intact": 0.7994108063657109
+          },
+          "class_pixels": {
+            "background": 120268835,
+            "damaged": 8586193,
+            "destroyed": 5990453,
+            "intact": 58092503
+          },
+          "sample_count": 184
+        },
+        "ukraine_conflict": {
+          "building_class_share": {
+            "damaged": 0.31742587257475147,
+            "destroyed": 0.010676805306716287,
+            "intact": 0.6718973221185323
+          },
+          "class_pixels": {
+            "background": 379822343,
+            "damaged": 21226596,
+            "destroyed": 713969,
+            "intact": 44930468
+          },
+          "sample_count": 426
+        }
+      },
+      "full_image_class_share": {
+        "background": 0.8271728916004792,
+        "damaged": 0.023383217604974492,
+        "destroyed": 0.019897876492036892,
+        "intact": 0.12954601430250937
+      },
+      "images_with_class": {
+        "background": 1634,
+        "damaged": 714,
+        "destroyed": 561,
+        "intact": 1530
+      },
+      "invalid_masks": [],
+      "manifest": "manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/stage2_master_train.jsonl",
+      "metadata_counts": {
+        "country_or_region": {
+          "Lebanon": 122,
+          "Libya": 98,
+          "Myanmar": 78,
+          "Spain": 667,
+          "Turkey": 184,
+          "Ukraine": 426,
+          "United States": 59
+        },
+        "disaster_type": {
+          "conflict": 426,
+          "earthquake": 184,
+          "explosion": 122,
+          "fire": 59,
+          "flood": 98,
+          "hurricane": 78,
+          "volcano": 667
+        },
+        "event_id": {
+          "beirut_explosion_2020": 122,
+          "hawaii_wildfire": 59,
+          "la_palma_volcano": 667,
+          "libya_flood": 98,
+          "myanmar_hurricane": 78,
+          "turkey_eq_2023": 184,
+          "ukraine_conflict": 426
+        },
+        "qc_label": {
+          "bright_polygon_rasterized_v1": 262,
+          "unknown": 1372
+        }
+      },
+      "missing_id_count": 0,
+      "sample_count": 1634,
+      "unique_id_count": 1634
+    },
+    "val": {
+      "building_class_share": {
+        "damaged": 0.021376563725075782,
+        "destroyed": 0.0225041305945398,
+        "intact": 0.9561193056803844
+      },
+      "class_pixels": {
+        "background": 279069455,
+        "damaged": 534790,
+        "destroyed": 562999,
+        "intact": 23919796
+      },
+      "duplicate_ids": [],
+      "events": {
+        "bata_explosion": {
+          "building_class_share": {
+            "damaged": 0.22736687975429448,
+            "destroyed": 0.1723582923986481,
+            "intact": 0.6002748278470574
+          },
+          "class_pixels": {
+            "background": 12399444,
+            "damaged": 280126,
+            "destroyed": 212353,
+            "intact": 739565
+          },
+          "sample_count": 13
+        },
+        "haiti_earthquake": {
+          "building_class_share": {
+            "damaged": 0.014845867099507035,
+            "destroyed": 0.0013615917845317287,
+            "intact": 0.9837925411159613
+          },
+          "class_pixels": {
+            "background": 60402153,
+            "damaged": 146268,
+            "destroyed": 13415,
+            "intact": 9692756
+          },
+          "sample_count": 67
+        },
+        "marshall_wildfire": {
+          "building_class_share": {
+            "damaged": 0.006903961505503922,
+            "destroyed": 0.062179722591033645,
+            "intact": 0.9309163159034625
+          },
+          "class_pixels": {
+            "background": 64944742,
+            "damaged": 36659,
+            "destroyed": 330165,
+            "intact": 4943026
+          },
+          "sample_count": 67
+        },
+        "morocco_earthquake": {
+          "building_class_share": {
+            "damaged": 0.008319019321249106,
+            "destroyed": 0.000819412444400326,
+            "intact": 0.9908615682343506
+          },
+          "class_pixels": {
+            "background": 141323116,
+            "damaged": 71737,
+            "destroyed": 7066,
+            "intact": 8544449
+          },
+          "sample_count": 143
+        }
+      },
+      "full_image_class_share": {
+        "background": 0.9177288680241026,
+        "damaged": 0.0017586740954168912,
+        "destroyed": 0.001851440298146215,
+        "intact": 0.07866101758233432
+      },
+      "images_with_class": {
+        "background": 290,
+        "damaged": 71,
+        "destroyed": 43,
+        "intact": 290
+      },
+      "invalid_masks": [],
+      "manifest": "manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/stage2_master_val.jsonl",
+      "metadata_counts": {
+        "country_or_region": {
+          "Equatorial Guinea": 13,
+          "Haiti": 67,
+          "Morocco": 143,
+          "United States": 67
+        },
+        "disaster_type": {
+          "earthquake": 210,
+          "explosion": 13,
+          "fire": 67
+        },
+        "event_id": {
+          "bata_explosion": 13,
+          "haiti_earthquake": 67,
+          "marshall_wildfire": 67,
+          "morocco_earthquake": 143
+        },
+        "qc_label": {
+          "unknown": 290
+        }
+      },
+      "missing_id_count": 0,
+      "sample_count": 290,
+      "unique_id_count": 290
+    }
+  },
+  "status": "warning",
+  "warning_count": 5,
+  "warnings": [
+    "building-only damaged share differs by >=3x across splits: {'train': 0.13529832108814785, 'val': 0.021376563725075782, 'test': 0.5422360526517863}",
+    "building-only destroyed share differs by >=3x across splits: {'train': 0.11513168666827078, 'val': 0.0225041305945398, 'test': 0.08269984838673644}",
+    "train: 1372 rows have unknown qc_label",
+    "val: 290 rows have unknown qc_label",
+    "test: 290 rows have unknown qc_label"
+  ]
+}
