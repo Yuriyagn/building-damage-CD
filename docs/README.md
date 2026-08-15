@@ -5,10 +5,12 @@
 ## 先读
 
 1. [主 README：实验矩阵、结果对比与当前问题](../README.md)
-2. [Metadata-aware multi-task 最新正式结果](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
-3. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
-4. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
-5. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
+2. [ARS 实验方法学审查与下一轮 RQ1 协议](ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
+3. [机器可读 experiment registry](../experiments/registry.json)
+4. [Metadata-aware multi-task 最新正式结果](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
+5. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
+6. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
+7. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
 
 ## 实验协议与主要结果
 

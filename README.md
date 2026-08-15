@@ -11,7 +11,9 @@ background / intact / damaged / destroyed
 > 状态快照：2026-08-15。旧 test 已降级为历史诊断；当前最新正式开发结果是
 > [Metadata-aware multi-task v1](reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)。
 > 更完整的数据谱系和历史审计见
-> [项目全景审计](docs/PROJECT_AUDIT_20260814.md)。
+> [项目全景审计](docs/PROJECT_AUDIT_20260814.md)。下一轮 RQ1 的文献证据、事实核查、
+> 方法学审稿和冻结候选协议见
+> [ARS 实验方法学审查](docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)。
 
 ## 1. 任务与模型输入
 
@@ -231,12 +233,22 @@ R4 在三个种子的 pooled 主指标上均为正，但 event-macro 只有 2/3 
 
 ## 7. 下一步优先级
 
-1. 重建 Stage-1 out-of-fold prior，保证 Stage-2 train/val 的 prior 都来自未见该图像/事件的 Stage-1 fold。
-2. 建立新的封存外部事件或盲测服务；现有 test 不再用于新的最终确认。
-3. 做 R0/R4 step-matched、visit-matched、source/count 分离实验，拆开“更多训练”和“更好数据”。
-4. 在 metadata 方向，先为每个灾种补充多个训练事件，再做灾种内 leave-one-event-out；否则不继续调 classification loss。
-5. 优先验证样本级可核验的视觉辅助任务：building existence、changed/unchanged；并与等参数乱序/随机辅助任务对照。
-6. 统一 checkpoint/early-stopping 定义和 pooled/sample/event 指标命名，再启动下一轮正式训练。
+ARS `methodology-focus` 对下一轮 RQ1 的当前判定是 **Major Revision / blocked**，不是“可直接开始训练”。
+
+1. 重建 Stage-1 out-of-fold prior，保证 Stage-2 development/holdout 的 prior 都来自未见该 outer event 的 Stage-1 fold。
+2. 对 DisasterM3、BRIGHT 和历史派生数据建立 canonical event/scene map，完成跨来源 exact/near duplicate 审计。
+3. 建立新的封存外部事件或盲测服务；现有 test 不再用于新的最终确认。
+4. 冻结 RQ1 的 C0 prior-only、C1 pre+OOF prior、C2 paired SAR、C3 within-event deranged SAR 四条件协议；先做 nested event CV，不加入 metadata 或新架构。
+5. 固定 C3 permutation、分层平衡审计、缺失类 estimand 和 inner-fold checkpoint rule，再做 smoke/pilot。
+6. 做 R0/R4 step-matched、visit-matched、source/count 分离实验，拆开“更多训练”和“更好数据”。
+7. metadata 分支只有在每个灾种拥有多个独立事件后才重开；否则不继续调 disaster classification loss。
+
+实验状态、test exposure 和 claim-provenance 现在统一登记在
+[experiment registry](experiments/registry.json)，可用下列命令检查：
+
+```bash
+python scripts/validate_experiment_registry.py experiments/registry.json
+```
 
 ## 8. 仓库结构与复现
 
@@ -277,6 +289,8 @@ bash instruction.sh stage2_v2_strict_check_runtime
 
 ## 9. 关键文档
 
+- [ARS 实验方法学审查：lit-review、3W、fact-check 与 RQ1 协议](docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
+- [机器可读 experiment registry](experiments/registry.json)
 - [完整项目审计与下一步建议](docs/PROJECT_AUDIT_20260814.md)
 - [Metadata-aware multi-task 正式结果](reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
 - [R0/R4 BRIGHT 数据补充比较](reports/stage2_v2/event_group_dataset_v1_20260803/R0_R4_PREDICTED_PRIOR_COMPARISON_20260804.md)

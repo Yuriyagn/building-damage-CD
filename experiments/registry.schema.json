@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Yuriyagn/building-damage-CD/blob/main/experiments/registry.schema.json",
+  "title": "Building damage experiment registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updated_at", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/experiment"}
+    }
+  },
+  "$defs": {
+    "path_hash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "role": {"type": "string"}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "verdict", "basis"],
+      "properties": {
+        "claim": {"type": "string", "minLength": 1},
+        "verdict": {
+          "enum": [
+            "ALIGNED",
+            "OVERSTATED",
+            "NOT_SUPPORTED_BY_PROVENANCE",
+            "PROVENANCE_INSUFFICIENT"
+          ]
+        },
+        "basis": {"type": "string", "minLength": 1}
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["condition", "seed", "status", "artifact"],
+      "properties": {
+        "condition": {"type": "string", "minLength": 1},
+        "seed": {"type": "integer"},
+        "status": {"enum": ["planned", "running", "completed", "failed", "cancelled"]},
+        "artifact": {"type": "string", "minLength": 1},
+        "initialization_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "checkpoint_epoch": {"type": "integer", "minimum": 0}
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "experiment_id",
+        "title",
+        "research_question",
+        "hypothesis",
+        "status",
+        "provenance_status",
+        "datasets",
+        "manifests_and_audits",
+        "split",
+        "code",
+        "conditions",
+        "seeds",
+        "selection",
+        "metrics",
+        "test_exposure",
+        "runs",
+        "artifacts",
+        "gate",
+        "claims"
+      ],
+      "properties": {
+        "experiment_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]+$"},
+        "title": {"type": "string", "minLength": 1},
+        "research_question": {"type": "string", "minLength": 1},
+        "hypothesis": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["planned", "blocked", "running", "completed", "failed", "superseded", "retracted"]
+        },
+        "provenance_status": {"enum": ["planned", "partial", "complete"]},
+        "datasets": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "manifests_and_audits": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/path_hash"}
+        },
+        "split": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["unit", "train", "validation", "test_policy"],
+          "properties": {
+            "unit": {"type": "string", "minLength": 1},
+            "train": {"type": ["integer", "null"], "minimum": 0},
+            "validation": {"type": ["integer", "null"], "minimum": 0},
+            "test_policy": {"type": "string", "minLength": 1}
+          }
+        },
+        "code": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["commit", "dirty_patch_sha256", "configs"],
+          "properties": {
+            "commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+            "dirty_patch_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+            "configs": {"type": "array", "items": {"$ref": "#/$defs/path_hash"}}
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "input", "intervention", "role"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "input": {"type": "string", "minLength": 1},
+              "intervention": {"type": "string", "minLength": 1},
+              "role": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "seeds": {"type": "array", "items": {"type": "integer"}},
+        "selection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["split", "checkpoint_rule", "threshold_source"],
+          "properties": {
+            "split": {"type": "string", "minLength": 1},
+            "checkpoint_rule": {"type": "string", "minLength": 1},
+            "threshold_source": {"type": "string", "minLength": 1}
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary", "secondary"],
+          "properties": {
+            "primary": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "secondary": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "test_exposure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["used", "status", "detail"],
+          "properties": {
+            "used": {"type": "boolean"},
+            "status": {"enum": ["not_used", "sealed", "historical_diagnostic_only", "exposed"]},
+            "detail": {"type": "string", "minLength": 1}
+          }
+        },
+        "runs": {"type": "array", "items": {"$ref": "#/$defs/run"}},
+        "artifacts": {"type": "array", "items": {"$ref": "#/$defs/path_hash"}},
+        "results": {"type": "object"},
+        "gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision", "passed", "reason"],
+          "properties": {
+            "decision": {"type": "string", "minLength": 1},
+            "passed": {"type": ["boolean", "null"]},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        },
+        "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/claim"}}
+      }
+    }
+  }
+}

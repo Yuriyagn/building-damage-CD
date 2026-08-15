@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-08-15T09:30:00+08:00",
+  "entries": [
+    {
+      "experiment_id": "metadata_multitask_v1_20260814",
+      "title": "Metadata-aware disaster auxiliary supervision",
+      "research_question": "Does disaster-type auxiliary supervision improve event-disjoint building-damage generalization?",
+      "hypothesis": "M1 will improve damage and event-macro F1 while disaster classification generalizes beyond a majority baseline.",
+      "status": "failed",
+      "provenance_status": "complete",
+      "datasets": [
+        "DisasterM3 optical-SAR minimal v0.2",
+        "R4 BRIGHT event-group supplement"
+      ],
+      "manifests_and_audits": [
+        {
+          "path": "reports/stage2_v2/event_group_dataset_v1_20260803/r4_manifest_audit.json",
+          "sha256": "58689f50d8c315de0095f6824ec63056a7f260a3ce5a495c1239bce59978df5c",
+          "role": "event-disjoint content audit"
+        }
+      ],
+      "split": {
+        "unit": "canonical disaster event",
+        "train": 1634,
+        "validation": 290,
+        "test_policy": "test embargoed; validation-only experiment"
+      },
+      "code": {
+        "commit": "e0925941abd593784181aaf1a3a92aff176b5c5c",
+        "dirty_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "configs": [
+          {
+            "path": "configs/stage2_metadata_multitask_v1/protocol.yaml",
+            "sha256": "ce31dc5834bc45d4a1d91c2fe0ac71ef0327da352cc0303033ceed364dd0a842",
+            "role": "frozen protocol"
+          },
+          {
+            "path": "configs/stage2_metadata_multitask_v1/m0_rgb_sar.yaml",
+            "sha256": "2a9b6952d22df3cb7cfcef16e08115f9841ed735ff1cc37ae8121bcdc9c590aa",
+            "role": "M0 condition"
+          },
+          {
+            "path": "configs/stage2_metadata_multitask_v1/m1_rgb_sar_disaster_aux.yaml",
+            "sha256": "0252e1c7ef3987f366771a1fefc9e07676c0ad596e74ec60253cb906436a4c33",
+            "role": "M1 condition"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "id": "M0",
+          "input": "pre RGB + paired post SAR",
+          "intervention": "lambda_disaster=0.0",
+          "role": "damage-only structural control"
+        },
+        {
+          "id": "M1",
+          "input": "pre RGB + paired post SAR",
+          "intervention": "lambda_disaster=0.1 with 7-class weighted CE",
+          "role": "disaster auxiliary candidate"
+        }
+      ],
+      "seeds": [42, 3407, 2026],
+      "selection": {
+        "split": "R4 event-group validation",
+        "checkpoint_rule": "raw validation BO three-grade macro F1; smoothed metric used only for patience",
+        "threshold_source": "no disaster score or primary comparison metric used for selection"
+      },
+      "metrics": {
+        "primary": ["BO damage macro F1", "event macro BO F1"],
+        "secondary": [
+          "Damaged F1",
+          "Destroyed F1",
+          "binary damage F1",
+          "worst-event BO F1",
+          "disaster present-class macro F1",
+          "encoder task-gradient cosine"
+        ]
+      },
+      "test_exposure": {
+        "used": false,
+        "status": "not_used",
+        "detail": "No test manifest was read for training, selection, evaluation, or reporting."
+      },
+      "runs": [
+        {"condition": "M0", "seed": 42, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M0_rgb_sar_damage_only/seed_42/run_20260814_182018", "initialization_sha256": "9f3a76d29644f7a7534ddf49c57dc67af024e199f364941b96f9298f23d92b93", "checkpoint_epoch": 39},
+        {"condition": "M0", "seed": 3407, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M0_rgb_sar_damage_only/seed_3407/run_20260814_213542", "initialization_sha256": "4eb2bae83298a3276fd8dd2fbf3d0b7a2ab36f29e62d0c9e7d8f3cca4fae89a2", "checkpoint_epoch": 14},
+        {"condition": "M0", "seed": 2026, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M0_rgb_sar_damage_only/seed_2026/run_20260815_011952", "initialization_sha256": "44317d2184b4ad636c83f98fa07b111110e4e6ddac8b49466ce745a23465c039", "checkpoint_epoch": 42},
+        {"condition": "M1", "seed": 42, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M1_rgb_sar_disaster_aux/seed_42/run_20260814_193142", "initialization_sha256": "9f3a76d29644f7a7534ddf49c57dc67af024e199f364941b96f9298f23d92b93", "checkpoint_epoch": 93},
+        {"condition": "M1", "seed": 3407, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M1_rgb_sar_disaster_aux/seed_3407/run_20260814_231502", "initialization_sha256": "4eb2bae83298a3276fd8dd2fbf3d0b7a2ab36f29e62d0c9e7d8f3cca4fae89a2", "checkpoint_epoch": 49},
+        {"condition": "M1", "seed": 2026, "status": "completed", "artifact": "outputs/stage2/metadata_multitask_v1/M1_rgb_sar_disaster_aux/seed_2026/run_20260815_024358", "initialization_sha256": "44317d2184b4ad636c83f98fa07b111110e4e6ddac8b49466ce745a23465c039", "checkpoint_epoch": 76}
+      ],
+      "artifacts": [
+        {
+          "path": "reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md",
+          "sha256": "3387bc5bcc988b655809214b0327116aa3f0b54ed1442b5ccabb2708464f9f23",
+          "role": "human-readable report"
+        },
+        {
+          "path": "reports/stage2_v2/metadata_multitask_v1_20260814/summary.json",
+          "sha256": "481d2ff4728651e6b76a921b654df580e8226eba9a6cafd44c8cac8cda9b5648",
+          "role": "machine-readable summary"
+        },
+        {
+          "path": "reports/stage2_v2/metadata_multitask_v1_20260814/runs.csv",
+          "sha256": "a6bd42881e45221e9a7f81fde22d5f562016fefacd69d38ba449ae281c6ca831",
+          "role": "run table"
+        }
+      ],
+      "results": {
+        "mean_delta_bo_damage_macro_f1": 0.03939200411921498,
+        "mean_delta_event_macro_bo_f1": 0.02239495532769677,
+        "mean_delta_worst_event_bo_f1": 0.022638457245105187,
+        "mean_m1_disaster_present_macro_f1": 0.23917893703183893,
+        "disaster_majority_macro_f1": 0.28,
+        "bootstrap_ci95_delta_bo_damage_macro_f1": [-0.0030470439759168497, 0.0941410530756925],
+        "bootstrap_ci95_delta_event_macro_bo_f1": [-0.01350167358114851, 0.06139904687348813]
+      },
+      "gate": {
+        "decision": "stop_and_report_M1_failure",
+        "passed": false,
+        "reason": "Damage gates passed, but M1 disaster macro F1 was below the majority baseline and failed the preregistered +0.10 semantic-generalization margin."
+      },
+      "claims": [
+        {
+          "claim": "M1 produced a screening-level mean improvement in validation damage metrics.",
+          "verdict": "ALIGNED",
+          "basis": "Three-seed paired mean deltas were +0.03939 BO damage macro and +0.02239 event macro BO."
+        },
+        {
+          "claim": "Disaster semantic knowledge improved cross-event damage generalization.",
+          "verdict": "NOT_SUPPORTED_BY_PROVENANCE",
+          "basis": "Train disaster macro was approximately 0.999, validation mean was 0.23918, below the 0.28 majority baseline; disaster and training-event identity were confounded."
+        }
+      ]
+    },
+    {
+      "experiment_id": "rq1_paired_sar_cross_event_v1",
+      "title": "Cross-event paired SAR correspondence test",
+      "research_question": "Under canonical-event-disjoint evaluation, does sample-aligned post-event SAR add transferable damage-grade information beyond event-aware OOF building prior and pre-event optical RGB?",
+      "hypothesis": "Paired SAR will outperform both a pre-plus-OOF-prior baseline and a fixed within-event deranged-SAR control on event-macro damage F1.",
+      "status": "blocked",
+      "provenance_status": "planned",
+      "datasets": ["DisasterM3", "BRIGHT"],
+      "manifests_and_audits": [],
+      "split": {
+        "unit": "canonical disaster event and geographic scene",
+        "train": null,
+        "validation": null,
+        "test_policy": "nested development event CV; one new sealed external-event evaluation only after protocol freeze"
+      },
+      "code": {
+        "commit": null,
+        "dirty_patch_sha256": null,
+        "configs": []
+      },
+      "conditions": [
+        {"id": "C0", "input": "event-aware OOF prior only", "intervention": "remove pre RGB and SAR", "role": "shortcut diagnostic"},
+        {"id": "C1", "input": "pre RGB + event-aware OOF prior + zero SAR", "intervention": "remove post-event SAR information", "role": "additive baseline"},
+        {"id": "C2", "input": "pre RGB + event-aware OOF prior + paired post SAR", "intervention": "preserve sample correspondence", "role": "candidate"},
+        {"id": "C3", "input": "pre RGB + event-aware OOF prior + fixed within-event deranged post SAR", "intervention": "destroy sample correspondence while preserving event domain", "role": "negative control"}
+      ],
+      "seeds": [42, 3407, 2026],
+      "selection": {
+        "split": "inner canonical-event grouped folds only",
+        "checkpoint_rule": "to be frozen before pilot; outer event forbidden for epoch selection",
+        "threshold_source": "inner folds only; no historical test"
+      },
+      "metrics": {
+        "primary": ["paired C2-C3 event-macro damage F1"],
+        "secondary": ["C2-C1 event-macro damage F1", "BO three-grade macro F1", "Damaged F1", "Destroyed F1", "binary damage F1", "worst-event BO F1", "event-by-class support and confusion"]
+      },
+      "test_exposure": {
+        "used": false,
+        "status": "not_used",
+        "detail": "No blind set is currently designated. A new external-event blind set or label-return service must be materialized; all existing project test sets remain historical diagnostics."
+      },
+      "runs": [],
+      "artifacts": [
+        {
+          "path": "docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md",
+          "sha256": "4be9bfd6aeaf79481723b899a6ca9f1723abe54d7f02d105dd34d1b1174c7bba",
+          "role": "methodology review and protocol blueprint"
+        }
+      ],
+      "gate": {
+        "decision": "block_formal_training_until_prerequisites",
+        "passed": null,
+        "reason": "Event-aware OOF priors, canonical cross-source deduplication, balanced fixed derangements, nested checkpoint selection, and a genuinely sealed external-event evaluation are not yet materialized."
+      },
+      "claims": [
+        {
+          "claim": "Paired SAR contains transferable damage-grade information beyond pre RGB and building prior.",
+          "verdict": "PROVENANCE_INSUFFICIENT",
+          "basis": "The controlled C0-C3 nested event experiment has not been run."
+        }
+      ]
+    }
+  ]
+}
