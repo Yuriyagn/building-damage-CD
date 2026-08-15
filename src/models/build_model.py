@@ -90,6 +90,20 @@ def build_model(cfg: dict, no_pretrained: bool = False) -> nn.Module:
             raise
         return SimpleUNet(in_channels=in_channels, out_channels=out_channels)
 
+    if name in {"metadata_unet", "metadata-aware-unet", "metadata_aware_unet"}:
+        from .metadata_multitask import MetadataAwareUNet
+
+        base_model = smp.Unet(
+            encoder_name=str(model_cfg.get("encoder", "resnet34")),
+            encoder_weights=weights,
+            in_channels=in_channels,
+            classes=out_channels,
+        )
+        return MetadataAwareUNet(
+            base_model,
+            num_disaster_classes=int(model_cfg.get("num_disaster_classes", 7)),
+            dropout=float(model_cfg.get("metadata_dropout", 0.2)),
+        )
     if name == "unet":
         return smp.Unet(
             encoder_name=str(model_cfg.get("encoder", "resnet34")),

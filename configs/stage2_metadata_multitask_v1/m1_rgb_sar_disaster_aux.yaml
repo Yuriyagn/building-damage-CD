@@ -1,0 +1,65 @@
+experiment_name: M1_rgb_sar_disaster_aux
+
+dataset:
+  train_manifest: manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/predicted_prior/train.jsonl
+  val_manifest: manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/predicted_prior/val.jsonl
+  prior_type: predicted
+  input_mode: pre_sar
+  sar_shuffle_mode: paired
+  crop_size: 512
+  gate_threshold: 0.6
+
+augmentation:
+  hflip: true
+  vflip: false
+  rotate90: true
+  crop_probabilities:
+    damaged: 0.4
+    destroyed: 0.4
+    building: 0.2
+    random: 0.0
+
+target:
+  num_classes: 3
+  class_names: [intact, damaged, destroyed]
+  loss_support: gt_building
+
+model:
+  name: metadata_unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  in_channels: 4
+  out_channels: 3
+  num_disaster_classes: 7
+  metadata_dropout: 0.2
+
+loss:
+  name: building_only_ce
+  class_weight_strategy: median_frequency
+  max_class_weight: 8.0
+
+multitask:
+  enabled: true
+  disaster_classes: [conflict, earthquake, explosion, fire, flood, hurricane, volcano]
+  disaster_loss_weight: 0.1
+  class_weights: [0.5692, 0.8661, 1.0636, 1.5294, 1.1867, 1.3302, 0.4549]
+
+train:
+  batch_size: 8
+  eval_batch_size: 4
+  epochs: 100
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  amp: true
+  deterministic: true
+  sampling_strategy: default
+  disaster_sampling_alpha: 0.0
+  checkpoint_policy: primary_only
+  save_last_checkpoint: false
+  early_stopping_window: 3
+  early_stopping_patience: 30
+  early_stopping_min_delta: 0.0
+  early_stopping_min_epochs: 40
+  seed: 42

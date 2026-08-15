@@ -51,6 +51,7 @@ class Stage2DamageDataset(Dataset):
 
     - pre_prior: [pre_R, pre_G, pre_B, 0, prior, 0]
     - pre_only: [pre_R, pre_G, pre_B, 0, 0, 0]
+    - pre_sar: [pre_R, pre_G, pre_B, SAR]
     - pre_sar_background_only:
       [pre_RGB outside GT buildings, SAR outside GT buildings, 0, 0]
     - pre_sar_prior: [pre_R, pre_G, pre_B, SAR, prior, SAR * prior]
@@ -143,6 +144,9 @@ class Stage2DamageDataset(Dataset):
             pre_f = self._pre_float_chw(pre)
             zeros = np.zeros_like(sar_f)[None, :, :]
             image = np.concatenate([pre_f, zeros, zeros, zeros], axis=0)
+        elif normalized_mode in {"pre_sar", "rgb_sar", "pre_optical_sar"}:
+            pre_f = self._pre_float_chw(pre)
+            image = np.concatenate([pre_f, sar_f[None, :, :]], axis=0)
         elif normalized_mode in {"pre_sar_background_only", "background_only"}:
             pre_f = self._pre_float_chw(pre)
             background = (target == 0).astype(np.float32)

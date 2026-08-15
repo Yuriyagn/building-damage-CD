@@ -19,8 +19,13 @@ if str(SRC_ROOT) not in sys.path:
 
 from config import load_config  # noqa: E402
 from models.build_model import build_model  # noqa: E402
+from models.metadata_multitask import unpack_model_output  # noqa: E402
 from stage2.common import read_jsonl, resolve_manifest, write_csv, write_json  # noqa: E402
 from stage2.datasets_v2 import Stage2V2Dataset  # noqa: E402
+from stage2.metadata_multitask import (  # noqa: E402
+    DisasterClassificationMeter,
+    encode_disaster_types,
+)
 from stage2.metrics_v2 import (  # noqa: E402
     CCSurrogateMeter,
     GroupedV2Meters,
@@ -184,6 +189,8 @@ def main() -> None:
     meter = Stage2V2MeterBundle()
     grouped = GroupedV2Meters(["disaster_type", "country_or_region", "event_id", "event_familiarity"])
     cc_surrogate = CCSurrogateMeter()
+    disaster_meter = DisasterClassificationMeter()
+    disaster_prediction_count = 0
     sample_rows: list[dict[str, Any]] = []
     preview_count = 0
     if args.save_predictions:
@@ -192,7 +199,14 @@ def main() -> None:
     for batch in tqdm(loader, desc=f"test_{args.split}"):
         image = batch["image"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            logits = model(image)
+            output = model(image)
+            logits, disaster_logits = unpack_model_output(output)
+        if disaster_logits is not None:
+            disaster_targets = encode_disaster_types(
+                [str(value) for value in batch["disaster_type"]], device=device
+            )
+            disaster_meter.update(disaster_logits, disaster_targets)
+            disaster_prediction_count += int(disaster_targets.numel())
         grade_batch = decode_grade_logits(logits, args.damage_margin_threshold)
         target_batch = batch["mask"].numpy().astype(np.uint8)
         support_batch = batch["prior"][:, 0].numpy() >= gate_threshold
@@ -236,6 +250,13 @@ def main() -> None:
 
     metrics: dict[str, Any] = meter.compute()
     metrics.update(cc_surrogate.compute())
+    if disaster_prediction_count:
+        metrics.update(
+            {
+                f"disaster_classification_{key}": value
+                for key, value in disaster_meter.compute().items()
+            }
+        )
     metrics.update(
         {
             "sample_count": len(dataset),
