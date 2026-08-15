@@ -4,13 +4,15 @@
 
 ## 先读
 
-1. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
-2. [主 README](../README.md)
-3. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
-4. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
+1. [主 README：实验矩阵、结果对比与当前问题](../README.md)
+2. [Metadata-aware multi-task 最新正式结果](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
+3. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
+4. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
+5. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
 
 ## 实验协议与主要结果
 
+- [Metadata-aware multi-task v1](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
 - [Stage-2 baseline implementation](../STAGE2_BASELINE_IMPLEMENTATION.md)
 - [Stage-1 project experience](../PROJECT_EXPERIENCE.md)
 - [Stage-2 v2 实验总报告](../reports/stage2_v2/stage2_v2_experiment_report.md)
@@ -38,4 +40,4 @@
 - clean strict 1207/357/388 test 已被多轮探索暴露，只能作历史诊断。
 - event-group 1372/290/290 test 已用于 R0/R4 诊断，也不再是新的盲测集。
 - `MINIMAL_PACKAGE_REPORT.md`、早期 runbook 和部分 readiness 文件记录的是当时状态；
-  当它们与 2026-08-14 审计冲突时，以项目审计和磁盘冻结产物为准。
+  当它们与 2026-08-15 README 或冻结结果冲突时，以 README、最新正式报告和磁盘冻结产物为准。
