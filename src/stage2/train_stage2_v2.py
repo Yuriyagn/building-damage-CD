@@ -3,15 +3,17 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import itertools
 import json
 import os
 import random
 import subprocess
 import sys
+import time
 from collections import Counter, defaultdict
 from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 import numpy as np
 import torch
@@ -42,7 +44,7 @@ from stage2.metadata_multitask import (  # noqa: E402
     load_label_map,
     validate_disaster_classes,
 )
-from stage2.metrics_v2 import Stage2V2MeterBundle  # noqa: E402
+from stage2.metrics_v2 import GroupedV2Meters, Stage2V2MeterBundle  # noqa: E402
 
 
 CHECKPOINT_METRICS = {
@@ -138,6 +140,81 @@ def seed_worker(worker_id: int) -> None:
     np.random.seed(worker_seed)
 
 
+def resolve_batch_limits(
+    *,
+    smoke_test: bool,
+    overfit_batches: int | None,
+    fixed_step_mode: bool,
+    batch_size: int,
+    gradient_accumulation_steps: int,
+) -> tuple[int | None, int | None, int | None]:
+    """Return dataset limit, train-batch limit, and validation-batch limit.
+
+    Formal fixed-step training consumes one optimizer step worth of training
+    micro-batches, but validation must cover the complete validation loader.
+    The previous implementation reused the training limit for validation and
+    silently evaluated only one validation batch at every selection step.
+    """
+
+    if smoke_test:
+        return max(batch_size, 2), 1, 1
+    if overfit_batches:
+        batches = int(overfit_batches)
+        return max(1, batches * batch_size), batches, batches
+    if fixed_step_mode:
+        return None, max(1, int(gradient_accumulation_steps)), None
+    return None, None, None
+
+
+def resolve_training_diagnostics(
+    *,
+    fixed_step_mode: bool,
+    optimizer_step: int,
+    eval_steps: set[int],
+    progress_interval_steps: int,
+) -> tuple[bool, bool]:
+    """Return whether to collect full train metrics and the scalar loss.
+
+    Full pixel/event diagnostics copy predictions from the GPU to the CPU. They
+    are useful beside validation checkpoints, but performing them at every
+    fixed optimizer step stalls the training pipeline without affecting model
+    selection. A lightweight scalar loss is retained at progress heartbeats.
+    """
+
+    if not fixed_step_mode:
+        return True, True
+    collect_metrics = optimizer_step in eval_steps
+    collect_loss = collect_metrics or optimizer_step % progress_interval_steps == 0
+    return collect_metrics, collect_loss
+
+
+class CyclingDataIterator:
+    """Keep one DataLoader iterator alive and cycle only after a full pass.
+
+    Fixed-step training previously called ``iter(loader)`` once per optimizer
+    step and consumed only its first batch. Even with persistent workers that
+    repeatedly rebuilt the sampler/prefetch pipeline and left the GPU waiting
+    on CPU input. This iterator preserves the normal shuffled epoch traversal
+    and only creates a new iterator after the current one is exhausted.
+    """
+
+    def __init__(self, loader: DataLoader) -> None:
+        self.loader = loader
+        self._iterator = iter(loader)
+        self.completed_cycles = 0
+
+    def __iter__(self) -> "CyclingDataIterator":
+        return self
+
+    def __next__(self) -> dict[str, Any]:
+        try:
+            return next(self._iterator)
+        except StopIteration:
+            self.completed_cycles += 1
+            self._iterator = iter(self.loader)
+            return next(self._iterator)
+
+
 def make_dataset(
     cfg: dict[str, Any],
     data_root: Path,
@@ -172,6 +249,7 @@ def make_dataset(
         ogsr_feature_keys=dcfg.get("ogsr_feature_keys"),
         sar_shuffle_mode=str(dcfg.get("sar_shuffle_mode", "paired")),
         sar_shuffle_seed=permutation_seed + split_offset,
+        sar_permutation_file=dcfg.get(f"{split}_sar_permutation_file") or dcfg.get("sar_permutation_file"),
         sar_singleton_policy=str(dcfg.get("sar_singleton_policy", "error")),
         cache_items=cache_items,
         limit=limit,
@@ -356,22 +434,39 @@ def train_one_epoch(
     disaster_criterion: torch.nn.Module | None = None,
     disaster_weight: float = 0.0,
     disaster_label_map: dict[str, str] | None = None,
+    batch_iterator: Iterator[dict[str, Any]] | None = None,
+    collect_metrics: bool = True,
+    collect_loss: bool = True,
 ) -> dict[str, float]:
     model.train()
-    meter = Stage2V2MeterBundle()
+    meter = Stage2V2MeterBundle() if collect_metrics else None
     loss_sum = 0.0
     sample_count = 0
     damage_loss_sum = 0.0
     disaster_loss_sum = 0.0
-    disaster_meter = DisasterClassificationMeter()
+    disaster_meter = DisasterClassificationMeter() if collect_metrics else None
     disaster_sample_count = 0
+    event_meters = GroupedV2Meters(["event_id"]) if collect_metrics else None
     gradient_metrics: dict[str, float] = {}
     accumulation_steps = max(1, int(gradient_accumulation_steps))
-    total_batches = len(loader) if max_batches is None else min(len(loader), int(max_batches))
+    if batch_iterator is not None:
+        if max_batches is None:
+            raise ValueError("batch_iterator requires an explicit max_batches")
+        total_batches = int(max_batches)
+        batches = itertools.islice(batch_iterator, total_batches)
+    else:
+        total_batches = len(loader) if max_batches is None else min(len(loader), int(max_batches))
+        batches = itertools.islice(loader, total_batches)
     optimizer.zero_grad(set_to_none=True)
-    for batch_index, batch in enumerate(tqdm(loader, desc="train", leave=False)):
-        if max_batches is not None and batch_index >= max_batches:
-            break
+    for batch_index, batch in enumerate(
+        tqdm(
+            batches,
+            total=total_batches,
+            desc="train",
+            leave=False,
+            disable=batch_iterator is not None,
+        )
+    ):
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
@@ -388,7 +483,7 @@ def train_one_epoch(
             loss = damage_loss
             if disaster_loss is not None:
                 loss = loss + float(disaster_weight) * disaster_loss
-        if batch_index == 0 and disaster_loss is not None:
+        if collect_metrics and batch_index == 0 and disaster_loss is not None:
             gradient_metrics = gradient_interaction(
                 damage_loss,
                 disaster_loss,
@@ -403,16 +498,48 @@ def train_one_epoch(
             scaler.step(optimizer)
             scaler.update()
             optimizer.zero_grad(set_to_none=True)
-        batch_size = image.shape[0]
-        loss_sum += float(loss.item()) * batch_size
+        if collect_loss or collect_metrics:
+            batch_size = image.shape[0]
+            loss_sum += float(loss.item()) * batch_size
+            sample_count += batch_size
+        if not collect_metrics:
+            continue
+        assert meter is not None and disaster_meter is not None and event_meters is not None
         damage_loss_sum += float(damage_loss.item()) * batch_size
         if disaster_loss is not None and disaster_logits is not None and disaster_targets is not None:
             disaster_loss_sum += float(disaster_loss.item()) * batch_size
             disaster_sample_count += batch_size
             disaster_meter.update(disaster_logits, disaster_targets)
-        sample_count += batch_size
         _bundle_update(meter, logits, target, batch["prior"], gate_threshold)
+        grade_batch = logits.detach().argmax(dim=1).cpu().numpy().astype(np.uint8) + 1
+        target_batch = target.detach().cpu().numpy().astype(np.uint8)
+        support_batch = batch["prior"][:, 0].numpy() >= gate_threshold
+        for sample_index in range(batch_size):
+            event_meters.update(
+                grade_batch[sample_index],
+                target_batch[sample_index],
+                support_batch[sample_index],
+                {"event_id": str(batch["event_id"][sample_index])},
+            )
+    if not collect_metrics:
+        return {"loss": loss_sum / max(sample_count, 1)} if collect_loss else {}
+    assert meter is not None and disaster_meter is not None and event_meters is not None
     metrics = meter.compute()
+    event_rows = event_meters.rows("event_id")
+    if event_rows:
+        metrics["event_macro_bo_f1"] = float(
+            np.mean([row["building_only_macro_f1_3class"] for row in event_rows])
+        )
+        present_damage = []
+        for row in event_rows:
+            values = [
+                row[f"building_only_f1_{name}"]
+                for name in ("damaged", "destroyed")
+                if row.get(f"building_only_support_{name}", 0) > 0
+            ]
+            if values:
+                present_damage.append(float(np.mean(values)))
+        metrics["event_macro_bo_damage_f1"] = float(np.mean(present_damage)) if present_damage else 0.0
     metrics["loss"] = loss_sum / max(sample_count, 1)
     metrics["damage_loss"] = damage_loss_sum / max(sample_count, 1)
     if disaster_sample_count:
@@ -455,6 +582,7 @@ def evaluate(
     disaster_loss_sum = 0.0
     disaster_meter = DisasterClassificationMeter()
     disaster_sample_count = 0
+    event_meters = GroupedV2Meters(["event_id"])
     for batch_index, batch in enumerate(tqdm(loader, desc="val", leave=False)):
         if max_batches is not None and batch_index >= max_batches:
             break
@@ -479,7 +607,32 @@ def evaluate(
             disaster_meter.update(disaster_logits, disaster_targets)
         sample_count += batch_size
         _bundle_update(meter, logits, target, batch["prior"], gate_threshold)
+        grade_batch = logits.detach().argmax(dim=1).cpu().numpy().astype(np.uint8) + 1
+        target_batch = target.detach().cpu().numpy().astype(np.uint8)
+        support_batch = batch["prior"][:, 0].numpy() >= gate_threshold
+        for sample_index in range(batch_size):
+            event_meters.update(
+                grade_batch[sample_index],
+                target_batch[sample_index],
+                support_batch[sample_index],
+                {"event_id": str(batch["event_id"][sample_index])},
+            )
     metrics = meter.compute()
+    event_rows = event_meters.rows("event_id")
+    if event_rows:
+        metrics["event_macro_bo_f1"] = float(
+            np.mean([row["building_only_macro_f1_3class"] for row in event_rows])
+        )
+        present_damage = []
+        for row in event_rows:
+            values = [
+                row[f"building_only_f1_{name}"]
+                for name in ("damaged", "destroyed")
+                if row.get(f"building_only_support_{name}", 0) > 0
+            ]
+            if values:
+                present_damage.append(float(np.mean(values)))
+        metrics["event_macro_bo_damage_f1"] = float(np.mean(present_damage)) if present_damage else 0.0
     metrics["loss"] = loss_sum / max(sample_count, 1)
     metrics["damage_loss"] = damage_loss_sum / max(sample_count, 1)
     if disaster_sample_count:
@@ -537,6 +690,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--early-stopping-patience", type=int)
     parser.add_argument("--early-stopping-min-epochs", type=int)
     parser.add_argument("--ogsr-feature-root")
+    parser.add_argument("--max-optimizer-steps", type=int)
+    parser.add_argument("--eval-steps", nargs="+", type=int)
     return parser.parse_args()
 
 
@@ -571,16 +726,23 @@ def main() -> None:
     amp = bool(train_cfg.get("amp", True) if args.amp is None else args.amp) and device.type == "cuda"
     batch_size = int(args.batch_size or train_cfg.get("batch_size", 8))
     num_workers = int(args.num_workers if args.num_workers is not None else train_cfg.get("num_workers", 8))
-    epochs = int(args.epochs or train_cfg.get("epochs", 100))
-    limit = None
-    max_batches = None
+    max_optimizer_steps_value = args.max_optimizer_steps or train_cfg.get("max_optimizer_steps") or train_cfg.get("final_step")
+    fixed_step_mode = max_optimizer_steps_value is not None
+    epochs = int(max_optimizer_steps_value) if fixed_step_mode else int(args.epochs or train_cfg.get("epochs", 100))
+    configured_eval_steps = args.eval_steps or train_cfg.get("eval_steps", [])
+    eval_steps = sorted({int(value) for value in configured_eval_steps if int(value) > 0})
+    if fixed_step_mode:
+        eval_steps = sorted(set(eval_steps) | {epochs})
+    eval_step_set = set(eval_steps)
+    limit, train_max_batches, eval_max_batches = resolve_batch_limits(
+        smoke_test=bool(args.smoke_test),
+        overfit_batches=args.overfit_batches,
+        fixed_step_mode=fixed_step_mode,
+        batch_size=batch_size,
+        gradient_accumulation_steps=gradient_accumulation_steps,
+    )
     if args.smoke_test:
-        limit = max(batch_size, 2)
         epochs = 1
-        max_batches = 1
-    elif args.overfit_batches:
-        limit = max(1, args.overfit_batches * batch_size)
-        max_batches = int(args.overfit_batches)
 
     data_root = Path(args.data_root)
     dataset_cfg = dict(cfg.get("dataset", {}))
@@ -712,10 +874,16 @@ def main() -> None:
         worker_init_fn=seed_worker,
         generator=torch.Generator().manual_seed(seed + 1),
     )
+    fixed_batch_iterator = (
+        CyclingDataIterator(train_loader)
+        if fixed_step_mode and not args.smoke_test and not args.overfit_batches
+        else None
+    )
     gate_threshold = float(dict(cfg.get("dataset", {})).get("gate_threshold", 0.6))
     patience = int(args.early_stopping_patience if args.early_stopping_patience is not None else train_cfg.get("early_stopping_patience", 30))
     min_epochs = int(args.early_stopping_min_epochs if args.early_stopping_min_epochs is not None else train_cfg.get("early_stopping_min_epochs", 40))
     early_window = int(train_cfg.get("early_stopping_window", 3))
+    progress_interval_steps = max(1, int(train_cfg.get("progress_interval_steps", 1000)))
     write_json(
         output_dir / "run_info.json",
         {
@@ -732,6 +900,19 @@ def main() -> None:
             "effective_batch_size": batch_size * gradient_accumulation_steps,
             "eval_batch_size": eval_batch_size,
             "epochs": epochs,
+            "fixed_step_mode": fixed_step_mode,
+            "max_optimizer_steps": epochs if fixed_step_mode else None,
+            "eval_steps": eval_steps,
+            "fixed_step_iterator_policy": (
+                "persistent_full_pass_cycle" if fixed_batch_iterator is not None else None
+            ),
+            "fixed_step_training_diagnostics_policy": (
+                "full_at_validation_loss_at_heartbeat"
+                if fixed_batch_iterator is not None
+                else None
+            ),
+            "train_max_batches_per_step_or_epoch": train_max_batches,
+            "validation_batch_limit": eval_max_batches,
             "amp": amp,
             "deterministic": deterministic,
             "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
@@ -742,6 +923,7 @@ def main() -> None:
             "early_stopping": {"patience": patience, "min_epochs": min_epochs, "window": early_window},
             "checkpoint_policy": checkpoint_policy,
             "save_last_checkpoint": save_last_checkpoint,
+            "progress_interval_steps": progress_interval_steps,
             "initial_model_state_sha256": initial_model_sha256,
             "multitask": multitask_info,
             "code_state": code_state(),
@@ -760,11 +942,12 @@ def main() -> None:
             device,
             amp,
             gate_threshold,
-            max_batches=1,
+            max_batches=train_max_batches,
             gradient_accumulation_steps=gradient_accumulation_steps,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
             disaster_label_map=disaster_label_map,
+            batch_iterator=fixed_batch_iterator,
         )
         step_model_epoch(model)
         val_metrics = evaluate(
@@ -774,7 +957,7 @@ def main() -> None:
             device,
             amp,
             gate_threshold,
-            max_batches=1,
+            max_batches=eval_max_batches,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
         )
@@ -792,7 +975,30 @@ def main() -> None:
     epochs_without_improvement = 0
     primary_name = "val_building_only_macro_f1_3class"
     stopped_early = False
+    run_loop_started = time.monotonic()
+
+    def fixed_step_progress(step: int, train_loss: float) -> dict[str, float | int]:
+        elapsed = max(time.monotonic() - run_loop_started, 1e-9)
+        steps_per_second = step / elapsed
+        return {
+            "optimizer_step": step,
+            "max_optimizer_steps": epochs,
+            "train_loss": train_loss,
+            "lr": float(optimizer.param_groups[0]["lr"]),
+            "elapsed_run_loop_seconds": elapsed,
+            "average_optimizer_steps_per_second_including_validation": steps_per_second,
+            "estimated_remaining_run_loop_seconds": max(
+                0.0, (epochs - step) / steps_per_second
+            ),
+        }
+
     for epoch in range(1, epochs + 1):
+        collect_train_metrics, collect_train_loss = resolve_training_diagnostics(
+            fixed_step_mode=fixed_step_mode,
+            optimizer_step=epoch,
+            eval_steps=eval_step_set,
+            progress_interval_steps=progress_interval_steps,
+        )
         train_metrics = train_one_epoch(
             model,
             train_loader,
@@ -802,13 +1008,24 @@ def main() -> None:
             device,
             amp,
             gate_threshold,
-            max_batches,
+            train_max_batches,
             gradient_accumulation_steps=gradient_accumulation_steps,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
             disaster_label_map=disaster_label_map,
+            batch_iterator=fixed_batch_iterator,
+            collect_metrics=collect_train_metrics,
+            collect_loss=collect_train_loss,
         )
         step_model_epoch(model)
+        if fixed_step_mode and epoch not in eval_step_set:
+            if scheduler is not None:
+                scheduler.step()
+            if epoch % progress_interval_steps == 0:
+                progress = fixed_step_progress(epoch, train_metrics["loss"])
+                write_json(output_dir / "latest_progress.json", progress)
+                print(json.dumps(progress, sort_keys=True), flush=True)
+            continue
         val_metrics = evaluate(
             model,
             val_loader,
@@ -816,7 +1033,7 @@ def main() -> None:
             device,
             amp,
             gate_threshold,
-            max_batches,
+            eval_max_batches,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
         )
@@ -868,6 +1085,20 @@ def main() -> None:
                 best_metrics,
                 class_weight_info,
             )
+        if fixed_step_mode:
+            save_checkpoint(
+                output_dir / "checkpoints" / f"step_{epoch:06d}.pth",
+                model,
+                optimizer,
+                scheduler,
+                cfg,
+                epoch,
+                seed,
+                best_metrics,
+                class_weight_info,
+            )
+            progress = fixed_step_progress(epoch, train_metrics["loss"])
+            write_json(output_dir / "latest_progress.json", progress)
         print(
             json.dumps(
                 {
@@ -888,13 +1119,16 @@ def main() -> None:
             ),
             flush=True,
         )
-        if patience > 0 and epoch >= min_epochs and epochs_without_improvement >= patience:
+        if (not fixed_step_mode) and patience > 0 and epoch >= min_epochs and epochs_without_improvement >= patience:
             stopped_early = True
             break
 
     completion = {
         "status": "completed",
-        "epochs_completed": len(history),
+        "epochs_completed": None if fixed_step_mode else len(history),
+        "evaluation_count": len(history),
+        "optimizer_steps_completed": epochs if fixed_step_mode else None,
+        "selection_policy": "fixed_steps_inner_only" if fixed_step_mode else "validation_checkpoint",
         "stopped_early": stopped_early,
         "checkpoint_policy": checkpoint_policy,
         "save_last_checkpoint": save_last_checkpoint,

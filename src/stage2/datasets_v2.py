@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import random
+import json
 from collections import defaultdict
+from pathlib import Path
 from typing import Any
 
 from .datasets import Stage2DamageDataset
@@ -72,6 +74,7 @@ class Stage2V2Dataset(Stage2DamageDataset):
         *args: Any,
         sar_shuffle_mode: str = "paired",
         sar_shuffle_seed: int = 42,
+        sar_permutation_file: str | Path | None = None,
         sar_singleton_policy: str = "error",
         cache_items: bool = False,
         **kwargs: Any,
@@ -94,7 +97,37 @@ class Stage2V2Dataset(Stage2DamageDataset):
             original_rows = kept_rows
         elif sar_singleton_policy not in {"error", "exclude"}:
             raise ValueError(f"unknown SAR singleton policy: {sar_singleton_policy}")
-        mapping, info = build_derangement(original_rows, sar_shuffle_mode, sar_shuffle_seed)
+        if sar_permutation_file is not None:
+            permutation_path = Path(sar_permutation_file)
+            payload = json.loads(permutation_path.read_text(encoding="utf-8"))
+            raw_mapping = payload.get("mapping", payload)
+            if not isinstance(raw_mapping, dict):
+                raise ValueError("SAR permutation file must contain an ID-to-ID mapping")
+            id_to_index = {str(row.get("id", "")): index for index, row in enumerate(original_rows)}
+            if set(raw_mapping) != set(id_to_index):
+                missing = sorted(set(id_to_index) - set(raw_mapping))
+                extra = sorted(set(raw_mapping) - set(id_to_index))
+                raise ValueError(f"SAR permutation ID mismatch: missing={missing[:5]}, extra={extra[:5]}")
+            source_ids = [str(raw_mapping[str(row["id"])]) for row in original_rows]
+            if any(source_id not in id_to_index for source_id in source_ids):
+                raise ValueError("SAR permutation references an unknown source ID")
+            mapping = [id_to_index[source_id] for source_id in source_ids]
+            if len(set(mapping)) != len(mapping):
+                raise ValueError("SAR permutation must be bijective")
+            if any(target == source for target, source in enumerate(mapping)):
+                raise ValueError("SAR permutation must be fully deranged")
+            info = {
+                "mode": "external_fixed",
+                "seed": sar_shuffle_seed,
+                "source": str(permutation_path.resolve()),
+                "records": [
+                    {"target_id": str(original_rows[target]["id"]), "source_id": str(original_rows[source]["id"])}
+                    for target, source in enumerate(mapping)
+                ],
+                "singleton_groups": [],
+            }
+        else:
+            mapping, info = build_derangement(original_rows, sar_shuffle_mode, sar_shuffle_seed)
         info["singleton_policy"] = sar_singleton_policy
         info["excluded_singletons"] = excluded_rows
         info["excluded_singleton_count"] = len(excluded_rows)

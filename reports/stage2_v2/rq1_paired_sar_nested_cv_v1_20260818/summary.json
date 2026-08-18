@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "rq1_paired_sar_cross_event_v1",
+  "protocol_id": "rq1_paired_sar_nested_cv_v1.2",
+  "status": "failed",
+  "execution_status": "completed",
+  "passed": false,
+  "decision": "stop_branch_preregistered_composite_gate_failed",
+  "evidence_scope": "nested_cv_development_only_no_blind_confirmation",
+  "completed_at": "2026-08-18T16:53:27+08:00",
+  "stage2_v3_elapsed": "17h10m20s",
+  "completeness": {
+    "stage1_oof_models": {"expected": 56, "completed": 56, "failed": 0},
+    "stage2_inner_runs": {"expected": 21, "completed": 21, "failed": 0},
+    "stage2_final_runs": {"expected": 70, "completed": 70, "failed": 0},
+    "stage2_final_evaluations": {"expected": 70, "completed": 70, "failed": 0}
+  },
+  "selected_steps": {
+    "outer_0": 14000,
+    "outer_1": 10000,
+    "outer_2": 14000,
+    "outer_3": 14000,
+    "outer_4": 14000,
+    "outer_5": 12000,
+    "outer_6": 16000
+  },
+  "primary": {
+    "estimand": "C2_minus_C3_event_macro_bo_damage_f1",
+    "mean": 0.06197639524327457,
+    "hierarchical_paired_bootstrap_ci95": [0.012056019753173271, 0.11542955786706983],
+    "bootstrap_iterations": 10000,
+    "bootstrap_units": "events then paired samples; seeds retained within events",
+    "descriptive_only": true
+  },
+  "secondary": {
+    "C2_minus_C1_event_macro_bo_damage_f1": 0.06508282701078294,
+    "C2_minus_C3_damaged_f1": 0.010275352062494919,
+    "C2_minus_C3_destroyed_f1": 0.11367743842405421,
+    "worst_event_C2_minus_C3_bo_grade_macro_f1": -0.073862346702335,
+    "worst_grade_event": "myanmar_hurricane"
+  },
+  "seed_means_C2_minus_C3_damage_f1": {
+    "42": 0.07724826381024756,
+    "3407": 0.05351489001799075,
+    "2026": 0.05516603190158539
+  },
+  "positive_event_count": 9,
+  "nonpositive_event_count": 5,
+  "absolute_event_seed_macro_means": {
+    "C0": {"seed_count": 1, "bo_damage_macro_f1": 0.1420705717008452, "bo_grade_macro_f1": 0.24550091292977452, "damaged_f1": 0.19623495099125227, "destroyed_f1": 0.08790619241043814, "binary_damage_f1": 0.30903589460692726, "predicted_gate_4class_macro_f1": 0.383260197118014},
+    "C1": {"seed_count": 3, "bo_damage_macro_f1": 0.1228858941652494, "bo_grade_macro_f1": 0.2750644779215717, "damaged_f1": 0.15724439426566864, "destroyed_f1": 0.08852739406483019, "binary_damage_f1": 0.249646768838036, "predicted_gate_4class_macro_f1": 0.40134640986384246},
+    "C2": {"seed_count": 3, "bo_damage_macro_f1": 0.18796872117603236, "bo_grade_macro_f1": 0.3440776688248427, "damaged_f1": 0.14620052179254026, "destroyed_f1": 0.22973692055952447, "binary_damage_f1": 0.33129422618709914, "predicted_gate_4class_macro_f1": 0.4415641362601086},
+    "C3": {"seed_count": 3, "bo_damage_macro_f1": 0.1259923259327578, "bo_grade_macro_f1": 0.26759852264521605, "damaged_f1": 0.13592516973004534, "destroyed_f1": 0.11605948213547025, "binary_damage_f1": 0.25744216330643116, "predicted_gate_4class_macro_f1": 0.39668270012696716}
+  },
+  "gates": {
+    "mean_C2_minus_C3_gte_0p02": true,
+    "positive_at_least_2_of_3_seeds": true,
+    "positive_at_least_9_of_14_events": true,
+    "mean_C2_minus_C1_gte_0p01": true,
+    "damaged_delta_gte_minus_0p01": true,
+    "destroyed_delta_gte_minus_0p01": true,
+    "worst_event_grade_delta_gte_minus_0p01": false
+  },
+  "provenance": {
+    "run_git_commit": "91cd9153c6c817b57a09d77ca2a8c42df6816aab",
+    "run_source_tree_sha256": "da6de9cf737880b31c56a39af20cfa1e394c40112b0e34ce6aae6a9d0dff2834",
+    "run_tracked_diff_sha256": "3bb34e1d64bee7c8219cf49c103044a4045dd7d36bd1d9105cec3fb6cc27812a",
+    "frozen_protocol_sha256": "55378b436238c024de81e03be87bf994970ac16b4d62de6d83a9c0d0ae690be6",
+    "prepared_audit_sha256": "32e49fed8deaa4adb8281ad19f35162647a07fe98e8f61a9939dfe89f7f967f0",
+    "stage1_queue_completed_sha256": "6df43b0412d258f5cbac2e1e897b0d32754f53d4ac0901fe0f56779c7106207b",
+    "finalized_manifest_audit_sha256": "b19791aa0d3fab30c8be30a74d593fc16a86bd744a4ab9223b0cdfa97c183d80",
+    "derangement_audit_sha256": "5a661ab322451a45f61de349fb5032abe3ffe6eb582bd88d71cdd15d013588ba",
+    "stage2_completed_sha256": "dd87a9f77ef3ce5be005990a910cbc191dea2404aabdff199ecc9d9e1d114979",
+    "source_result_summary_sha256": "b8bc506a790eb1c5135f5fcea0123cac2d5612e989da12cd51e035d974475b06",
+    "artifact_verification": "ANALYZED",
+    "independent_full_replication": false
+  },
+  "claim_boundary": {
+    "supported": "Average sample-correspondence signal on the 14 exposed development events.",
+    "not_supported": [
+      "Robust benefit across events",
+      "Independent blind-event generalization",
+      "Geospatial footprint independence",
+      "Deployment readiness",
+      "Physical causal interpretation"
+    ]
+  }
+}

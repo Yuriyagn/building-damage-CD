@@ -42,5 +42,6 @@ manifests/stage2_event_shortcut_v1/
 manifests/stage2_v2_event_group_v1_20260803/
 manifests/stage2_v2_event_group_bright_r4_v1_20260803/
 manifests/stage2_v2_event_group_bright_r4_predicted_v1_20260803/
+manifests/rq1_paired_sar_nested_cv_v1_20260815/
 
 .DS_Store

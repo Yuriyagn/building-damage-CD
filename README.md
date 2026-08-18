@@ -8,11 +8,12 @@ background / intact / damaged / destroyed
 
 项目不是只追求一个更高的 pooled 分数，而是判断模型是否真的利用灾前/灾后变化信息，在未见事件上稳定区分 `damaged` 与 `destroyed`，而不是依赖建筑轮廓、事件身份、灾种先验或类别比例捷径。
 
-> 状态快照：2026-08-15。旧 test 已降级为历史诊断；当前最新正式开发结果是
-> [Metadata-aware multi-task v1](reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)。
+> 状态快照：2026-08-18。旧 test 已降级为历史诊断；当前最新正式开发结果是
+> [RQ1 paired-SAR nested CV](reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)：
+> 运行已完整结束，但 7 项冻结门槛只通过 6 项，分支按协议关闭。
 > 更完整的数据谱系和历史审计见
-> [项目全景审计](docs/PROJECT_AUDIT_20260814.md)。下一轮 RQ1 的文献证据、事实核查、
-> 方法学审稿和冻结候选协议见
+> [项目全景审计](docs/PROJECT_AUDIT_20260814.md)。RQ1 开跑前的文献证据、事实核查、
+> 方法学审稿和冻结协议见
 > [ARS 实验方法学审查](docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)。
 
 ## 1. 任务与模型输入
@@ -69,6 +70,7 @@ BO damage macro F1 = mean(F1_damaged, F1_destroyed)
 | D4 / balanced E1 | strict development events，seed 42 | E0 recipe | LOEO 或 event×class 均匀采样 | 揭示类别崩溃；极端均匀采样反而降分 |
 | R0 vs R4 | event-group 1372/290 与 1634/290，3 seeds | SAR + frozen O1 predicted prior | R4 只增加 262 张同事件 BRIGHT train 样本 | validation 有正信号，主要来自 Destroyed；预算/来源域混杂未解除 |
 | Metadata M0 vs M1 | R4 1634/290，3 seeds | 四通道 pre-RGB + post-SAR | M1 增加 `0.1 × disaster CE`；结构与初始化相同 | damage 均值提高，但灾种分类低于 majority；分支停止，不运行 M2 |
+| RQ1 C0–C3 nested CV | 14 exposed development events，7 outer folds，3 seeds | event-excluded OOF prior + pre-RGB + paired/deranged SAR | 样本级 SAR 对应关系；固定同事件错配负控 | C2−C3 damage `+0.06198`，但 worst-event grade `−0.07386`；6/7 gates，通过平均效应、未通过稳健性，分支停止 |
 
 ## 4. 同协议内的实验结果
 
@@ -161,7 +163,7 @@ R4 在三个种子的 pooled 主指标上均为正，但 event-macro 只有 2/3 
 
 ### 4.5 Metadata-aware multi-task：M0 vs M1
 
-这是当前最新、validation-only 的三种子实验。M0/M1 使用完全相同的 ResNet34 U-Net、多任务 head、初始化、batch 顺序和优化器；输入均为 `[pre-RGB, post-SAR]`，不把 prior、disaster type、地点或传感器 metadata 作为模型输入。
+这是 RQ1 之前完成的 validation-only 三种子实验。M0/M1 使用完全相同的 ResNet34 U-Net、多任务 head、初始化、batch 顺序和优化器；输入均为 `[pre-RGB, post-SAR]`，不把 prior、disaster type、地点或传感器 metadata 作为模型输入。
 
 | Condition | Damage supervision | Disaster supervision | BO grade macro | BO damage macro | Event macro BO | Worst-event BO | Disaster macro |
 |---|---|---|---:|---:|---:|---:|---:|
@@ -193,6 +195,21 @@ R4 在三个种子的 pooled 主指标上均为正，但 event-macro 只有 2/3 
 
 因此 M1 没有通过“灾害语义泛化”门槛，M2 固定乱序标签对照按协议不启动。当前只能把增益归为辅助正则化/优化信号，不能表述为“加入灾害知识提升泛化”。
 
+### 4.6 RQ1 paired-SAR nested CV：平均信号为正，稳健性门失败
+
+RQ1 修复了旧 event-group 工作中 Stage-1 prior 可能看过下游 holdout pre-image 的问题：每个 outer/inner 角色都使用排除对应事件训练的 OOF building prior。C3 采用固定、同事件、同 shape/source、无自配对的 deranged SAR，使 C2−C3 更接近样本对应性检验，而不是简单域差异比较。
+
+| 冻结量 | 结果 |
+|---|---:|
+| C2−C3 event-macro BO damage F1 | **+0.06198** |
+| 描述性层级 paired bootstrap 95% CI | `[+0.01206, +0.11543]` |
+| C2−C1 event-macro BO damage F1 | **+0.06508** |
+| C2−C3 Damaged / Destroyed F1 | `+0.01028 / +0.11368` |
+| 正向 seeds / events | `3/3 / 9/14` |
+| worst-event C2−C3 grade F1 | **−0.07386（Myanmar Hurricane）** |
+
+所有 56 个 Stage-1 OOF、21 个 inner 和 70 个 final Stage-2 run 均已完成，无队列失败。科学 composite gate 要求 7 项全部通过，本轮只通过 6 项，因此状态是“执行完成、实验失败”。结论限于这 14 个已暴露开发事件上的平均对应性信号，不能声称跨事件稳健或 blind-event 泛化。完整事件级结果、Material Passport 和 11 项统计谬误审查见 [RQ1 冻结报告](reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)。
+
 ## 5. 为什么会涨分或丢分：跨实验归纳
 
 | 现象 | 证据 | 更可能的原因 |
@@ -211,7 +228,7 @@ R4 在三个种子的 pooled 主指标上均为正，但 event-macro 只有 2/3 
 
 1. **旧数据存在精确泄漏。** legacy 2613 行有 661 个 full-sample 重复组，其中 105 个跨 train-test；旧 Stage-1/Stage-2 test 只能保留为历史记录。
 2. **没有新的盲测集。** clean strict test 和 event-group test 都已被多轮评估暴露，后续只能标为 `historical_diagnostic_only`。
-3. **Predicted prior 不是 out-of-fold。** 最新 event-group validation 有 119/290 张 pre-image 曾参与 Stage-1 O1 训练，导致上游先验参与下游模型选择时存在验证污染。
+3. **历史 predicted prior 不是 out-of-fold。** R0/R4 与 Metadata validation 有 119/290 张 pre-image 曾参与 Stage-1 O1 训练；RQ1 已用 event-excluded OOF prior 修复这一点，但旧结果仍不能据此升级证据等级。
 4. **事件与类别/灾种绑定。** event-group validation 95.61% building pixels 为 Intact；训练集中每个灾种只对应一个事件；test 的 Damaged 又几乎由单一 Mexico Hurricane 提供。
 
 ### P1：会让涨分归因不成立
@@ -233,15 +250,13 @@ R4 在三个种子的 pooled 主指标上均为正，但 event-macro 只有 2/3 
 
 ## 7. 下一步优先级
 
-ARS `methodology-focus` 对下一轮 RQ1 的当前判定是 **Major Revision / blocked**，不是“可直接开始训练”。
+RQ1 已完成并因 worst-event gate 失败而冻结。默认不在同一 14 个开发事件上继续换架构或调参；下一步重点从“方法搜索”转向“更好的确认数据”。
 
-1. 重建 Stage-1 out-of-fold prior，保证 Stage-2 development/holdout 的 prior 都来自未见该 outer event 的 Stage-1 fold。
-2. 对 DisasterM3、BRIGHT 和历史派生数据建立 canonical event/scene map，完成跨来源 exact/near duplicate 审计。
-3. 建立新的封存外部事件或盲测服务；现有 test 不再用于新的最终确认。
-4. 冻结 RQ1 的 C0 prior-only、C1 pre+OOF prior、C2 paired SAR、C3 within-event deranged SAR 四条件协议；先做 nested event CV，不加入 metadata 或新架构。
-5. 固定 C3 permutation、分层平衡审计、缺失类 estimand 和 inner-fold checkpoint rule，再做 smoke/pilot。
-6. 做 R0/R4 step-matched、visit-matched、source/count 分离实验，拆开“更多训练”和“更好数据”。
-7. metadata 分支只有在每个灾种拥有多个独立事件后才重开；否则不继续调 disaster classification loss。
+1. 获取并封存新的 canonical disaster events，训练与选择期间不可见。
+2. 补足 georeference 和 SAR sensor/acquisition metadata，完成 footprint、传感器及时相独立性审计。
+3. 在新盲事件上原样运行冻结 C1/C2/C3 recipe 和全部 7 项 gate，不重选 steps 或阈值。
+4. 只有 blind confirmation 全部门槛通过后，才升级跨事件稳健性声明。
+5. metadata 分支只有在每个灾种拥有多个独立事件后才重开；否则不继续调 disaster classification loss。
 
 实验状态、test exposure 和 claim-provenance 现在统一登记在
 [experiment registry](experiments/registry.json)，可用下列命令检查：
@@ -290,6 +305,7 @@ bash instruction.sh stage2_v2_strict_check_runtime
 ## 9. 关键文档
 
 - [ARS 实验方法学审查：lit-review、3W、fact-check 与 RQ1 协议](docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
+- [RQ1 paired-SAR nested CV 冻结结果](reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)
 - [机器可读 experiment registry](experiments/registry.json)
 - [完整项目审计与下一步建议](docs/PROJECT_AUDIT_20260814.md)
 - [Metadata-aware multi-task 正式结果](reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)

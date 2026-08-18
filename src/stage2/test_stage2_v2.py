@@ -77,6 +77,7 @@ def make_dataset(
         ogsr_feature_keys=dcfg.get("ogsr_feature_keys"),
         sar_shuffle_mode=str(dcfg.get("sar_shuffle_mode", "paired")),
         sar_shuffle_seed=permutation_seed + split_offset,
+        sar_permutation_file=dcfg.get(f"{split}_sar_permutation_file") or dcfg.get("sar_permutation_file"),
         sar_singleton_policy=str(dcfg.get("sar_singleton_policy", "error")),
         limit=limit,
     )
