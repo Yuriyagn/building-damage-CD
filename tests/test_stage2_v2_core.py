@@ -22,15 +22,18 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from stage2.datasets import Stage2DamageDataset  # noqa: E402
-from stage2.datasets_v2 import build_derangement  # noqa: E402
+from stage2.datasets_v2 import Stage2V2Dataset, build_derangement  # noqa: E402
 from stage2.losses_v2 import BuildingOnlyGradeBinaryAuxLoss, BuildingOnlyGradeLoss  # noqa: E402
 from stage2.metrics_v2 import Stage2V2MeterBundle, summarize_event_generalization  # noqa: E402
 from stage2.summarize_stage2_v2 import infer_run, paired_bootstrap  # noqa: E402
 from stage2.test_stage2_v2 import decode_grade_logits  # noqa: E402
 from stage2.train_stage2_v2 import (  # noqa: E402
+    CyclingDataIterator,
     EventClassBalancedSampler,
     audit_state,
     checkpoint_metrics_for_policy,
+    resolve_batch_limits,
+    resolve_training_diagnostics,
     step_model_epoch,
 )
 from models.external_uabcd import UABCDInputAdapter  # noqa: E402
@@ -116,6 +119,19 @@ class EventShortcutInputTest(unittest.TestCase):
         self.assertEqual(float(image[:, building].abs().sum()), 0.0)
         self.assertGreater(float(image[:, ~building].abs().sum()), 0.0)
 
+    def test_rq1_five_channel_layouts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_name:
+            root = Path(tmp_name)
+            paired = self._dataset(root, "pre_prior_sar5")[0]["image"]
+            baseline = self._dataset(root, "pre_prior5")[0]["image"]
+            prior_only = self._dataset(root, "prior_only5")[0]["image"]
+        self.assertEqual(tuple(paired.shape), (5, 4, 4))
+        self.assertGreater(float(paired[:3].sum()), 0.0)
+        self.assertGreater(float(paired[4].sum()), 0.0)
+        self.assertEqual(float(baseline[4].sum()), 0.0)
+        self.assertEqual(float(prior_only[:3].sum()), 0.0)
+        self.assertEqual(float(prior_only[4].sum()), 0.0)
+
 
 class EventClassSamplerTest(unittest.TestCase):
     def test_sampler_draws_only_from_selected_event_class_group(self) -> None:
@@ -128,6 +144,97 @@ class EventClassSamplerTest(unittest.TestCase):
                 self.assertIn(index, {0, 1})
             else:
                 self.assertEqual(index, 2)
+
+
+class CyclingDataIteratorTest(unittest.TestCase):
+    def test_cycles_only_after_consuming_the_full_loader(self) -> None:
+        class CountingLoader:
+            def __init__(self) -> None:
+                self.iter_calls = 0
+
+            def __iter__(self):
+                self.iter_calls += 1
+                return iter(({"value": 1}, {"value": 2}, {"value": 3}))
+
+        loader = CountingLoader()
+        iterator = CyclingDataIterator(loader)  # type: ignore[arg-type]
+        values = [next(iterator)["value"] for _ in range(7)]
+        self.assertEqual(values, [1, 2, 3, 1, 2, 3, 1])
+        self.assertEqual(iterator.completed_cycles, 2)
+        self.assertEqual(loader.iter_calls, 3)
+
+    def test_formal_fixed_step_uses_full_validation_loader(self) -> None:
+        limit, train_batches, val_batches = resolve_batch_limits(
+            smoke_test=False,
+            overfit_batches=None,
+            fixed_step_mode=True,
+            batch_size=8,
+            gradient_accumulation_steps=1,
+        )
+        self.assertIsNone(limit)
+        self.assertEqual(train_batches, 1)
+        self.assertIsNone(val_batches)
+
+    def test_smoke_and_overfit_keep_bounded_validation(self) -> None:
+        self.assertEqual(
+            resolve_batch_limits(
+                smoke_test=True,
+                overfit_batches=None,
+                fixed_step_mode=True,
+                batch_size=8,
+                gradient_accumulation_steps=1,
+            ),
+            (8, 1, 1),
+        )
+        self.assertEqual(
+            resolve_batch_limits(
+                smoke_test=False,
+                overfit_batches=2,
+                fixed_step_mode=True,
+                batch_size=8,
+                gradient_accumulation_steps=1,
+            ),
+            (16, 2, 2),
+        )
+
+    def test_fixed_step_diagnostics_only_run_when_they_are_consumed(self) -> None:
+        eval_steps = {4000, 6000}
+        self.assertEqual(
+            resolve_training_diagnostics(
+                fixed_step_mode=True,
+                optimizer_step=1,
+                eval_steps=eval_steps,
+                progress_interval_steps=250,
+            ),
+            (False, False),
+        )
+        self.assertEqual(
+            resolve_training_diagnostics(
+                fixed_step_mode=True,
+                optimizer_step=250,
+                eval_steps=eval_steps,
+                progress_interval_steps=250,
+            ),
+            (False, True),
+        )
+        self.assertEqual(
+            resolve_training_diagnostics(
+                fixed_step_mode=True,
+                optimizer_step=4000,
+                eval_steps=eval_steps,
+                progress_interval_steps=250,
+            ),
+            (True, True),
+        )
+        self.assertEqual(
+            resolve_training_diagnostics(
+                fixed_step_mode=False,
+                optimizer_step=1,
+                eval_steps=set(),
+                progress_interval_steps=250,
+            ),
+            (True, True),
+        )
 
 
 class EventGeneralizationSummaryTest(unittest.TestCase):
@@ -177,6 +284,26 @@ class FixedDerangementTest(unittest.TestCase):
         rows = [{"id": "a0", "event_id": "a"}, {"id": "b0", "event_id": "b"}, {"id": "b1", "event_id": "b"}]
         with self.assertRaisesRegex(ValueError, "singleton"):
             build_derangement(rows, "within_event", seed=42)
+
+    def test_external_permutation_is_loaded_and_audited(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_name:
+            root = Path(tmp_name)
+            (root / "images").mkdir()
+            (root / "masks").mkdir()
+            rows = []
+            for index, value in enumerate((32, 224)):
+                Image.fromarray(np.full((4, 4), value, dtype=np.uint8)).save(root / "images" / f"sar{index}.png")
+                Image.fromarray(np.zeros((4, 4), dtype=np.uint8)).save(root / "masks" / f"mask{index}.png")
+                rows.append({"id": f"s{index}", "event_id": "e", "post_sar": f"images/sar{index}.png", "mask_multiclass": f"masks/mask{index}.png"})
+            manifest = root / "manifest.jsonl"
+            manifest.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+            permutation = root / "permutation.json"
+            permutation.write_text(json.dumps({"mapping": {"s0": "s1", "s1": "s0"}}), encoding="utf-8")
+            dataset = Stage2V2Dataset(root, manifest, train=False, prior_type="none", input_mode="sar_only", sar_permutation_file=permutation)
+            first = dataset[0]
+        self.assertEqual(first["sar_source_id"], "s1")
+        self.assertFalse(first["sar_is_paired"])
+        self.assertEqual(dataset.permutation_info["mode"], "external_fixed")
 
 
 class ExternalUABCDAdapterTest(unittest.TestCase):

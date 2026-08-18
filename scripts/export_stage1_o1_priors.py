@@ -49,6 +49,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-manifests", nargs="+", default=DEFAULT_INPUT_MANIFESTS)
     parser.add_argument("--split-names", nargs="+", default=DEFAULT_SPLIT_NAMES)
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--model-id")
+    parser.add_argument("--limit", type=int)
     return parser.parse_args()
 
 
@@ -66,12 +68,15 @@ def main() -> None:
     practice_root = Path(args.practice_root)
     data_root = Path(args.data_root) if args.data_root else default_data_root(practice_root)
     out_dir = Path(args.out_dir)
+    if out_dir.exists() and any(out_dir.iterdir()):
+        raise FileExistsError(f"refusing to overwrite non-empty prior export: {out_dir}")
     if len(args.input_manifests) != len(args.split_names):
         raise ValueError("--input-manifests and --split-names must have equal length")
 
     threshold_info = read_json(args.threshold_json)
     threshold = float(threshold_info["threshold"])
     cfg = load_config(args.config)
+    model_id = str(args.model_id or cfg.get("experiment_name") or "O1_unet_resnet34_freq")
     normalize = str(cfg.get("input", {}).get("normalize", "imagenet"))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -89,6 +94,8 @@ def main() -> None:
     for split_name, manifest_value in zip(args.split_names, args.input_manifests):
         manifest_path = resolve_manifest(practice_root, manifest_value)
         rows = read_jsonl(manifest_path)
+        if args.limit is not None:
+            rows = rows[: args.limit]
         split_min = 1.0
         split_max = 0.0
         count = 0
@@ -96,7 +103,10 @@ def main() -> None:
 
         for row in tqdm(rows, desc=f"export_{split_name}"):
             sample_id = str(row["id"])
-            image_path = resolve_data_path(data_root, row["pre_image"])
+            image_value = row.get("pre_image") or row.get("image")
+            if not image_value:
+                raise KeyError(f"manifest row {sample_id} has neither pre_image nor image")
+            image_path = resolve_data_path(data_root, image_value)
             if not image_path.exists():
                 missing_inputs.append(str(image_path))
                 continue
@@ -134,7 +144,7 @@ def main() -> None:
                     "building_prob": to_data_rel(data_root, prob_npz),
                     "building_prob_uint8": to_data_rel(data_root, prob_png),
                     "building_binary": to_data_rel(data_root, binary_png),
-                    "stage1_model": "O1_unet_resnet34_freq",
+                    "stage1_model": model_id,
                     "stage1_threshold": threshold,
                 }
             )
@@ -152,7 +162,7 @@ def main() -> None:
 
     write_jsonl(out_dir / "prior_manifest_index.jsonl", index_rows)
     summary = {
-        "model": "O1_unet_resnet34_freq",
+        "model": model_id,
         "checkpoint": str(args.checkpoint),
         "threshold_json": str(args.threshold_json),
         "threshold": threshold,

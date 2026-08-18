@@ -55,6 +55,9 @@ class Stage2DamageDataset(Dataset):
     - pre_sar_background_only:
       [pre_RGB outside GT buildings, SAR outside GT buildings, 0, 0]
     - pre_sar_prior: [pre_R, pre_G, pre_B, SAR, prior, SAR * prior]
+    - prior_only5: [0, 0, 0, prior, 0]
+    - pre_prior5: [pre_R, pre_G, pre_B, prior, 0]
+    - pre_prior_sar5: [pre_R, pre_G, pre_B, prior, SAR]
     - pre_sar_texture_prior:
       [pre_R, pre_G, pre_B, SAR, SAR_grad, prior, SAR * prior, SAR_grad * prior]
     - pre_sar_ogsr_texture_prior:
@@ -182,6 +185,17 @@ class Stage2DamageDataset(Dataset):
                 ],
                 axis=0,
             )
+        elif normalized_mode in {"prior_only5", "zero_pre_prior_zero_sar5"}:
+            zeros = np.zeros_like(sar_f)[None, :, :]
+            image = np.concatenate([zeros, zeros, zeros, prior_f[None, :, :], zeros], axis=0)
+        elif normalized_mode in {"pre_prior5", "pre_prior_zero_sar5"}:
+            pre_f = self._pre_float_chw(pre)
+            image = np.concatenate(
+                [pre_f, prior_f[None, :, :], np.zeros_like(sar_f)[None, :, :]], axis=0
+            )
+        elif normalized_mode in {"pre_prior_sar5", "pre_optical_prior_sar5"}:
+            pre_f = self._pre_float_chw(pre)
+            image = np.concatenate([pre_f, prior_f[None, :, :], sar_f[None, :, :]], axis=0)
         elif normalized_mode in {"pre_sar_texture_prior", "pre_sar_grad_prior", "pre_sar_gradient_prior"}:
             pre_f = self._pre_float_chw(pre)
             image = np.concatenate(

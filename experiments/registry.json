@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-08-15T09:30:00+08:00",
+  "updated_at": "2026-08-18T17:20:00+08:00",
   "entries": [
     {
       "experiment_id": "metadata_multitask_v1_20260814",
@@ -140,20 +140,38 @@
       "title": "Cross-event paired SAR correspondence test",
       "research_question": "Under canonical-event-disjoint evaluation, does sample-aligned post-event SAR add transferable damage-grade information beyond event-aware OOF building prior and pre-event optical RGB?",
       "hypothesis": "Paired SAR will outperform both a pre-plus-OOF-prior baseline and a fixed within-event deranged-SAR control on event-macro damage F1.",
-      "status": "blocked",
-      "provenance_status": "planned",
+      "status": "failed",
+      "provenance_status": "complete",
       "datasets": ["DisasterM3", "BRIGHT"],
-      "manifests_and_audits": [],
+      "manifests_and_audits": [
+        {
+          "path": "reports/stage2_v2/event_group_dataset_v1_20260803/r4_manifest_audit.json",
+          "sha256": "58689f50d8c315de0095f6824ec63056a7f260a3ce5a495c1239bce59978df5c",
+          "role": "2214-sample exact-content and event audit"
+        },
+        {
+          "path": "reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/summary.json",
+          "sha256": "a8e21d1007f6c369bb8e04ded4fd0ee84544bf595b99ac7b356874bc7c2ac0ce",
+          "role": "compact seven-fold lineage, completeness and provenance digest"
+        }
+      ],
       "split": {
         "unit": "canonical disaster event and geographic scene",
         "train": null,
         "validation": null,
-        "test_policy": "nested development event CV; one new sealed external-event evaluation only after protocol freeze"
+        "test_policy": "all 14 labeled events are exposed development data; nested event CV only; no blind confirmation claim"
       },
       "code": {
-        "commit": null,
-        "dirty_patch_sha256": null,
-        "configs": []
+        "commit": "91cd9153c6c817b57a09d77ca2a8c42df6816aab",
+        "dirty_patch_sha256": "3bb34e1d64bee7c8219cf49c103044a4045dd7d36bd1d9105cec3fb6cc27812a",
+        "source_tree_sha256": "da6de9cf737880b31c56a39af20cfa1e394c40112b0e34ce6aae6a9d0dff2834",
+        "configs": [
+          {
+            "path": "configs/rq1_paired_sar_nested_cv_v1/protocol.yaml",
+            "sha256": "55378b436238c024de81e03be87bf994970ac16b4d62de6d83a9c0d0ae690be6",
+            "role": "frozen v1.2 protocol"
+          }
+        ]
       },
       "conditions": [
         {"id": "C0", "input": "event-aware OOF prior only", "intervention": "remove pre RGB and SAR", "role": "shortcut diagnostic"},
@@ -164,36 +182,83 @@
       "seeds": [42, 3407, 2026],
       "selection": {
         "split": "inner canonical-event grouped folds only",
-        "checkpoint_rule": "to be frozen before pilot; outer event forbidden for epoch selection",
-        "threshold_source": "inner folds only; no historical test"
+        "checkpoint_rule": "common step maximizing mean inner event-macro BO three-grade F1 across C1-C3; ties choose earlier step",
+        "threshold_source": "outer-training OOF priors only; grid 0.30-0.70 step 0.05; outer events forbidden"
       },
       "metrics": {
         "primary": ["paired C2-C3 event-macro damage F1"],
         "secondary": ["C2-C1 event-macro damage F1", "BO three-grade macro F1", "Damaged F1", "Destroyed F1", "binary damage F1", "worst-event BO F1", "event-by-class support and confusion"]
       },
       "test_exposure": {
-        "used": false,
-        "status": "not_used",
-        "detail": "No blind set is currently designated. A new external-event blind set or label-return service must be materialized; all existing project test sets remain historical diagnostics."
+        "used": true,
+        "status": "exposed",
+        "detail": "All 14 existing labeled events, including historically inspected splits, are explicitly reclassified as development data for nested CV. No blind set or Codabench feedback is used."
       },
-      "runs": [],
+      "runs": [
+        {"condition": "C0", "seed": 42, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C1", "seed": 42, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C1", "seed": 3407, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C1", "seed": 2026, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C2", "seed": 42, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C2", "seed": 3407, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C2", "seed": 2026, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C3", "seed": 42, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C3", "seed": 3407, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7},
+        {"condition": "C3", "seed": 2026, "status": "completed", "artifact": "outputs/stage2/rq1_paired_sar_nested_cv_v1_20260815/stage2_nested_faststep_fullval_v3_20260817", "outer_fold_count": 7, "completed_run_count": 7}
+      ],
       "artifacts": [
         {
           "path": "docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md",
           "sha256": "4be9bfd6aeaf79481723b899a6ca9f1723abe54d7f02d105dd34d1b1174c7bba",
           "role": "methodology review and protocol blueprint"
+        },
+        {
+          "path": "reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md",
+          "sha256": "687c718bcb8fe441c66a633fa240cd876f15a44ad31f4f2e14b13530b13dbbec",
+          "role": "human-readable frozen result and statistical fallacy scan"
+        },
+        {
+          "path": "reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/summary.json",
+          "sha256": "a8e21d1007f6c369bb8e04ded4fd0ee84544bf595b99ac7b356874bc7c2ac0ce",
+          "role": "machine-readable result, gates and provenance"
+        },
+        {
+          "path": "reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/event_effects.csv",
+          "sha256": "45ce993850d1d83f1e287ef12f7e6c86c938aefa0e46379c1dc4f6054148000d",
+          "role": "event-level paired effects"
         }
       ],
+      "results": {
+        "primary_mean_C2_minus_C3_event_damage_f1": 0.06197639524327457,
+        "primary_hierarchical_paired_bootstrap_ci95": [0.012056019753173271, 0.11542955786706983],
+        "secondary_mean_C2_minus_C1_event_damage_f1": 0.06508282701078294,
+        "damaged_delta": 0.010275352062494919,
+        "destroyed_delta": 0.11367743842405421,
+        "positive_seed_count": 3,
+        "positive_event_count": 9,
+        "worst_event_grade_delta": -0.073862346702335,
+        "worst_grade_event": "myanmar_hurricane"
+      },
       "gate": {
-        "decision": "block_formal_training_until_prerequisites",
-        "passed": null,
-        "reason": "Event-aware OOF priors, canonical cross-source deduplication, balanced fixed derangements, nested checkpoint selection, and a genuinely sealed external-event evaluation are not yet materialized."
+        "decision": "stop_branch_preregistered_composite_gate_failed",
+        "passed": false,
+        "reason": "Six of seven frozen gates passed, but Myanmar Hurricane C2-C3 BO grade macro F1 was -0.07386, below the preregistered worst-event floor of -0.01."
       },
       "claims": [
         {
-          "claim": "Paired SAR contains transferable damage-grade information beyond pre RGB and building prior.",
+          "claim": "Paired SAR produced an average sample-correspondence signal on the 14 exposed development events.",
+          "verdict": "ALIGNED",
+          "basis": "Mean paired C2-C3 event damage F1 was +0.06198; all three seed means were positive and the descriptive hierarchical bootstrap interval was [+0.01206, +0.11543]."
+        },
+        {
+          "claim": "The paired-SAR benefit is robust across disaster events.",
+          "verdict": "NOT_SUPPORTED_BY_PROVENANCE",
+          "basis": "Five of 14 event means were nonpositive and the frozen worst-event grade gate failed at -0.07386."
+        },
+        {
+          "claim": "The method generalizes to independent blind events or is deployment-ready.",
           "verdict": "PROVENANCE_INSUFFICIENT",
-          "basis": "The controlled C0-C3 nested event experiment has not been run."
+          "basis": "All 14 labeled events are exposed development data; no independent blind confirmation or formal geospatial footprint audit exists."
         }
       ]
     }

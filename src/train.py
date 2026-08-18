@@ -205,6 +205,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--early-stopping-patience", type=int)
     parser.add_argument("--early-stopping-min-delta", type=float)
     parser.add_argument("--early-stopping-min-epochs", type=int)
+    parser.add_argument("--max-optimizer-steps", type=int)
+    parser.add_argument("--log-steps", type=int, default=1000)
     return parser.parse_args()
 
 
@@ -216,6 +218,8 @@ def main() -> None:
     set_seed(seed)
 
     output_dir = Path(args.output_dir)
+    if output_dir.exists() and any(output_dir.iterdir()):
+        raise FileExistsError(f"refusing to overwrite non-empty output directory: {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
     write_json(output_dir / "config_resolved.json", cfg)
 
@@ -270,6 +274,7 @@ def main() -> None:
             "epochs": epochs,
             "amp": amp,
             "early_stopping": early_stopping,
+            "max_optimizer_steps": args.max_optimizer_steps,
         },
     )
 
@@ -286,6 +291,58 @@ def main() -> None:
         metrics = evaluate(model, val_loader, criterion, device, amp=False)
         write_json(output_dir / "smoke_test.json", {"loss": float(loss.item()), "val": metrics})
         print(json.dumps({"smoke_test": "ok", "loss": float(loss.item()), "val_iou": metrics["iou_building"]}))
+        return
+
+    if args.max_optimizer_steps is not None:
+        max_steps = int(args.max_optimizer_steps)
+        if max_steps <= 0:
+            raise ValueError("--max-optimizer-steps must be positive")
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_steps)
+        scaler = torch.cuda.amp.GradScaler(enabled=amp)
+        model.train()
+        global_step = 0
+        running_loss = 0.0
+        running_count = 0
+        history: list[dict[str, Any]] = []
+        while global_step < max_steps:
+            for batch in train_loader:
+                image = batch["image"].to(device, non_blocking=True)
+                mask = batch["mask"].to(device, non_blocking=True)
+                optimizer.zero_grad(set_to_none=True)
+                with torch.cuda.amp.autocast(enabled=amp):
+                    logits = model(image)
+                    loss = criterion(logits, mask)
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+                scheduler.step()
+                global_step += 1
+                running_loss += float(loss.item())
+                running_count += 1
+                if global_step % int(args.log_steps) == 0 or global_step == max_steps:
+                    row = {
+                        "optimizer_step": global_step,
+                        "train_loss_window": running_loss / max(running_count, 1),
+                        "lr": float(optimizer.param_groups[0]["lr"]),
+                    }
+                    history.append(row)
+                    write_csv(output_dir / "metrics_history.csv", history)
+                    write_json(output_dir / "latest_metrics.json", row)
+                    print(json.dumps(row, sort_keys=True), flush=True)
+                    running_loss = 0.0
+                    running_count = 0
+                if global_step >= max_steps:
+                    break
+        final_metrics = evaluate(model, val_loader, criterion, device, amp)
+        save_checkpoint(output_dir / "checkpoints" / "fixed_final.pth", model, optimizer, cfg, 0, -1.0)
+        completion = {
+            "status": "completed",
+            "optimizer_steps": global_step,
+            "selection_policy": "fixed_step_no_heldout_checkpoint_selection",
+            "export_evaluation": final_metrics,
+        }
+        write_json(output_dir / "completed.json", completion)
+        print(json.dumps(completion, sort_keys=True), flush=True)
         return
 
     history = []
