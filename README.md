@@ -8,9 +8,12 @@ background / intact / damaged / destroyed
 
 项目不是只追求一个更高的 pooled 分数，而是判断模型是否真的利用灾前/灾后变化信息，在未见事件上稳定区分 `damaged` 与 `destroyed`，而不是依赖建筑轮廓、事件身份、灾种先验或类别比例捷径。
 
-> 状态快照：2026-08-18。旧 test 已降级为历史诊断；当前最新正式开发结果是
+> 状态快照：2026-08-20。旧 test 已降级为历史诊断；当前最新正式开发结果包括
 > [RQ1 paired-SAR nested CV](reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)：
 > 运行已完整结束，但 7 项冻结门槛只通过 6 项，分支按协议关闭。
+> [RQ2 model development v1](reports/stage2_v2/rq2_model_development_v1_20260818/RESULTS.md)
+> 的 42-run development pilot 已完成；三个候选均未通过冻结晋级门槛，分支按协议停止。
+> 该结果只适用于 14 个已暴露事件，不能证明 unseen-event 泛化。
 > 更完整的数据谱系和历史审计见
 > [项目全景审计](docs/PROJECT_AUDIT_20260814.md)。RQ1 开跑前的文献证据、事实核查、
 > 方法学审稿和冻结协议见
@@ -306,6 +309,7 @@ bash instruction.sh stage2_v2_strict_check_runtime
 
 - [ARS 实验方法学审查：lit-review、3W、fact-check 与 RQ1 协议](docs/ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
 - [RQ1 paired-SAR nested CV 冻结结果](reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)
+- [RQ2 model development v1 冻结开发结果](reports/stage2_v2/rq2_model_development_v1_20260818/RESULTS.md)
 - [机器可读 experiment registry](experiments/registry.json)
 - [完整项目审计与下一步建议](docs/PROJECT_AUDIT_20260814.md)
 - [Metadata-aware multi-task 正式结果](reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)

@@ -1,0 +1,661 @@
+{
+  "backfill_if_full_fails": false,
+  "candidates": [
+    {
+      "candidate": "R2_A",
+      "candidate_c2_minus_c3_event_macro_damage": 0.06054065070078851,
+      "candidate_c2_minus_c3_positive_seed_count": 1,
+      "candidate_minus_f0_damaged": 0.0024160891887134678,
+      "candidate_minus_f0_destroyed": -0.05083862796891877,
+      "candidate_minus_f0_event_macro_damage": -0.02421126939010265,
+      "candidate_minus_f0_positive_event_count": 4,
+      "candidate_minus_f0_positive_seed_count": 0,
+      "eligible": false,
+      "event_candidate_minus_f0_damage": {
+        "bata_explosion": -0.033777262458309976,
+        "beirut_explosion_2020": -0.05184353548019929,
+        "haiti_earthquake": -0.00020046921985211394,
+        "hawaii_wildfire": -0.255777363951329,
+        "la_palma_volcano": -0.02738613511570165,
+        "libya_flood": -0.12053705005290194,
+        "marshall_wildfire": 0.07284329329242313,
+        "mexico_hurricane": 0.2224123266045085,
+        "morocco_earthquake": -0.004073965443059469,
+        "myanmar_hurricane": 0.01785214622790486,
+        "noto_earthquake": 0.03177283536897195,
+        "nyiragongo_2021": -0.03984015907859273,
+        "turkey_eq_2023": -0.10346181174733801,
+        "ukraine_conflict": -0.046940620407961375
+      },
+      "gates": {
+        "candidate_c2_minus_c3_event_macro_damage_gte_0p02": true,
+        "candidate_minus_f0_damaged_gte_minus_0p005": true,
+        "candidate_minus_f0_destroyed_gte_minus_0p01": false,
+        "candidate_minus_f0_event_macro_damage_gte_0p01": false,
+        "candidate_minus_f0_positive_events_gte_8": false,
+        "worst_candidate_c2_minus_c3_grade_gte_minus_0p03": false,
+        "worst_candidate_minus_f0_grade_gte_minus_0p03": false
+      },
+      "paired_rows": [
+        {
+          "candidate_c2_minus_c3_damage": 0.13618336605456532,
+          "candidate_c2_minus_c3_grade": 0.11566937544761013,
+          "candidate_minus_f0_damage": -0.033777262458309976,
+          "candidate_minus_f0_damaged": -0.0063488730911506475,
+          "candidate_minus_f0_destroyed": -0.06120565182546933,
+          "candidate_minus_f0_grade": 0.008193318769628699,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "bata_explosion",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.008148399974919812,
+          "candidate_c2_minus_c3_grade": -0.00817452423075049,
+          "candidate_minus_f0_damage": -0.05184353548019929,
+          "candidate_minus_f0_damaged": -0.05258407370810542,
+          "candidate_minus_f0_destroyed": -0.051102997252293135,
+          "candidate_minus_f0_grade": -0.03583974883603025,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "beirut_explosion_2020",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.00011255297109952385,
+          "candidate_c2_minus_c3_grade": 0.003892393341430933,
+          "candidate_minus_f0_damage": -0.00020046921985211394,
+          "candidate_minus_f0_damaged": -0.005783192638238583,
+          "candidate_minus_f0_destroyed": 0.005382254198534357,
+          "candidate_minus_f0_grade": 0.011793513750289586,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "haiti_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.1502430005983665,
+          "candidate_c2_minus_c3_grade": 0.10820246284798762,
+          "candidate_minus_f0_damage": -0.255777363951329,
+          "candidate_minus_f0_damaged": -0.15037185093101438,
+          "candidate_minus_f0_destroyed": -0.3611828769716436,
+          "candidate_minus_f0_grade": -0.17615716306091683,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "hawaii_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.07006346928713475,
+          "candidate_c2_minus_c3_grade": 0.06416301791355644,
+          "candidate_minus_f0_damage": -0.02738613511570165,
+          "candidate_minus_f0_damaged": 0.0009322512740772815,
+          "candidate_minus_f0_destroyed": -0.05570452150548055,
+          "candidate_minus_f0_grade": -0.024623880662198783,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "la_palma_volcano",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.015890584525599452,
+          "candidate_c2_minus_c3_grade": 0.0008381993566140555,
+          "candidate_minus_f0_damage": -0.12053705005290194,
+          "candidate_minus_f0_damaged": -0.051989841313775875,
+          "candidate_minus_f0_destroyed": -0.18908425879202795,
+          "candidate_minus_f0_grade": -0.05483715706682435,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "libya_flood",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.1042583836043649,
+          "candidate_c2_minus_c3_grade": 0.28167444006292797,
+          "candidate_minus_f0_damage": 0.07284329329242313,
+          "candidate_minus_f0_damaged": 0.0026615599337855823,
+          "candidate_minus_f0_destroyed": 0.14302502665106068,
+          "candidate_minus_f0_grade": 0.03537278181234832,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "marshall_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.045850149114587346,
+          "candidate_c2_minus_c3_grade": -0.03547359723445931,
+          "candidate_minus_f0_damage": 0.2224123266045085,
+          "candidate_minus_f0_damaged": 0.4589249184116016,
+          "candidate_minus_f0_destroyed": -0.01410026520258465,
+          "candidate_minus_f0_grade": 0.15087926879501956,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "mexico_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.0003480946817534369,
+          "candidate_c2_minus_c3_grade": -0.0015616400376518569,
+          "candidate_minus_f0_damage": -0.004073965443059469,
+          "candidate_minus_f0_damaged": -0.008147930886118938,
+          "candidate_minus_f0_destroyed": 0.0,
+          "candidate_minus_f0_grade": 0.10306481673721027,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "morocco_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.0087176233954782,
+          "candidate_c2_minus_c3_grade": 0.05857130733630178,
+          "candidate_minus_f0_damage": 0.01785214622790486,
+          "candidate_minus_f0_damaged": 0.0393330009815355,
+          "candidate_minus_f0_destroyed": -0.003628708525725782,
+          "candidate_minus_f0_grade": 0.20091292839599523,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "myanmar_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.06716033694705566,
+          "candidate_c2_minus_c3_grade": 0.02614829864239998,
+          "candidate_minus_f0_damage": 0.03177283536897195,
+          "candidate_minus_f0_damaged": 0.017521314625765103,
+          "candidate_minus_f0_destroyed": 0.04602435611217877,
+          "candidate_minus_f0_grade": 0.027913492143484542,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "noto_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.36172638103227356,
+          "candidate_c2_minus_c3_grade": 0.25534532511414293,
+          "candidate_minus_f0_damage": -0.03984015907859273,
+          "candidate_minus_f0_damaged": -0.046743541409756374,
+          "candidate_minus_f0_destroyed": -0.03293677674742912,
+          "candidate_minus_f0_grade": -0.03258736604271406,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "nyiragongo_2021",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.021436888838579943,
+          "candidate_c2_minus_c3_grade": 0.013001745240246498,
+          "candidate_minus_f0_damage": -0.10346181174733801,
+          "candidate_minus_f0_damaged": -0.09834683550178427,
+          "candidate_minus_f0_destroyed": -0.10857678799289175,
+          "candidate_minus_f0_grade": -0.044014836264456736,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "turkey_eq_2023",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.034573023035724904,
+          "candidate_c2_minus_c3_grade": -0.0013579381115884637,
+          "candidate_minus_f0_damage": -0.046940620407961375,
+          "candidate_minus_f0_damaged": -0.06523165710483203,
+          "candidate_minus_f0_destroyed": -0.028649583711090755,
+          "candidate_minus_f0_grade": 0.005194028553358598,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "ukraine_conflict",
+          "seed": 42
+        }
+      ],
+      "seed_candidate_c2_minus_c3_damage": {
+        "42": 0.06054065070078851
+      },
+      "seed_candidate_minus_f0_damage": {
+        "42": -0.02421126939010265
+      },
+      "seeds": [
+        42
+      ],
+      "worst_event_candidate_c2_minus_c3_grade": -0.03547359723445931,
+      "worst_event_candidate_minus_f0_grade": -0.17615716306091683
+    },
+    {
+      "candidate": "R2_B",
+      "candidate_c2_minus_c3_event_macro_damage": 0.06239833920017327,
+      "candidate_c2_minus_c3_positive_seed_count": 1,
+      "candidate_minus_f0_damaged": -0.0031822624184533817,
+      "candidate_minus_f0_destroyed": -0.025855339250283434,
+      "candidate_minus_f0_event_macro_damage": -0.014518800834368404,
+      "candidate_minus_f0_positive_event_count": 6,
+      "candidate_minus_f0_positive_seed_count": 0,
+      "eligible": false,
+      "event_candidate_minus_f0_damage": {
+        "bata_explosion": -0.07207414857892536,
+        "beirut_explosion_2020": -0.006324489221547963,
+        "haiti_earthquake": -0.010644972572555315,
+        "hawaii_wildfire": -0.0009031274900977992,
+        "la_palma_volcano": -0.021096762294694926,
+        "libya_flood": 0.014982786223893652,
+        "marshall_wildfire": -0.06952402338805505,
+        "mexico_hurricane": 0.06605306577032673,
+        "morocco_earthquake": 0.0042265822653263325,
+        "myanmar_hurricane": 0.004118473198127831,
+        "noto_earthquake": 0.03859858297671624,
+        "nyiragongo_2021": -0.14217585656296106,
+        "turkey_eq_2023": 0.004987747953632493,
+        "ukraine_conflict": -0.013487069960343462
+      },
+      "gates": {
+        "candidate_c2_minus_c3_event_macro_damage_gte_0p02": true,
+        "candidate_minus_f0_damaged_gte_minus_0p005": true,
+        "candidate_minus_f0_destroyed_gte_minus_0p01": false,
+        "candidate_minus_f0_event_macro_damage_gte_0p01": false,
+        "candidate_minus_f0_positive_events_gte_8": false,
+        "worst_candidate_c2_minus_c3_grade_gte_minus_0p03": true,
+        "worst_candidate_minus_f0_grade_gte_minus_0p03": false
+      },
+      "paired_rows": [
+        {
+          "candidate_c2_minus_c3_damage": -0.0160241057732452,
+          "candidate_c2_minus_c3_grade": 0.09540260912462806,
+          "candidate_minus_f0_damage": -0.07207414857892536,
+          "candidate_minus_f0_damaged": -0.14163679371376364,
+          "candidate_minus_f0_destroyed": -0.002511503444087071,
+          "candidate_minus_f0_grade": -0.032121362793991914,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "bata_explosion",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.046252221130348686,
+          "candidate_c2_minus_c3_grade": 0.013694532633251877,
+          "candidate_minus_f0_damage": -0.006324489221547963,
+          "candidate_minus_f0_damaged": 0.03885967026500209,
+          "candidate_minus_f0_destroyed": -0.051508648708097994,
+          "candidate_minus_f0_grade": -0.008302310678253433,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "beirut_explosion_2020",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.011978084532052373,
+          "candidate_c2_minus_c3_grade": 0.02084331047839527,
+          "candidate_minus_f0_damage": -0.010644972572555315,
+          "candidate_minus_f0_damaged": -0.021471690889821607,
+          "candidate_minus_f0_destroyed": 0.00018174574471097743,
+          "candidate_minus_f0_grade": 0.009766281833863133,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "haiti_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.20605782236007675,
+          "candidate_c2_minus_c3_grade": 0.177289008865892,
+          "candidate_minus_f0_damage": -0.0009031274900977992,
+          "candidate_minus_f0_damaged": -0.027040631307864826,
+          "candidate_minus_f0_destroyed": 0.025234376327669117,
+          "candidate_minus_f0_grade": 0.007863854267415205,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "hawaii_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.11418375217072288,
+          "candidate_c2_minus_c3_grade": 0.07839142725433207,
+          "candidate_minus_f0_damage": -0.021096762294694926,
+          "candidate_minus_f0_damaged": -0.0001584123169524586,
+          "candidate_minus_f0_destroyed": -0.04203511227243739,
+          "candidate_minus_f0_grade": -0.0054424261205843205,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "la_palma_volcano",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.12436928017798518,
+          "candidate_c2_minus_c3_grade": 0.0843389283756687,
+          "candidate_minus_f0_damage": 0.014982786223893652,
+          "candidate_minus_f0_damaged": 0.04203907320352715,
+          "candidate_minus_f0_destroyed": -0.012073500755739819,
+          "candidate_minus_f0_grade": 0.029941939823251107,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "libya_flood",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.043869606248148146,
+          "candidate_c2_minus_c3_grade": 0.05481818190308407,
+          "candidate_minus_f0_damage": -0.06952402338805505,
+          "candidate_minus_f0_damaged": 0.0,
+          "candidate_minus_f0_destroyed": -0.1390480467761101,
+          "candidate_minus_f0_grade": -0.03420842577956329,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "marshall_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.0687003844791832,
+          "candidate_c2_minus_c3_grade": -0.02642100994801813,
+          "candidate_minus_f0_damage": 0.06605306577032673,
+          "candidate_minus_f0_damaged": 0.10584851321009374,
+          "candidate_minus_f0_destroyed": 0.02625761833055971,
+          "candidate_minus_f0_grade": 0.04717872987365783,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "mexico_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.002847062668582234,
+          "candidate_c2_minus_c3_grade": -0.005520708944734137,
+          "candidate_minus_f0_damage": 0.0042265822653263325,
+          "candidate_minus_f0_damaged": 0.008453164530652665,
+          "candidate_minus_f0_destroyed": 0.0,
+          "candidate_minus_f0_grade": -0.08605964030284446,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "morocco_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.011411651683663607,
+          "candidate_c2_minus_c3_grade": -0.0003821645170669352,
+          "candidate_minus_f0_damage": 0.004118473198127831,
+          "candidate_minus_f0_damaged": -0.00024347851452113933,
+          "candidate_minus_f0_destroyed": 0.008480424910776805,
+          "candidate_minus_f0_grade": 0.09705338700225173,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "myanmar_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.014234471366038504,
+          "candidate_c2_minus_c3_grade": 0.15814908837045058,
+          "candidate_minus_f0_damage": 0.03859858297671624,
+          "candidate_minus_f0_damaged": 0.022557408187935543,
+          "candidate_minus_f0_destroyed": 0.05463975776549694,
+          "candidate_minus_f0_grade": -0.01526216269116093,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "noto_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.2817954997746641,
+          "candidate_c2_minus_c3_grade": 0.19493751636117396,
+          "candidate_minus_f0_damage": -0.14217585656296106,
+          "candidate_minus_f0_damaged": -0.052161182138540374,
+          "candidate_minus_f0_destroyed": -0.23219053098738174,
+          "candidate_minus_f0_grade": -0.10016107162621868,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "nyiragongo_2021",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.13064259854618845,
+          "candidate_c2_minus_c3_grade": 0.04174429025476645,
+          "candidate_minus_f0_damage": 0.004987747953632493,
+          "candidate_minus_f0_damaged": 0.007764515911280162,
+          "candidate_minus_f0_destroyed": 0.0022109799959847964,
+          "candidate_minus_f0_grade": -0.021060488341032246,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "turkey_eq_2023",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.08235456995678433,
+          "candidate_c2_minus_c3_grade": 0.031091779224640015,
+          "candidate_minus_f0_damage": -0.013487069960343462,
+          "candidate_minus_f0_damaged": -0.027361830285374644,
+          "candidate_minus_f0_destroyed": 0.0003876903646876789,
+          "candidate_minus_f0_grade": 0.02125818705434457,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "ukraine_conflict",
+          "seed": 42
+        }
+      ],
+      "seed_candidate_c2_minus_c3_damage": {
+        "42": 0.06239833920017327
+      },
+      "seed_candidate_minus_f0_damage": {
+        "42": -0.014518800834368404
+      },
+      "seeds": [
+        42
+      ],
+      "worst_event_candidate_c2_minus_c3_grade": -0.02642100994801813,
+      "worst_event_candidate_minus_f0_grade": -0.10016107162621868
+    },
+    {
+      "candidate": "R2_C",
+      "candidate_c2_minus_c3_event_macro_damage": 0.04323517514919032,
+      "candidate_c2_minus_c3_positive_seed_count": 1,
+      "candidate_minus_f0_damaged": -0.016091801973399524,
+      "candidate_minus_f0_destroyed": -0.034937300517646555,
+      "candidate_minus_f0_event_macro_damage": -0.025514551245523036,
+      "candidate_minus_f0_positive_event_count": 6,
+      "candidate_minus_f0_positive_seed_count": 0,
+      "eligible": false,
+      "event_candidate_minus_f0_damage": {
+        "bata_explosion": 0.004286766075191073,
+        "beirut_explosion_2020": -0.038294317797348626,
+        "haiti_earthquake": -0.0006082518184503671,
+        "hawaii_wildfire": -0.06527288332566528,
+        "la_palma_volcano": 0.006856051785393724,
+        "libya_flood": 0.027896646644033074,
+        "marshall_wildfire": -0.02418482657502155,
+        "mexico_hurricane": 0.025331774805063836,
+        "morocco_earthquake": 0.0017428045003826031,
+        "myanmar_hurricane": -0.0022440998854206112,
+        "noto_earthquake": -0.07711308449503092,
+        "nyiragongo_2021": -0.19357518015930258,
+        "turkey_eq_2023": 0.007673418047225877,
+        "ukraine_conflict": -0.029698535238372764
+      },
+      "gates": {
+        "candidate_c2_minus_c3_event_macro_damage_gte_0p02": true,
+        "candidate_minus_f0_damaged_gte_minus_0p005": false,
+        "candidate_minus_f0_destroyed_gte_minus_0p01": false,
+        "candidate_minus_f0_event_macro_damage_gte_0p01": false,
+        "candidate_minus_f0_positive_events_gte_8": false,
+        "worst_candidate_c2_minus_c3_grade_gte_minus_0p03": false,
+        "worst_candidate_minus_f0_grade_gte_minus_0p03": false
+      },
+      "paired_rows": [
+        {
+          "candidate_c2_minus_c3_damage": 0.0652245683372858,
+          "candidate_c2_minus_c3_grade": 0.18549906672138058,
+          "candidate_minus_f0_damage": 0.004286766075191073,
+          "candidate_minus_f0_damaged": 0.03485764065799504,
+          "candidate_minus_f0_destroyed": -0.026284108507612924,
+          "candidate_minus_f0_grade": -0.020217389007206377,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "bata_explosion",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.0042771658761880105,
+          "candidate_c2_minus_c3_grade": -0.037431792698091104,
+          "candidate_minus_f0_damage": -0.038294317797348626,
+          "candidate_minus_f0_damaged": -0.029862164973080862,
+          "candidate_minus_f0_destroyed": -0.04672647062161638,
+          "candidate_minus_f0_grade": -0.047887375410211874,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "beirut_explosion_2020",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.00033131386871019207,
+          "candidate_c2_minus_c3_grade": 0.007259411651266978,
+          "candidate_minus_f0_damage": -0.0006082518184503671,
+          "candidate_minus_f0_damaged": -0.00918243193283576,
+          "candidate_minus_f0_destroyed": 0.007965928295935027,
+          "candidate_minus_f0_grade": 0.012280305704776118,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "haiti_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.29571747550488514,
+          "candidate_c2_minus_c3_grade": 0.2550273782938031,
+          "candidate_minus_f0_damage": -0.06527288332566528,
+          "candidate_minus_f0_damaged": -0.1245303642844266,
+          "candidate_minus_f0_destroyed": -0.00601540236690401,
+          "candidate_minus_f0_grade": -0.0005509488934772877,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "hawaii_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.06044574594756222,
+          "candidate_c2_minus_c3_grade": 0.07514762241309336,
+          "candidate_minus_f0_damage": 0.006856051785393724,
+          "candidate_minus_f0_damaged": 0.0001159965478547616,
+          "candidate_minus_f0_destroyed": 0.013596107022932735,
+          "candidate_minus_f0_grade": -0.006301771805067302,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "la_palma_volcano",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.09804294849204737,
+          "candidate_c2_minus_c3_grade": 0.10917642250419884,
+          "candidate_minus_f0_damage": 0.027896646644033074,
+          "candidate_minus_f0_damaged": 0.007795074941013641,
+          "candidate_minus_f0_destroyed": 0.04799821834705259,
+          "candidate_minus_f0_grade": 0.051516712978361356,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "libya_flood",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.04821461524920123,
+          "candidate_c2_minus_c3_grade": 0.05854983102055755,
+          "candidate_minus_f0_damage": -0.02418482657502155,
+          "candidate_minus_f0_damaged": 0.0,
+          "candidate_minus_f0_destroyed": -0.0483696531500431,
+          "candidate_minus_f0_grade": -0.014164042117507214,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "marshall_wildfire",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.23512653577385226,
+          "candidate_c2_minus_c3_grade": -0.12463345332485287,
+          "candidate_minus_f0_damage": 0.025331774805063836,
+          "candidate_minus_f0_damaged": 0.037803545335239344,
+          "candidate_minus_f0_destroyed": 0.012860004274888346,
+          "candidate_minus_f0_grade": 0.010561167814273895,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "mexico_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.0016786214135663955,
+          "candidate_c2_minus_c3_grade": -0.04281860729985837,
+          "candidate_minus_f0_damage": 0.0017428045003826031,
+          "candidate_minus_f0_damaged": 0.0034856090007652062,
+          "candidate_minus_f0_destroyed": 0.0,
+          "candidate_minus_f0_grade": -0.08538492552913513,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "morocco_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.013215403055863217,
+          "candidate_c2_minus_c3_grade": -0.1879586589347183,
+          "candidate_minus_f0_damage": -0.0022440998854206112,
+          "candidate_minus_f0_damaged": -0.002471322752669286,
+          "candidate_minus_f0_destroyed": -0.0020168770181719286,
+          "candidate_minus_f0_grade": -0.016022168450052943,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "myanmar_hurricane",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": -0.07352616097187,
+          "candidate_c2_minus_c3_grade": 0.16542274779549457,
+          "candidate_minus_f0_damage": -0.07711308449503092,
+          "candidate_minus_f0_damaged": -0.056211201590393084,
+          "candidate_minus_f0_destroyed": -0.09801496739966876,
+          "candidate_minus_f0_grade": -0.01709247621593224,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "noto_earthquake",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.22422124488531775,
+          "candidate_c2_minus_c3_grade": 0.15850515818093458,
+          "candidate_minus_f0_damage": -0.19357518015930258,
+          "candidate_minus_f0_damaged": -0.04089482742106272,
+          "candidate_minus_f0_destroyed": -0.34625553289754246,
+          "candidate_minus_f0_grade": -0.13643337640266429,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "nyiragongo_2021",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.12604098437643524,
+          "candidate_c2_minus_c3_grade": 0.04374786685356513,
+          "candidate_minus_f0_damage": 0.007673418047225877,
+          "candidate_minus_f0_damaged": -0.008680886833592055,
+          "candidate_minus_f0_destroyed": 0.02402772292804381,
+          "candidate_minus_f0_grade": -0.013963080823168217,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "turkey_eq_2023",
+          "seed": 42
+        },
+        {
+          "candidate_c2_minus_c3_damage": 0.011520199691426536,
+          "candidate_c2_minus_c3_grade": 0.016487204037689607,
+          "candidate_minus_f0_damage": -0.029698535238372764,
+          "candidate_minus_f0_damaged": -0.03750989432240093,
+          "candidate_minus_f0_destroyed": -0.021887176154344636,
+          "candidate_minus_f0_grade": 0.016521756118457298,
+          "damaged_present": true,
+          "destroyed_present": true,
+          "event_id": "ukraine_conflict",
+          "seed": 42
+        }
+      ],
+      "seed_candidate_c2_minus_c3_damage": {
+        "42": 0.04323517514919032
+      },
+      "seed_candidate_minus_f0_damage": {
+        "42": -0.025514551245523036
+      },
+      "seeds": [
+        42
+      ],
+      "worst_event_candidate_c2_minus_c3_grade": -0.1879586589347183,
+      "worst_event_candidate_minus_f0_grade": -0.13643337640266429
+    }
+  ],
+  "evidence_scope": "14_exposed_development_events",
+  "phase": "pilot",
+  "protocol_id": "rq2_model_development_v1.0",
+  "selected_candidate": null,
+  "status": "stopped_no_eligible_candidate"
+}

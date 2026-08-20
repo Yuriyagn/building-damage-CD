@@ -1,0 +1,82 @@
+{
+  "protocol_id": "rq2_model_development_v1.0",
+  "status": "technical_preflight_passed_internal_development_authorized",
+  "evidence_scope": "technical_preflight_only_not_model_selection",
+  "environment": {
+    "conda_env": "sam3",
+    "torch": "2.7.0+cu126",
+    "cuda_device_count": 2,
+    "gpu_model": "NVIDIA GeForce RTX 4090 D",
+    "runtime_gate": "passed"
+  },
+  "rq1_anchor_audit": {
+    "status": "verified",
+    "stage1_oof_runs": 56,
+    "stage1_oof_exports": 56,
+    "outer_folds": 7,
+    "derangement_mappings": 28,
+    "finalized_manifest_audit_sha256": "b19791aa0d3fab30c8be30a74d593fc16a86bd744a4ab9223b0cdfa97c183d80",
+    "derangement_audit_sha256": "5a661ab322451a45f61de349fb5032abe3ffe6eb582bd88d71cdd15d013588ba",
+    "stage1_queue_completed_sha256": "6df43b0412d258f5cbac2e1e897b0d32754f53d4ac0901fe0f56779c7106207b",
+    "copy_policy": "reuse_by_reference_no_bulk_copy"
+  },
+  "tests": {
+    "full_unittest_suite": {
+      "passed": 84,
+      "failed": 0
+    },
+    "rq2_tests": {
+      "passed": 14,
+      "failed": 0
+    },
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "blind_lock_template_rejected": true,
+    "synthetic_blind_package_dry_run": "passed_without_scores"
+  },
+  "model_parameters": {
+    "F0_resnet34": 24442931,
+    "R2_A_dual_resnet18": 26558579,
+    "R2_A_over_F0": 1.0865545952733737,
+    "R2_A_budget_range": [0.85, 1.15],
+    "R2_A_budget_passed": true,
+    "R2_B_hierarchical_resnet34": 24442786
+  },
+  "cuda_smoke": {
+    "R2_A": "passed",
+    "R2_B": "passed",
+    "R2_C": "passed"
+  },
+  "two_batch_overfit": {
+    "epochs": 30,
+    "minimum_relative_loss_reduction": 0.5,
+    "R2_A": {
+      "relative_loss_reduction": 0.7495898108263203,
+      "passed": true
+    },
+    "R2_B": {
+      "relative_loss_reduction": 0.8411698476256199,
+      "passed": true
+    },
+    "R2_C": {
+      "relative_loss_reduction": 0.7433485443384668,
+      "passed": true
+    }
+  },
+  "throughput_500_steps": {
+    "comparison": "same GPU, same outer-0 C2 batch and full validation",
+    "F0_elapsed_run_loop_seconds": 217.54960786597803,
+    "R2_A_elapsed_run_loop_seconds": 212.00967773690354,
+    "R2_A_over_F0_wall_time_ratio": 0.9745348650203618,
+    "maximum_ratio": 2.5,
+    "passed": true
+  },
+  "formal_training": {
+    "started": false,
+    "pilot_runs_completed": 0,
+    "blind_evaluator_lock_required": false,
+    "claim_scope": "14_exposed_events_development_only",
+    "unseen_event_generalization_claim_allowed": false
+  },
+  "artifact_root": "/home/yr/code/Building damage change detection/outputs/stage2/rq2_model_development_v1_preflight_20260818_233514"
+}
