@@ -6,17 +6,19 @@
 
 1. [主 README：实验矩阵、结果对比与当前问题](../README.md)
 2. [RQ1 paired-SAR nested CV 冻结结果](../reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)
-3. [ARS 实验方法学审查与 RQ1 协议](ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
-4. [机器可读 experiment registry](../experiments/registry.json)
-5. [Metadata-aware multi-task 正式结果](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
-6. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
-7. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
-8. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
+3. [RQ2 model development v1 冻结开发结果](../reports/stage2_v2/rq2_model_development_v1_20260818/RESULTS.md)
+4. [ARS 实验方法学审查与 RQ1 协议](ARS_EXPERIMENT_METHOD_REVIEW_20260815.md)
+5. [机器可读 experiment registry](../experiments/registry.json)
+6. [Metadata-aware multi-task 正式结果](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
+7. [项目全景、实验审计与下一步建议](PROJECT_AUDIT_20260814.md)
+8. [Stage-2 数据完整性更正](../reports/stage2_v2/DATA_INTEGRITY_CORRECTION_20260622.md)
+9. [人工复核 clean 数据集](../reports/stage2_v2/HUMAN_REVIEWED_CLEAN_DATASET_20260624.md)
 
 ## 实验协议与主要结果
 
 - [Metadata-aware multi-task v1](../reports/stage2_v2/metadata_multitask_v1_20260814/RESULTS.md)
 - [RQ1 paired-SAR nested CV](../reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/RESULTS.md)
+- [RQ2 model development v1](../reports/stage2_v2/rq2_model_development_v1_20260818/RESULTS.md)
 - [Stage-2 baseline implementation](../STAGE2_BASELINE_IMPLEMENTATION.md)
 - [Stage-1 project experience](../PROJECT_EXPERIENCE.md)
 - [Stage-2 v2 实验总报告](../reports/stage2_v2/stage2_v2_experiment_report.md)

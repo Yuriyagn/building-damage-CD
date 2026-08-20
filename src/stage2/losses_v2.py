@@ -82,6 +82,32 @@ class BuildingOnlyGradeBinaryAuxLoss(nn.Module):
         return grade_loss + self.binary_aux_weight * binary_loss
 
 
+class BuildingOnlyHierarchicalNLLLoss(nn.Module):
+    """NLL for normalized hierarchical intact/damaged/destroyed log-probabilities."""
+
+    def __init__(self, class_weights: torch.Tensor | None = None) -> None:
+        super().__init__()
+        if class_weights is None:
+            self.register_buffer("class_weights", None)
+        else:
+            if class_weights.numel() != 3:
+                raise ValueError("hierarchical class_weights must contain three values")
+            self.register_buffer("class_weights", class_weights.float())
+
+    def forward(self, log_probs: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        if log_probs.ndim != 4 or log_probs.shape[1] != 3:
+            raise ValueError(f"expected [B,3,H,W] log-probabilities, got {tuple(log_probs.shape)}")
+        if target.ndim == 4:
+            target = target.squeeze(1)
+        valid = target > 0
+        if not torch.any(valid):
+            return log_probs.sum() * 0.0
+        flat_log_probs = log_probs.permute(0, 2, 3, 1)[valid]
+        flat_target = target[valid].long() - 1
+        weights = self.class_weights.to(log_probs.device) if self.class_weights is not None else None
+        return F.nll_loss(flat_log_probs, flat_target, weight=weights)
+
+
 def build_stage2_v2_loss(cfg: dict, class_weights: torch.Tensor | None = None) -> nn.Module:
     loss_cfg = dict(cfg.get("loss", {}))
     name = str(loss_cfg.get("name", "building_only_ce")).lower()
@@ -96,8 +122,12 @@ def build_stage2_v2_loss(cfg: dict, class_weights: torch.Tensor | None = None) -
         "building_only_ce_binary_aux",
         "building_only_focal_binary_aux",
         "binary_aux",
+        "building_only_hierarchical_nll",
+        "hierarchical_nll",
     }:
         raise ValueError(f"unsupported Stage-2 v2 loss: {name}")
+    if name in {"building_only_hierarchical_nll", "hierarchical_nll"}:
+        return BuildingOnlyHierarchicalNLLLoss(class_weights=class_weights)
     grade_loss = BuildingOnlyGradeLoss(
         class_weights=class_weights,
         focal_gamma=gamma,

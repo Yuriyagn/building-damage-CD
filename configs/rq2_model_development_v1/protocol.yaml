@@ -1,0 +1,114 @@
+protocol_id: rq2_model_development_v1.0
+status: ready_internal_development
+evidence_scope: exposed_14_event_development_only_blind_confirmation_pending
+rq1_anchor:
+  commit: 004f86a8
+  protocol: rq1_paired_sar_nested_cv_v1.2
+  result: reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/summary.json
+  stage1_oof_models: 56
+  selected_steps_by_outer: [14000, 10000, 14000, 14000, 14000, 12000, 16000]
+development_run_authorization:
+  authorized_by_user: true
+  authorized_at: '2026-08-19T00:00:00+08:00'
+  blind_evaluator_lock_required: false
+  allowed_phases: [pilot, full_development]
+  claim_scope: exposed_14_event_development_only
+  unseen_event_generalization_claim_allowed: false
+external_blind_confirmation_contract:
+  required_before_internal_development: false
+  required_before_blind_scoring: true
+  current_status: not_arranged
+  minimum_new_canonical_events: 3
+  robust_claim_minimum_events: 5
+  minimum_events_with_damaged: 2
+  minimum_events_with_destroyed: 2
+  labels_withheld: true
+  written_confirmation_sha256_required: true
+  scored_submission_limit: 1
+  excluded_blind_events:
+    - california_wildfire_2025
+    - jamaica_hurricane_2025
+  lock_validator: scripts/validate_rq2_blind_evaluator_lock.py
+conditions:
+  C2: paired post-SAR
+  C3: fixed within-event deranged post-SAR
+  c3_seed: 3407
+advancement_gate:
+  technical:
+    unit_and_regression_tests_required: true
+    cuda_smoke_required: true
+    overfit_batches: 2
+    overfit_epochs: 30
+    overfit_min_relative_loss_reduction: 0.50
+    throughput_steps: 500
+    dual_stream_max_wall_time_ratio_vs_f0: 2.5
+candidates:
+  R2_A:
+    intervention: modality-specific dual ResNet18 encoders with concat/absolute-difference/prior fusion
+    model_name: dual_stream_unet_r18
+    loss_name: building_only_ce
+    sampling_strategy: default
+    trainable_parameter_ratio_floor: 0.85
+    trainable_parameter_ratio_ceiling: 1.15
+  R2_B:
+    intervention: factorized affected then damaged/destroyed hierarchical head
+    model_name: hierarchical_unet_r34
+    loss_name: building_only_hierarchical_nll
+    sampling_strategy: default
+  R2_C:
+    intervention: capped canonical-event sampling
+    model_name: unet
+    loss_name: building_only_ce
+    sampling_strategy: capped_event
+    event_sampling_alpha: 0.5
+    event_sampling_min_weight: 0.5
+    event_sampling_max_weight: 4.0
+pilot:
+  seeds: [42]
+  folds: 7
+  conditions: [C2, C3]
+  expected_runs: 42
+  gates:
+    candidate_minus_f0_event_macro_damage_min: 0.01
+    candidate_minus_f0_positive_events_min: 8
+    candidate_minus_f0_damaged_min: -0.005
+    candidate_minus_f0_destroyed_min: -0.01
+    candidate_c2_minus_c3_event_macro_damage_min: 0.02
+    worst_event_grade_delta_floor: -0.03
+  selection_order:
+    - candidate_minus_f0_event_macro_damage
+    - worst_event_grade_delta
+    - candidate_minus_f0_damaged
+    - lower_inference_cost
+  advancing_candidates: 1
+  backfill_if_full_fails: false
+full_development:
+  seeds: [42, 3407, 2026]
+  additional_runs: 28
+  gates:
+    candidate_minus_f0_event_macro_damage_min: 0.02
+    positive_seeds_min: 2
+    positive_events_min: 10
+    worst_event_grade_delta_floor: -0.01
+    candidate_minus_f0_damaged_min: 0.0
+    candidate_minus_f0_destroyed_min: 0.0
+    candidate_c2_minus_c3_event_macro_damage_min: 0.02
+    candidate_c2_minus_c3_positive_seeds_min: 2
+blind_confirmation:
+  status: optional_post_development_confirmation_not_yet_arranged
+  full_development_stage1_seed: 42
+  full_development_stage1_steps: 20000
+  full_development_stage2_steps: 14000
+  seeds: [42, 3407, 2026]
+  conditions: [C2, C3]
+  prior_threshold: 0.70
+  positive_event_rule: ceil_10E_over_14
+  bootstrap_role: descriptive_only
+  no_test_time_adaptation: true
+stopping_rule: any_failed_hard_gate_freezes_and_stops_without_hyperparameter_followup
+excluded_methods:
+  - metadata_auxiliary
+  - group_dro
+  - cross_attention
+  - model_combination
+  - backbone_sweep

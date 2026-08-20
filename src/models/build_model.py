@@ -83,6 +83,27 @@ def build_model(cfg: dict, no_pretrained: bool = False) -> nn.Module:
 
         return build_external_fsgnet(model_cfg, no_pretrained=no_pretrained)
 
+    if name in {"dual_stream_unet_r18", "rq2_dual_stream_unet_r18"}:
+        from .rq2_model_development import DualStreamUNet
+
+        return DualStreamUNet(
+            encoder_name=str(model_cfg.get("encoder", "resnet18")),
+            encoder_weights=weights,
+            in_channels=in_channels,
+            out_channels=out_channels,
+        )
+
+    if name in {"hierarchical_unet_r34", "rq2_hierarchical_unet_r34"}:
+        from .rq2_model_development import HierarchicalGradeUNet
+
+        if out_channels != 3:
+            raise ValueError("hierarchical_unet_r34 exposes three normalized grade logits")
+        return HierarchicalGradeUNet(
+            encoder_name=str(model_cfg.get("encoder", "resnet34")),
+            encoder_weights=weights,
+            in_channels=in_channels,
+        )
+
     try:
         import segmentation_models_pytorch as smp
     except Exception:

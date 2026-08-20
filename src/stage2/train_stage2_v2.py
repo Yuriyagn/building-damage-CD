@@ -303,6 +303,93 @@ def build_sampler(dataset: Stage2V2Dataset, alpha: float, seed: int) -> Weighted
     return WeightedRandomSampler(weights, num_samples=len(dataset), replacement=True, generator=generator)
 
 
+def build_capped_event_sampler(
+    dataset: Stage2V2Dataset,
+    *,
+    alpha: float,
+    min_weight: float,
+    max_weight: float,
+    seed: int,
+) -> tuple[WeightedRandomSampler, dict[str, Any]]:
+    """Build the frozen RQ2-C sqrt event sampler with auditable caps."""
+
+    if alpha <= 0:
+        raise ValueError("capped_event requires event_sampling_alpha > 0")
+    if min_weight <= 0 or max_weight < min_weight:
+        raise ValueError("invalid capped_event weight bounds")
+    counts = Counter(str(row.get("event_id", "") or "unknown") for row in dataset.rows)
+    if not counts:
+        raise ValueError("capped_event requires a non-empty dataset")
+    median_count = float(np.median(list(counts.values())))
+    raw_by_event = {
+        event_id: float((median_count / count) ** alpha)
+        for event_id, count in counts.items()
+    }
+    clipped_by_event = {
+        event_id: float(np.clip(weight, min_weight, max_weight))
+        for event_id, weight in raw_by_event.items()
+    }
+    raw_sample_weights = np.asarray(
+        [clipped_by_event[str(row.get("event_id", "") or "unknown")] for row in dataset.rows],
+        dtype=np.float64,
+    )
+    normalized_sample_weights = raw_sample_weights / float(raw_sample_weights.mean())
+    weight_tensor = torch.tensor(normalized_sample_weights, dtype=torch.double)
+    audit_generator = torch.Generator().manual_seed(int(seed))
+    first_epoch_indices = torch.multinomial(
+        weight_tensor,
+        num_samples=len(dataset),
+        replacement=True,
+        generator=audit_generator,
+    ).tolist()
+    first_epoch_counts = Counter(
+        str(dataset.rows[index].get("event_id", "") or "unknown")
+        for index in first_epoch_indices
+    )
+    sampler = WeightedRandomSampler(
+        weight_tensor,
+        num_samples=len(dataset),
+        replacement=True,
+        generator=torch.Generator().manual_seed(int(seed)),
+    )
+    event_rows = []
+    total_weight = float(weight_tensor.sum())
+    for event_id in sorted(counts):
+        per_image_weight = float(
+            normalized_sample_weights[
+                next(
+                    index
+                    for index, row in enumerate(dataset.rows)
+                    if str(row.get("event_id", "") or "unknown") == event_id
+                )
+            ]
+        )
+        expected_draws = len(dataset) * counts[event_id] * per_image_weight / total_weight
+        event_rows.append(
+            {
+                "event_id": event_id,
+                "image_count": int(counts[event_id]),
+                "raw_per_image_weight": raw_by_event[event_id],
+                "clipped_per_image_weight": clipped_by_event[event_id],
+                "normalized_per_image_weight": per_image_weight,
+                "expected_draw_count": float(expected_draws),
+                "first_epoch_draw_count": int(first_epoch_counts[event_id]),
+            }
+        )
+    return sampler, {
+        "strategy": "capped_event",
+        "sampling_unit": "canonical_event",
+        "replacement": True,
+        "num_samples_per_epoch": len(dataset),
+        "seed": int(seed),
+        "alpha": float(alpha),
+        "min_weight": float(min_weight),
+        "max_weight": float(max_weight),
+        "median_event_count": median_count,
+        "events": event_rows,
+    }
+
+
 class EventClassBalancedSampler(Sampler[tuple[int, int]]):
     """Sample an (event, class) group uniformly, then crop that class in one group image."""
 
@@ -844,6 +931,16 @@ def main() -> None:
             min_pixels_per_image=int(train_cfg.get("event_class_min_pixels_per_image", 64)),
             min_images_per_group=int(train_cfg.get("event_class_min_images_per_group", 2)),
             classes=[int(value) for value in train_cfg.get("event_class_classes", [1, 2, 3])],
+        )
+    elif sampling_strategy == "capped_event":
+        if float(train_cfg.get("disaster_sampling_alpha", 0.0)) > 0:
+            raise ValueError("capped_event is incompatible with disaster_sampling_alpha > 0")
+        sampler, sampler_info = build_capped_event_sampler(
+            train_ds,
+            alpha=float(train_cfg.get("event_sampling_alpha", 0.5)),
+            min_weight=float(train_cfg.get("event_sampling_min_weight", 0.5)),
+            max_weight=float(train_cfg.get("event_sampling_max_weight", 4.0)),
+            seed=seed,
         )
     elif sampling_strategy in {"default", "none", "disaster_balanced"}:
         sampler = build_sampler(train_ds, float(train_cfg.get("disaster_sampling_alpha", 0.0)), seed)

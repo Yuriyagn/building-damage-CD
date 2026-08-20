@@ -1,0 +1,22 @@
+{
+  "protocol_id": "rq2_model_development_v1.0",
+  "status": "accepted",
+  "evaluator": "REPLACE_WITH_CUSTODIAN_NAME",
+  "accepted_at": "2099-01-01T00:00:00Z",
+  "written_confirmation_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_count": 5,
+  "event_ids_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "input_manifest_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "hidden_labels_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "metric_script_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "labels_withheld": true,
+  "pixel_semantic_evaluation": true,
+  "damaged_event_count": 2,
+  "destroyed_event_count": 2,
+  "geospatial_overlap_audit": "custodian_attested_passed",
+  "excluded_event_overlap": false,
+  "format_dry_run_limit": 1,
+  "scored_submission_limit": 1,
+  "resubmission_policy": "only_if_no_score_was_computed_or_disclosed",
+  "notes": "Template only. Zero hashes are rejected by the formal validator."
+}
