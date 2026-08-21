@@ -1,0 +1,24 @@
+amendment_id: rq3_damage_evidence_decomposition_unlocked_dev_v1.0
+parent_protocol_id: rq3_damage_evidence_decomposition_v1.0
+accepted_at: 2026-08-20
+authority: user_explicit_instruction
+decision: waive_blind_evaluator_lock_for_exposed_development
+execution_class: exposed_development_only
+allowed_phases: [pilot, full]
+blind_evaluator_lock_required: false
+unchanged_controls:
+  - seven_frozen_outer_folds
+  - frozen_stage1_oof_priors
+  - frozen_selected_steps
+  - frozen_c3_derangements
+  - single_factor_order
+  - preregistered_development_gates
+claim_policy:
+  development_screening_evidence: allowed
+  independent_blind_confirmation: forbidden
+  unseen_event_robustness: forbidden
+  deployment_readiness: forbidden
+reason: >-
+  No third-party blind evaluator is currently available. The user explicitly
+  authorized proceeding with the existing 14 exposed events as development-only
+  evidence. A future blind evaluation, if obtained, must be reported separately.

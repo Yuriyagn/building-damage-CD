@@ -104,6 +104,13 @@ def build_model(cfg: dict, no_pretrained: bool = False) -> nn.Module:
             in_channels=in_channels,
         )
 
+    if name in {"rq3_damage_evidence", "damage_evidence_decomposition"}:
+        from .rq3_damage_evidence import build_rq3_damage_evidence
+
+        model = build_rq3_damage_evidence(model_cfg, no_pretrained=no_pretrained)
+        model.rq3_config = dict(cfg.get("rq3", {}))
+        return model
+
     try:
         import segmentation_models_pytorch as smp
     except Exception:

@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "rq3_damage_evidence_decomposition_v1_20260820",
+  "protocol_id": "rq3_damage_evidence_decomposition_v1.0",
+  "status": "failed",
+  "execution_status": "completed_with_nonfinite_checkpoints",
+  "passed": false,
+  "decision": "freeze_e1_technical_failure_do_not_promote",
+  "evidence_scope": "14_exposed_events_development_only_no_blind_confirmation",
+  "completed_at": "2026-08-21T00:56:45+08:00",
+  "elapsed_from_launch": "4h20m30s",
+  "completeness": {
+    "expected_runs": 14,
+    "completed_runs": 14,
+    "queue_failures": 0,
+    "evaluation_metrics_files": 14,
+    "per_event_metric_files": 14
+  },
+  "absolute_event_macro_means": {
+    "F0_C2": {
+      "damage_f1": 0.19349946316140088,
+      "grade_f1": 0.3509718498611095,
+      "intact_f1": 0.6659166232605268,
+      "damaged_f1": 0.14476370818303055,
+      "destroyed_f1": 0.2422352181397712,
+      "binary_damage_f1": 0.3355212378747084,
+      "predicted_gate_4class_macro_f1": 0.44536432288127176
+    },
+    "E1_C2": {
+      "damage_f1": 0.0,
+      "grade_f1": 0.27436237827207294,
+      "intact_f1": 0.8230871348162189,
+      "damaged_f1": 0.0,
+      "destroyed_f1": 0.0,
+      "binary_damage_f1": 0.0,
+      "predicted_gate_4class_macro_f1": 0.3954254289005511
+    },
+    "E1_C3": {
+      "damage_f1": 0.0,
+      "grade_f1": 0.27436237827207294,
+      "intact_f1": 0.8230871348162189,
+      "damaged_f1": 0.0,
+      "destroyed_f1": 0.0,
+      "binary_damage_f1": 0.0,
+      "predicted_gate_4class_macro_f1": 0.3954254289005511
+    }
+  },
+  "pilot_gates": {
+    "anchor_relative_event_macro_damage": {"value": -0.19349946316140088, "threshold": 0.01, "passed": false},
+    "damaged_delta": {"value": -0.14476370818303055, "threshold": 0.005, "passed": false},
+    "destroyed_delta": {"value": -0.2422352181397712, "threshold": -0.01, "passed": false},
+    "improved_event_count": {"value": 0, "threshold": 8, "passed": false},
+    "c2_minus_c3_damage": {"value": 0.0, "threshold": 0.02, "passed": false},
+    "worst_event_grade_vs_anchor": {"value": -0.37917973339647804, "threshold": -0.03, "passed": false, "event_id": "hawaii_wildfire"},
+    "worst_event_grade_vs_c3": {"value": 0.0, "threshold": -0.03, "passed": true, "interpretation": "nominal_only_both_conditions_collapsed"},
+    "overall_damage_vs_original_f0": {"value": -0.2498866478167903, "threshold": 0.0, "passed": false, "aggregation": "mean_of_seven_fold_level_metrics_json_damage_macro_f1"}
+  },
+  "numerical_integrity": {
+    "verdict": "technical_failure_nonfinite",
+    "runs_with_nonfinite_final_train_loss": 14,
+    "runs_with_nonfinite_final_val_loss": 14,
+    "first_reported_nan_step_counts": {"250": 2, "500": 11, "750": 1},
+    "checkpoints_scanned": 14,
+    "checkpoints_with_nonfinite_model_state": 14,
+    "model_state_tensor_count_per_checkpoint": 280,
+    "nan_tensor_count_per_checkpoint": 232,
+    "model_state_element_count_per_checkpoint": 24462084,
+    "nan_element_count_per_checkpoint": 24461603,
+    "nan_element_fraction_per_checkpoint": 0.9999803360150323,
+    "predicted_damage_pixels": 0,
+    "true_damage_pixels": 99417491,
+    "c2_c3_per_event_files_byte_identical_for_all_folds": true,
+    "root_cause": "not_localized",
+    "known_completion_contract_gap": "training/evaluation completion checks validate markers, steps, file presence and row counts but do not reject nonfinite losses, logits, metrics or checkpoint tensors"
+  },
+  "preflight_context": {
+    "two_batch_30_step_overfit_passed": true,
+    "two_batch_loss_reduction": 0.6809933842453876,
+    "throughput_500_step_wall_time_ratio_e1_over_f0": 1.1513097740290372,
+    "interpretation": "short-horizon preflight did not detect divergence beginning at 250-750 formal optimizer steps"
+  },
+  "provenance": {
+    "git_commit_at_run": "31a1adc37087928eecdf6d973634bfbf7f7d408e",
+    "run_source_tree_sha256": "224ca5ab349be44ae64c976f1b1298d2c3c97f6746ab6318926174dfe14969f3",
+    "run_tracked_diff_sha256": "6aedaa9e3f80dadcaf64fbdc0fb912bfd9068c4222619c610d6d0b03dea59d3f",
+    "pilot_completed_sha256": "e160ec54268f213287a09b609c5342763823a53cd0d146f1015f612846db6fd3",
+    "queue_state_sha256": "88948acc4d8e0dc4106b330bd98cf6830ee7fecbf6ed5f18224924e1b243b142",
+    "protocol_sha256": "1d9f50d58c34fc09aa315bd4f69244c670538475617cd01189c1c326ca7d03b4",
+    "development_amendment_sha256": "d4e7786776dae5a40f369838d65e050c46cf5e5ebabd52c1659d2dc573ab2731",
+    "artifact_verification": "ANALYZED",
+    "independent_rerun": false
+  },
+  "claim_boundary": {
+    "supported": [
+      "The 14-run E1 queue and evaluation export completed mechanically.",
+      "The produced E1 checkpoints are numerically invalid and must not be promoted.",
+      "The current completion validator can accept nonfinite experiments as complete."
+    ],
+    "not_supported": [
+      "Instance-level supervision is intrinsically harmful or ineffective.",
+      "Paired SAR contains no damage evidence.",
+      "E1 is a valid negative model comparison.",
+      "Independent unseen-event generalization.",
+      "Deployment readiness."
+    ]
+  },
+  "next_action": "add fail-closed finite-value checks, localize the numerical fault with a non-score-bearing single-fold stability diagnostic, then either rerun the unchanged E1 pilot after a numerically equivalent fix or preregister a new protocol if the scientific recipe changes"
+}

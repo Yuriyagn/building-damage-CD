@@ -11,6 +11,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 from .common import get_metadata, read_jsonl, resolve_data_path, resolve_manifest
+from .rq3_components import predicted_prior_components
 
 
 DEFAULT_OGSR_TEXTURE_FEATURE_KEYS = (
@@ -84,6 +85,11 @@ class Stage2DamageDataset(Dataset):
         rotate90: bool = False,
         ogsr_feature_root: str | Path | None = None,
         ogsr_feature_keys: list[str] | tuple[str, ...] | None = None,
+        rq3_components: bool = False,
+        rq3_gate_threshold: float = 0.6,
+        rq3_min_component_area: int = 4,
+        rq3_label_purity: float = 0.8,
+        sar_calibration_file: str | Path | None = None,
         limit: int | None = None,
     ) -> None:
         self.data_root = Path(data_root)
@@ -107,6 +113,12 @@ class Stage2DamageDataset(Dataset):
         self.ogsr_feature_root = Path(ogsr_feature_root) if ogsr_feature_root else None
         self.ogsr_feature_keys = tuple(ogsr_feature_keys or DEFAULT_OGSR_TEXTURE_FEATURE_KEYS)
         self._ogsr_feature_index = self._load_ogsr_feature_index()
+        self.rq3_components = bool(rq3_components)
+        self.rq3_gate_threshold = float(rq3_gate_threshold)
+        self.rq3_min_component_area = int(rq3_min_component_area)
+        self.rq3_label_purity = float(rq3_label_purity)
+        self.sar_calibration_file = Path(sar_calibration_file) if sar_calibration_file else None
+        self.sar_calibration = self._load_sar_calibration()
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -136,6 +148,7 @@ class Stage2DamageDataset(Dataset):
             sar, prior, target, pre, ogsr_features = self._augment(sar, prior, target, pre, ogsr_features)
 
         sar_f = sar.astype(np.float32) / 255.0
+        sar_f = self._calibrate_sar(sar_f, row)
         prior_f = prior.astype(np.float32)
         sar_grad = self._sar_gradient(sar_f)
         normalized_mode = self.input_mode.replace("-", "_")
@@ -274,8 +287,112 @@ class Stage2DamageDataset(Dataset):
             item["ogsr_features"] = torch.from_numpy(
                 np.ascontiguousarray(np.transpose(ogsr_features.astype(np.float32), (2, 0, 1)))
             ).float()
+        if self.rq3_components:
+            components = predicted_prior_components(
+                prior_f,
+                target,
+                threshold=self.rq3_gate_threshold,
+                min_area=self.rq3_min_component_area,
+                label_purity=self.rq3_label_purity,
+            )
+            item.update(
+                {
+                    "rq3_component_map": torch.from_numpy(
+                        np.ascontiguousarray(components.component_map)
+                    ).long(),
+                    "rq3_instance_valid_mask": torch.from_numpy(
+                        np.ascontiguousarray(components.valid_loss_mask)
+                    ).bool(),
+                    "rq3_component_count": int(components.component_count),
+                    "rq3_valid_component_count": int(components.valid_component_count),
+                    "rq3_ambiguous_component_count": int(
+                        components.ambiguous_component_count
+                    ),
+                }
+            )
+        item.update(self._sar_metadata(row))
         item.update(get_metadata(row))
         return item
+
+    def _load_sar_calibration(self) -> dict[str, Any] | None:
+        if self.sar_calibration_file is None:
+            return None
+        payload = json.loads(self.sar_calibration_file.read_text(encoding="utf-8"))
+        if payload.get("schema_version") != "rq3_sar_calibration_v1":
+            raise ValueError(f"invalid SAR calibration schema: {self.sar_calibration_file}")
+        if "global" not in payload:
+            raise ValueError("SAR calibration requires global fallback statistics")
+        return payload
+
+    @staticmethod
+    def _sar_metadata(row: dict[str, Any]) -> dict[str, Any]:
+        provenance = row.get("sar_provenance")
+        if not isinstance(provenance, dict):
+            provenance = {}
+
+        def text_value(name: str, fallback: str = "unknown") -> str:
+            value = provenance.get(name, row.get(f"sar_{name}", fallback))
+            return str(value) if value not in {None, ""} else fallback
+
+        def float_value(name: str) -> float:
+            value = provenance.get(name, row.get(f"sar_{name}"))
+            if value is None and name == "incidence_angle":
+                value = provenance.get("incidence_angle_deg", row.get("sar_incidence_angle_deg"))
+            if value is None and name == "gsd":
+                value = provenance.get("gsd_m", row.get("sar_gsd_m"))
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                return float("nan")
+
+        return {
+            "sar_provider": text_value("provider"),
+            "sar_platform": text_value("platform"),
+            "sar_mode": text_value("mode"),
+            "sar_polarization": text_value("polarization"),
+            "sar_product_type": text_value("product_type"),
+            "sar_acquisition_time": text_value("acquisition_time"),
+            "sar_metadata_confidence": text_value("mapping_confidence", "unavailable"),
+            "sar_incidence_angle": float_value("incidence_angle"),
+            "sar_gsd": float_value("gsd"),
+        }
+
+    @staticmethod
+    def _calibration_key(row: dict[str, Any]) -> tuple[str, str]:
+        metadata = Stage2DamageDataset._sar_metadata(row)
+        group = "|".join(
+            [
+                str(metadata["sar_provider"]),
+                str(metadata["sar_mode"]),
+                str(metadata["sar_polarization"]),
+            ]
+        )
+        return group, str(metadata["sar_provider"])
+
+    def _calibrate_sar(self, sar_f: np.ndarray, row: dict[str, Any]) -> np.ndarray:
+        if self.sar_calibration is None:
+            return sar_f
+        group, provider = self._calibration_key(row)
+        stats = self.sar_calibration.get("groups", {}).get(group)
+        if stats is None:
+            stats = self.sar_calibration.get("providers", {}).get(provider)
+        if stats is None:
+            stats = self.sar_calibration["global"]
+        median = float(stats["median"])
+        mad = float(stats["mad"])
+        modulation = dict(self.sar_calibration.get("continuous_modulation", {}) or {})
+        metadata = self._sar_metadata(row)
+        for value_key, reference_key, coefficient_key in (
+            ("sar_incidence_angle", "incidence_angle_reference", "incidence_angle_coefficient"),
+            ("sar_gsd", "gsd_reference", "gsd_coefficient"),
+        ):
+            value = float(metadata[value_key])
+            reference = modulation.get(reference_key)
+            coefficient = float(modulation.get(coefficient_key, 0.0))
+            if np.isfinite(value) and reference is not None:
+                median += coefficient * (value - float(reference))
+        calibrated = (sar_f.astype(np.float32) - median) / (1.4826 * mad + 1e-6)
+        return np.clip(calibrated, -5.0, 5.0).astype(np.float32)
 
     def _uses_pre_image(self) -> bool:
         return "pre" in self.input_mode.replace("-", "_").split("_")
