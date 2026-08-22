@@ -1,0 +1,55 @@
+protocol_id: rq3_damage_evidence_decomposition_v1.0
+created_at: 2026-08-20
+target: pixel_semantic_four_class
+anchor: F0
+factor_order: [E1_instance, E2_wavelet, E3_sensor, E4_reliability]
+formal_execution_requires_blind_lock: true
+frozen:
+  outer_folds: 7
+  stage1_oof_priors: 56
+  seeds: [42, 3407, 2026]
+  selected_steps: {0: 14000, 1: 10000, 2: 14000, 3: 14000, 4: 14000, 5: 12000, 6: 16000}
+  c3_mapping: rq1_fixed_within_event_derangement
+components:
+  connectivity: 4
+  min_area_pixels: 4
+  label_purity: 0.8
+  geometry_source: event_excluded_oof_building_prior
+  validation_or_inference_oracle_geometry: forbidden
+pilot:
+  conditions: [C2, C3]
+  seeds: [42]
+  expected_runs: 14
+  gates:
+    anchor_relative_event_macro_damage_min: 0.01
+    damaged_delta_min: 0.005
+    destroyed_delta_min: -0.01
+    improved_event_count_min: 8
+    c2_minus_c3_damage_min: 0.02
+    worst_event_grade_vs_anchor_min: -0.03
+    worst_event_grade_vs_c3_min: -0.03
+    overall_damage_vs_original_f0_min: 0.0
+full:
+  conditions: [C1, C2, C3]
+  seeds: [42, 3407, 2026]
+  expected_runs: 63
+  gates:
+    anchor_relative_damage_min: 0.02
+    damaged_delta_min: 0.01
+    destroyed_delta_min: 0.0
+    positive_seed_count_min: 2
+    positive_event_count_min: 10
+    c2_minus_c3_damage_min: 0.02
+    positive_c2_minus_c3_seed_count_min: 2
+    c2_minus_c1_damage_min: 0.01
+    worst_event_grade_vs_anchor_min: -0.01
+    worst_event_grade_vs_c3_min: -0.01
+blind:
+  target_event_count: 5
+  minimum_event_count: 3
+  robust_claim_minimum_event_count: 5
+  improved_event_fraction_min: 0.7
+  excluded_events: [california_wildfire_2025, jamaica_hurricane_2025]
+  format_dry_run_limit: 1
+  scored_submission_limit: 1
+failure_policy: freeze_factor_and_return_to_latest_passed_anchor

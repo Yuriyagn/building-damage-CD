@@ -45,6 +45,12 @@ from stage2.metadata_multitask import (  # noqa: E402
     validate_disaster_classes,
 )
 from stage2.metrics_v2 import GroupedV2Meters, Stage2V2MeterBundle  # noqa: E402
+from stage2.rq3_runtime import (  # noqa: E402
+    forward_stage2_model,
+    reliability_auxiliary_loss,
+    stage2_damage_loss,
+)
+from stage2.rq3_components import predicted_prior_components  # noqa: E402
 
 
 CHECKPOINT_METRICS = {
@@ -234,6 +240,9 @@ def make_dataset(
     }
     split_offset = {"train": 0, "val": 10_000, "test": 20_000}[split]
     permutation_seed = int(dcfg.get("sar_shuffle_seed", seed))
+    model_factors = {
+        str(value).lower() for value in dict(cfg.get("model", {})).get("factors", [])
+    }
     return Stage2V2Dataset(
         data_root=data_root,
         manifest=str(dcfg[f"{split}_manifest"]),
@@ -247,9 +256,19 @@ def make_dataset(
         rotate90=bool(acfg.get("rotate90", True)),
         ogsr_feature_root=dcfg.get("ogsr_feature_root"),
         ogsr_feature_keys=dcfg.get("ogsr_feature_keys"),
+        rq3_components=bool(model_factors & {"instance", "reliability"}),
+        rq3_gate_threshold=float(dcfg.get("gate_threshold", 0.6)),
+        rq3_min_component_area=int(dcfg.get("rq3_min_component_area", 4)),
+        rq3_label_purity=float(dcfg.get("rq3_label_purity", 0.8)),
+        sar_calibration_file=dcfg.get("sar_calibration_file"),
         sar_shuffle_mode=str(dcfg.get("sar_shuffle_mode", "paired")),
         sar_shuffle_seed=permutation_seed + split_offset,
         sar_permutation_file=dcfg.get(f"{split}_sar_permutation_file") or dcfg.get("sar_permutation_file"),
+        rq3_reliability_permutation_file=(
+            dcfg.get("train_rq3_reliability_permutation_file")
+            if train and "reliability" in model_factors
+            else None
+        ),
         sar_singleton_policy=str(dcfg.get("sar_singleton_policy", "error")),
         cache_items=cache_items,
         limit=limit,
@@ -268,13 +287,35 @@ def compute_class_weights(dataset: Stage2V2Dataset, cfg: dict[str, Any]) -> tupl
         return None, {"strategy": "none", "class_weights": None}
 
     counts = np.zeros(3, dtype=np.int64)
+    instance_supervision = "instance" in {
+        str(value).lower() for value in dict(cfg.get("model", {})).get("factors", [])
+    }
     for row in tqdm(dataset.rows, desc="class_weights", leave=False):
-        path = Path(str(row["mask_multiclass"]))
-        if not path.is_absolute():
-            path = dataset.data_root / path
-        mask = np.asarray(Image.open(path).convert("L"), dtype=np.uint8)
-        bincount = np.bincount(mask.reshape(-1), minlength=4)[1:4]
-        counts += bincount.astype(np.int64)
+        if instance_supervision:
+            mask = dataset.load_target(row)
+            prior = dataset.load_prior(row)
+            components = predicted_prior_components(
+                prior,
+                mask,
+                threshold=dataset.rq3_gate_threshold,
+                min_area=dataset.rq3_min_component_area,
+                label_purity=dataset.rq3_label_purity,
+            )
+            for component_id in range(1, components.component_count + 1):
+                region = components.component_map == component_id
+                if not np.any(components.valid_loss_mask[region]):
+                    continue
+                labels = mask[region]
+                labels = labels[(labels >= 1) & (labels <= 3)]
+                if labels.size:
+                    counts[int(np.argmax(np.bincount(labels, minlength=4)[1:4]))] += 1
+        else:
+            path = Path(str(row["mask_multiclass"]))
+            if not path.is_absolute():
+                path = dataset.data_root / path
+            mask = np.asarray(Image.open(path).convert("L"), dtype=np.uint8)
+            bincount = np.bincount(mask.reshape(-1), minlength=4)[1:4]
+            counts += bincount.astype(np.int64)
     frequencies = counts.astype(np.float64) / max(float(counts.sum()), 1.0)
     nonzero = frequencies[frequencies > 0]
     median = float(np.median(nonzero)) if len(nonzero) else 1.0
@@ -286,8 +327,9 @@ def compute_class_weights(dataset: Stage2V2Dataset, cfg: dict[str, Any]) -> tupl
     weights = torch.tensor(weights_np, dtype=torch.float32)
     return weights, {
         "strategy": strategy,
-        "building_pixel_counts": counts.astype(int).tolist(),
-        "building_frequencies": frequencies.tolist(),
+        "supervision_unit": "predicted_component" if instance_supervision else "building_pixel",
+        "building_pixel_counts" if not instance_supervision else "valid_component_counts": counts.astype(int).tolist(),
+        "building_frequencies" if not instance_supervision else "valid_component_frequencies": frequencies.tolist(),
         "median_frequency": median,
         "max_class_weight": max_weight,
         "class_weights": weights.tolist(),
@@ -557,9 +599,10 @@ def train_one_epoch(
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            output = model(image)
+            output = forward_stage2_model(model, image, batch, device)
             logits, disaster_logits = unpack_model_output(output)
-            damage_loss = criterion(logits, target)
+            damage_loss = stage2_damage_loss(criterion, output, target)
+            reliability_loss = reliability_auxiliary_loss(output, batch, device)
             disaster_loss, disaster_targets = _disaster_loss_for_batch(
                 disaster_logits,
                 batch,
@@ -568,6 +611,12 @@ def train_one_epoch(
                 disaster_label_map,
             )
             loss = damage_loss
+            if reliability_loss is not None:
+                loss = loss + float(
+                    dict(getattr(model, "rq3_config", {}) or {}).get(
+                        "reliability_loss_weight", 0.1
+                    )
+                ) * reliability_loss
             if disaster_loss is not None:
                 loss = loss + float(disaster_weight) * disaster_loss
         if collect_metrics and batch_index == 0 and disaster_loss is not None:
@@ -676,13 +725,20 @@ def evaluate(
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            output = model(image)
+            output = forward_stage2_model(model, image, batch, device)
             logits, disaster_logits = unpack_model_output(output)
-            damage_loss = criterion(logits, target)
+            damage_loss = stage2_damage_loss(criterion, output, target)
+            reliability_loss = reliability_auxiliary_loss(output, batch, device)
             disaster_loss, disaster_targets = _disaster_loss_for_batch(
                 disaster_logits, batch, disaster_criterion, device, None
             )
             loss = damage_loss
+            if reliability_loss is not None:
+                loss = loss + float(
+                    dict(getattr(model, "rq3_config", {}) or {}).get(
+                        "reliability_loss_weight", 0.1
+                    )
+                ) * reliability_loss
             if disaster_loss is not None:
                 loss = loss + float(disaster_weight) * disaster_loss
         batch_size = image.shape[0]

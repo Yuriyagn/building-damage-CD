@@ -32,6 +32,7 @@ from stage2.metrics_v2 import (  # noqa: E402
     Stage2V2MeterBundle,
     summarize_event_generalization,
 )
+from stage2.rq3_runtime import forward_stage2_model  # noqa: E402
 
 
 COLORS = {
@@ -66,6 +67,9 @@ def make_dataset(
     dcfg = dict(cfg.get("dataset", {}))
     split_offset = {"train": 0, "val": 10_000, "test": 20_000}[split]
     permutation_seed = int(dcfg.get("sar_shuffle_seed", seed))
+    model_factors = {
+        str(value).lower() for value in dict(cfg.get("model", {})).get("factors", [])
+    }
     return Stage2V2Dataset(
         data_root=data_root,
         manifest=str(dcfg[f"{split}_manifest"]),
@@ -75,6 +79,11 @@ def make_dataset(
         crop_size=None,
         ogsr_feature_root=dcfg.get("ogsr_feature_root"),
         ogsr_feature_keys=dcfg.get("ogsr_feature_keys"),
+        rq3_components=bool(model_factors & {"instance", "reliability"}),
+        rq3_gate_threshold=float(dcfg.get("gate_threshold", 0.6)),
+        rq3_min_component_area=int(dcfg.get("rq3_min_component_area", 4)),
+        rq3_label_purity=float(dcfg.get("rq3_label_purity", 0.8)),
+        sar_calibration_file=dcfg.get("sar_calibration_file"),
         sar_shuffle_mode=str(dcfg.get("sar_shuffle_mode", "paired")),
         sar_shuffle_seed=permutation_seed + split_offset,
         sar_permutation_file=dcfg.get(f"{split}_sar_permutation_file") or dcfg.get("sar_permutation_file"),
@@ -200,7 +209,7 @@ def main() -> None:
     for batch in tqdm(loader, desc=f"test_{args.split}"):
         image = batch["image"].to(device, non_blocking=True)
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
-            output = model(image)
+            output = forward_stage2_model(model, image, batch, device)
             logits, disaster_logits = unpack_model_output(output)
         if disaster_logits is not None:
             disaster_targets = encode_disaster_types(

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-08-20T13:50:10+08:00",
+  "updated_at": "2026-08-21T19:59:24+08:00",
   "entries": [
     {
       "experiment_id": "metadata_multitask_v1_20260814",
@@ -466,6 +466,261 @@
           "claim": "The RQ2 pilot generalizes to independent blind events or is deployment-ready.",
           "verdict": "PROVENANCE_INSUFFICIENT",
           "basis": "All 14 labeled events are exposed development data and no third-party blind evaluation occurred."
+        }
+      ]
+    },
+    {
+      "experiment_id": "rq3_damage_evidence_decomposition_v1_20260820",
+      "title": "Damage evidence decomposition with explicitly amended exposed-development screening",
+      "research_question": "Can instance supervision, spatial-frequency SAR evidence, acquisition-conditioned normalization, or reliability gating suppress event-level SAR failures without losing paired-SAR damage evidence?",
+      "hypothesis": "At least one bounded factor will pass the frozen event-macro, class, negative-control and worst-event gates before independent blind confirmation.",
+      "status": "failed",
+      "provenance_status": "complete",
+      "datasets": [
+        "DisasterM3 optical-SAR minimal v0.2",
+        "BRIGHT exposed 14-event development set"
+      ],
+      "manifests_and_audits": [
+        {
+          "path": "reports/stage2_v2/rq1_paired_sar_nested_cv_v1_20260818/summary.json",
+          "sha256": "a8e21d1007f6c369bb8e04ded4fd0ee84544bf595b99ac7b356874bc7c2ac0ce",
+          "role": "frozen RQ1 completeness and provenance anchor"
+        },
+        {
+          "path": "configs/rq3_damage_evidence_decomposition_v1/blind_evaluator_lock.schema.json",
+          "sha256": "fcea49a0e35b2d0115341bbb8e7199f60d0bdae7fac83c6c5521920adb802fba",
+          "role": "fail-closed blind evaluator contract"
+        },
+        {
+          "path": "configs/rq3_damage_evidence_decomposition_v1/unlocked_development_amendment.yaml",
+          "sha256": "d4e7786776dae5a40f369838d65e050c46cf5e5ebabd52c1659d2dc573ab2731",
+          "role": "explicit user-authorized exposed-development execution amendment"
+        }
+      ],
+      "split": {
+        "unit": "canonical disaster event",
+        "train": null,
+        "validation": null,
+        "test_policy": "Seven RQ1 frozen outer folds cover 14 exposed development events. No independent blind score exists and blind/generalization/deployment claims are forbidden."
+      },
+      "code": {
+        "commit": "31a1adc37087928eecdf6d973634bfbf7f7d408e",
+        "dirty_patch_sha256": "6aedaa9e3f80dadcaf64fbdc0fb912bfd9068c4222619c610d6d0b03dea59d3f",
+        "configs": [
+          {
+            "path": "configs/rq3_damage_evidence_decomposition_v1/protocol.yaml",
+            "sha256": "1d9f50d58c34fc09aa315bd4f69244c670538475617cd01189c1c326ca7d03b4",
+            "role": "frozen RQ3 factor order and hard gates"
+          },
+          {
+            "path": "configs/rq3_damage_evidence_decomposition_v1/unlocked_development_amendment.yaml",
+            "sha256": "d4e7786776dae5a40f369838d65e050c46cf5e5ebabd52c1659d2dc573ab2731",
+            "role": "development-only blind-lock waiver and claim boundary"
+          }
+        ]
+      },
+      "conditions": [
+        {"id": "E1_SMOKE", "input": "two real batches", "intervention": "instance supervision CUDA smoke", "role": "technical preflight"},
+        {"id": "E1_OVERFIT", "input": "two frozen real batches", "intervention": "30-step instance supervision overfit", "role": "technical preflight"},
+        {"id": "F0_THROUGHPUT", "input": "synthetic batch 2 at 512 squared", "intervention": "500-step F0 benchmark", "role": "runtime anchor"},
+        {"id": "E1_THROUGHPUT", "input": "synthetic batch 2 at 512 squared", "intervention": "500-step E1 benchmark", "role": "runtime candidate"},
+        {"id": "BRIGHT_GEOREF_AUDIT", "input": "2214 RQ3 samples and 4672 official BRIGHT GeoTIFFs", "intervention": "exact decoded-pixel identity and fail-closed georeference recovery", "role": "non-training provenance audit"},
+        {"id": "E1_PILOT_UNLOCKED", "input": "seven frozen outer folds with paired and deranged SAR", "intervention": "instance-level supervision under exposed-development amendment", "role": "14-run development pilot"}
+      ],
+      "seeds": [42],
+      "selection": {
+        "split": "seven frozen RQ1 canonical-event outer folds; all 14 events remain exposed development data",
+        "checkpoint_rule": "per-fold step frozen by RQ1 inner selection; no RQ3 outer metric selects a checkpoint",
+        "threshold_source": "RQ1 outer-training-only frozen building thresholds"
+      },
+      "metrics": {
+        "primary": ["event-macro building-only damage F1", "C2 minus C3 damage F1"],
+        "secondary": ["Damaged F1", "Destroyed F1", "worst-event grade delta", "throughput", "two-batch loss reduction"]
+      },
+      "test_exposure": {
+        "used": true,
+        "status": "exposed",
+        "detail": "The 14 labeled events are development-only. No third-party blind event was evaluated."
+      },
+      "runs": [
+        {
+          "condition": "E1_SMOKE",
+          "seed": 42,
+          "status": "completed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_v1_20260820/e1_strict_purity_cuda_smoke"
+        },
+        {
+          "condition": "E1_OVERFIT",
+          "seed": 42,
+          "status": "completed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_v1_20260820/e1_strict_purity_overfit_verdict.json"
+        },
+        {
+          "condition": "F0_THROUGHPUT",
+          "seed": 42,
+          "status": "completed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_v1_20260820/throughput_instance_ce/f0.json"
+        },
+        {
+          "condition": "E1_THROUGHPUT",
+          "seed": 42,
+          "status": "completed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_v1_20260820/throughput_instance_ce/e1.json"
+        },
+        {
+          "condition": "BRIGHT_GEOREF_AUDIT",
+          "seed": 0,
+          "status": "completed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_v1_20260820/bright_georeference_recovery_pixels_v1_20260820/AUDIT.json"
+        },
+        {
+          "condition": "E1_PILOT_UNLOCKED",
+          "seed": 42,
+          "status": "failed",
+          "artifact": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_unlocked_dev_v1_20260820"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "configs/rq3_damage_evidence_decomposition_v1/protocol.yaml",
+          "sha256": "b61a6be0aa4ec2d1fd6c6efd981e2514d73005c81fea8ddfd8cd3aae52cf4b9c",
+          "role": "frozen protocol and hard gates"
+        },
+        {
+          "path": "configs/rq3_damage_evidence_decomposition_v1/blind_evaluator_lock.schema.json",
+          "sha256": "0f36ebb1fbf8eefaf6b4a87d438011b565bf0b0fc729a7920bd82eb7da839f0e",
+          "role": "fail-closed third-party blind contract"
+        },
+        {
+          "path": "configs/rq3_damage_evidence_decomposition_v1/unlocked_development_amendment.yaml",
+          "sha256": "d4e7786776dae5a40f369838d65e050c46cf5e5ebabd52c1659d2dc573ab2731",
+          "role": "explicit user amendment authorizing exposed-development execution"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/PREFLIGHT.md",
+          "sha256": "3a380310a29b77a853936e24093872e6ad854f108e0d7537079351b931f27c95",
+          "role": "Material Passport, implementation result and claim boundary"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/PRECHECK_RESULTS.json",
+          "sha256": "eece4256d71ce5ef7613336eef2588e09d3aa1360b6912576afb7cafa5140141",
+          "role": "machine-readable technical preflight verdict"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/UNLOCKED_DEVELOPMENT_LAUNCH.md",
+          "sha256": "e25aaf33a5fe968f8752066e999d2de69898e232d08792185e019d0373422bac",
+          "role": "ARS-compatible launch receipt, runtime scope and monitoring commands"
+        },
+        {
+          "path": "scripts/run_rq3_damage_evidence.py",
+          "sha256": "dd6ecb77aca6bc0e45a4243872c6bc17eed2a68a6a179b7aaec5fa9f9d5726af",
+          "role": "runner requiring either a blind lock or explicit development amendment"
+        },
+        {
+          "path": "scripts/launch_rq3_unlocked_e1_pilot.sh",
+          "sha256": "81b43253b5dd744d123226842ececcf25c1f6fef882bd32db759fe4bb9480110",
+          "role": "runtime-gated two-GPU E1 development pilot launcher"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/SAR_PROVENANCE_RECOVERY.md",
+          "sha256": "eb2280a1bc6363e29097d6fcc181abf5b93490c00c91c7eb77749dd6e6553020",
+          "role": "official BRIGHT identity, published event context and catalog-candidate claim boundary"
+        },
+        {
+          "path": "scripts/recover_rq3_bright_georeference.py",
+          "sha256": "ed9ff8497c3f70a76c94db572fe87638ad42867104d82fd2ecd425070de7ad15",
+          "role": "reproducible exact-pixel identity and georeference recovery"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/THIRD_PARTY_BLIND_EVALUATION_REQUEST.md",
+          "sha256": "9f6990edda30d86b56dfa549a19ff1790a93c582278c0fde79f9f9d5ff84c2e0",
+          "role": "unsent external custodian request template"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/RESULTS.md",
+          "sha256": "1c2a6b3a8965f66a75fd2db0aabb456ef8368e8dd8e093cca55182b0d3e18d3f",
+          "role": "human-readable completed E1 technical-failure result and claim boundary"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/summary.json",
+          "sha256": "d3e9f7f29c349cefed44b0d8103ea7b30e306480a0a7db9715047bc5e4b383ad",
+          "role": "machine-readable E1 metrics, hard gates and numerical-integrity audit"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/event_effects.csv",
+          "sha256": "202d7e652743a3a6b24ab859bf4892957cbe5727383be63e1b129de8fc774613",
+          "role": "14-event F0, E1-C2 and E1-C3 paired effects"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_damage_evidence_decomposition_v1_20260820/MODEL_AUDIT_PROMPT.md",
+          "sha256": "16bc8f0dbbed6f9e78598495a185f128923535e28bebe8d5521f079bd353bb22",
+          "role": "reusable evidence-constrained external-model audit prompt"
+        }
+      ],
+      "results": {
+        "sample_count": 2214,
+        "event_count": 14,
+        "official_polygon_traceable_sample_count": 1383,
+        "official_bright_unique_pixel_match_count": 2189,
+        "official_bright_ambiguous_pixel_match_count": 3,
+        "official_bright_unmatched_count": 22,
+        "official_bright_any_pixel_match_coverage": 0.990063233965673,
+        "official_bright_unique_georeference_coverage": 0.9887082204155375,
+        "high_confidence_metadata_coverage": 0.0,
+        "sensor_branch_admissible": false,
+        "e1_two_batch_loss_reduction": 0.6809933842453876,
+        "e1_to_f0_throughput_wall_time_ratio": 1.1513097740290372,
+        "formal_pilot_run_count": 0,
+        "unlocked_development_pilot_expected_run_count": 14,
+        "unlocked_development_pilot_completed_run_count": 14,
+        "unlocked_development_pilot_process_failure_count": 0,
+        "unlocked_development_pilot_nonfinite_checkpoint_count": 14,
+        "e1_c2_event_macro_damage_f1": 0.0,
+        "e1_c3_event_macro_damage_f1": 0.0,
+        "f0_c2_event_macro_damage_f1": 0.19349946316140088,
+        "e1_c2_minus_f0_event_macro_damage_f1": -0.19349946316140088,
+        "e1_c2_minus_c3_event_macro_damage_f1": 0.0,
+        "e1_positive_event_count": 0,
+        "e1_checkpoint_nan_element_fraction": 0.9999803360150323,
+        "e2_status": "not_started",
+        "e3_status": "blocked_metadata_coverage",
+        "e4_status": "not_started"
+      },
+      "gate": {
+        "decision": "freeze_e1_technical_failure_do_not_promote",
+        "passed": false,
+        "reason": "All 14 tasks completed mechanically, but every final checkpoint contains non-finite model state and seven of eight nominal pilot gates fail. E1 is not a valid negative model comparison and cannot become an anchor."
+      },
+      "claims": [
+        {
+          "claim": "The RQ3 E1-E4 interfaces and the exposed-development runner are implemented.",
+          "verdict": "ALIGNED",
+          "basis": "Syntax, repository tests, model forward checks, E1 CUDA smoke, short overfit and throughput checks passed before the E1 pilot was launched."
+        },
+        {
+          "claim": "The RQ3 completion path fails closed on numerical corruption.",
+          "verdict": "OVERSTATED",
+          "basis": "The queue accepted all 14 runs as complete even though their final train/validation losses and almost all checkpoint state elements were NaN."
+        },
+        {
+          "claim": "Most exposed RQ3 samples can be linked to a unique official BRIGHT geographic tile.",
+          "verdict": "ALIGNED",
+          "basis": "2189 of 2214 samples have one exact canonical-pixel match and a recovered CRS/footprint; 3 ambiguous and 22 unmatched samples remain fail-closed. This does not establish collect-level sensor provenance."
+        },
+        {
+          "claim": "E1 is a valid negative comparison showing that instance supervision harms damage grading.",
+          "verdict": "NOT_SUPPORTED_BY_PROVENANCE",
+          "basis": "Systematic numerical divergence invalidates the E1 intervention comparison; all-Intact outputs are an artifact of non-finite logits and argmax behavior."
+        },
+        {
+          "claim": "Any RQ3 factor improves damage grading or cross-event robustness.",
+          "verdict": "NOT_SUPPORTED_BY_PROVENANCE",
+          "basis": "E1 is technically invalid and E2-E4 have not produced eligible score-bearing results."
+        },
+        {
+          "claim": "RQ3 generalizes to independent blind events or is deployment-ready.",
+          "verdict": "PROVENANCE_INSUFFICIENT",
+          "basis": "No third-party blind lock or scored blind evaluation exists."
         }
       ]
     }

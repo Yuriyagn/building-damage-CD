@@ -1,0 +1,77 @@
+{
+  "protocol_id": "rq3_damage_evidence_decomposition_v1.0",
+  "date": "2026-08-20",
+  "status": "exposed_development_e1_pilot_running",
+  "formal_training_started": true,
+  "development_training_started": true,
+  "blind_evaluator_lock": "absent",
+  "evaluation_contract": {
+    "status": "waived_by_explicit_user_amendment",
+    "execution_class": "exposed_development_only",
+    "amendment_id": "rq3_damage_evidence_decomposition_unlocked_dev_v1.0",
+    "amendment_sha256": "d4e7786776dae5a40f369838d65e050c46cf5e5ebabd52c1659d2dc573ab2731",
+    "independent_blind_confirmation_allowed": false,
+    "unseen_event_robustness_claim_allowed": false
+  },
+  "runtime_inspection": {
+    "runtime_gate": "passed",
+    "gpu_count": 2,
+    "gpus_idle_before_launch": true,
+    "tmux_session_count_after_launch": 1,
+    "rq3_training_process_count_after_launch": 2
+  },
+  "tests": {"repository_total_passed": 101, "rq3_specific_passed": 16},
+  "evidence_audit": {
+    "sample_count": 2214,
+    "event_count": 14,
+    "official_polygon_traceable_sample_count": 1383,
+    "official_instance_metric_direct_sample_count": 262,
+    "high_confidence_metadata_coverage": 0.0,
+    "sensor_branch_admissible": false,
+    "file_hashes_included": true,
+    "official_bright_georeference_recovery": {
+      "unique_pixel_match_count": 2189,
+      "ambiguous_pixel_match_count": 3,
+      "unmatched_count": 22,
+      "any_pixel_match_coverage": 0.990063233965673,
+      "unique_georeference_coverage": 0.9887082204155375,
+      "binary_exact_file_count": 262,
+      "audit_sha256": "d42adc6411021b7cf47133d65cc71bddcf76d2033dae60423dc85809596e4ab0"
+    },
+    "official_catalog_followup": {
+      "noto_umbra_candidate_count": 4,
+      "noto_exact_sample_mapping": false,
+      "noto_candidate_audit_sha256": "cf4b791c1049537e904de814bb47f53849daf07751ff50a47abf12d97356a6b6",
+      "remote_pixel_disambiguation": "inconclusive_read_error_then_terminated"
+    }
+  },
+  "e1": {
+    "cuda_smoke": "passed",
+    "two_batch_overfit": {
+      "initial_loss": 1.0285786390304565,
+      "final_loss": 0.32812339067459106,
+      "relative_reduction": 0.6809933842453876,
+      "passed": true
+    },
+    "throughput": {
+      "f0_seconds_500_steps": 15.88820703125,
+      "e1_seconds_500_steps": 18.292248046875,
+      "wall_time_ratio": 1.1513097740290372,
+      "passed": true
+    },
+    "pilot": {
+      "expected_run_count": 14,
+      "completed_run_count_at_startup_check": 0,
+      "running_run_count_at_startup_check": 2,
+      "pending_run_count_at_startup_check": 12,
+      "failure_count_at_startup_check": 0,
+      "tmux_session": "rq3_e1_unlocked_pilot_20260820_203615",
+      "output_root": "/home/yr/code/Building damage change detection/outputs/stage2/rq3_damage_evidence_decomposition_unlocked_dev_v1_20260820"
+    }
+  },
+  "gate": {
+    "decision": "unlocked_development_pilot_running",
+    "passed": null,
+    "reason": "The user explicitly waived the blind-lock startup gate for exposed development experiments. E1 is running; no pilot metric verdict exists yet. E3 remains independently inadmissible because exact per-sample sensor metadata coverage is 0%."
+  }
+}

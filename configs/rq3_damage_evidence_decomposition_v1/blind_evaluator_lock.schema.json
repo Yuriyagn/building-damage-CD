@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RQ3 third-party blind evaluator lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol_id", "status", "evaluator", "accepted_at",
+    "written_confirmation_sha256", "event_count", "event_ids_sha256",
+    "input_manifest_sha256", "hidden_labels_sha256", "metric_script_sha256",
+    "labels_withheld", "pixel_semantic_evaluation", "sensor_metadata_available",
+    "damaged_event_count", "destroyed_event_count", "geospatial_overlap_audit",
+    "excluded_event_overlap", "california_2025_excluded", "jamaica_2025_excluded",
+    "format_dry_run_limit", "scored_submission_limit", "resubmission_policy"
+  ],
+  "properties": {
+    "protocol_id": {"const": "rq3_damage_evidence_decomposition_v1.0"},
+    "status": {"const": "accepted"},
+    "evaluator": {"type": "string", "minLength": 1},
+    "accepted_at": {"type": "string", "format": "date-time"},
+    "written_confirmation_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "event_count": {"type": "integer", "minimum": 3},
+    "event_ids_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "input_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hidden_labels_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "metric_script_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "labels_withheld": {"const": true},
+    "pixel_semantic_evaluation": {"const": true},
+    "sensor_metadata_available": {"const": true},
+    "damaged_event_count": {"type": "integer", "minimum": 2},
+    "destroyed_event_count": {"type": "integer", "minimum": 2},
+    "geospatial_overlap_audit": {"enum": ["passed", "custodian_attested_passed"]},
+    "excluded_event_overlap": {"const": false},
+    "california_2025_excluded": {"const": true},
+    "jamaica_2025_excluded": {"const": true},
+    "format_dry_run_limit": {"const": 1},
+    "scored_submission_limit": {"const": 1},
+    "resubmission_policy": {"const": "only_if_no_score_was_computed_or_disclosed"},
+    "notes": {"type": "string"}
+  }
+}
