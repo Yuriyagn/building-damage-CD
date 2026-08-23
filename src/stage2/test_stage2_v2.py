@@ -32,6 +32,16 @@ from stage2.metrics_v2 import (  # noqa: E402
     Stage2V2MeterBundle,
     summarize_event_generalization,
 )
+from stage2.numerical_integrity import (  # noqa: E402
+    NUMERICAL_FAILURE_EXIT_CODE,
+    NumericalIntegrityError,
+    fail_numerical,
+    finite_python_values,
+    guard_tensors,
+    named_tensors,
+    strict_write_json,
+    verify_checkpoint_sidecar,
+)
 from stage2.rq3_runtime import forward_stage2_model  # noqa: E402
 
 
@@ -169,12 +179,29 @@ def main() -> None:
     args = parse_args()
     cfg = load_config(args.config)
     checkpoint_path = Path(args.checkpoint)
-    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
-    seed = int(checkpoint.get("seed", dict(cfg.get("train", {})).get("seed", 42)))
     output_dir = Path(args.output_dir)
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite non-empty output directory: {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
+    numerical_integrity = bool(dict(cfg.get("numerical_integrity", {})).get("enabled", False))
+    if numerical_integrity:
+        try:
+            verify_checkpoint_sidecar(checkpoint_path)
+        except (ValueError, OSError, json.JSONDecodeError) as error:
+            fail_numerical(
+                output_dir,
+                stage="checkpoint_sidecar",
+                first_nonfinite_tensor=str(error),
+            )
+    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    if numerical_integrity:
+        guard_tensors(
+            output_dir,
+            stage="checkpoint_load",
+            items=named_tensors(checkpoint, "checkpoint"),
+            step=int(checkpoint.get("epoch", -1)),
+        )
+    seed = int(checkpoint.get("seed", dict(cfg.get("train", {})).get("seed", 42)))
 
     if not torch.cuda.is_available() and not args.allow_cpu:
         raise RuntimeError("CUDA is unavailable; pass --allow-cpu only for a diagnostic test")
@@ -211,6 +238,14 @@ def main() -> None:
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
             output = forward_stage2_model(model, image, batch, device)
             logits, disaster_logits = unpack_model_output(output)
+        if numerical_integrity:
+            guard_tensors(
+                output_dir,
+                stage="evaluation_logits_before_argmax",
+                items=named_tensors(output, "output"),
+                step=int(checkpoint.get("epoch", -1)),
+                batch_ids=[str(value) for value in batch.get("id", [])],
+            )
         if disaster_logits is not None:
             disaster_targets = encode_disaster_types(
                 [str(value) for value in batch["disaster_type"]], device=device
@@ -286,8 +321,27 @@ def main() -> None:
         }
     )
     per_event_rows = grouped.rows("event_id")
-    write_json(output_dir / "metrics.json", metrics)
-    write_json(output_dir / "event_generalization.json", summarize_event_generalization(per_event_rows))
+    event_summary = summarize_event_generalization(per_event_rows)
+    if numerical_integrity:
+        passed, offending = finite_python_values(
+            {"metrics": metrics, "event_summary": event_summary, "sample_rows": sample_rows}
+        )
+        if not passed:
+            fail_numerical(
+                output_dir,
+                stage="evaluation_score_artifact",
+                first_nonfinite_tensor=str(offending),
+                step=int(checkpoint.get("epoch", -1)),
+            )
+        strict_write_json(output_dir / "metrics.json", metrics)
+        strict_write_json(output_dir / "event_generalization.json", event_summary)
+        strict_write_json(
+            output_dir / "numerical_integrity.json",
+            {"status": "passed", "checkpoint_epoch": int(checkpoint.get("epoch", -1))},
+        )
+    else:
+        write_json(output_dir / "metrics.json", metrics)
+        write_json(output_dir / "event_generalization.json", event_summary)
     write_csv(output_dir / "sample_metrics.csv", sample_rows)
     write_csv(output_dir / "per_disaster_metrics.csv", grouped.rows("disaster_type"))
     write_csv(output_dir / "per_region_metrics.csv", grouped.rows("country_or_region"))
@@ -297,4 +351,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except NumericalIntegrityError as error:
+        print(json.dumps(error.report, sort_keys=True, allow_nan=False), file=sys.stderr, flush=True)
+        raise SystemExit(NUMERICAL_FAILURE_EXIT_CODE) from error

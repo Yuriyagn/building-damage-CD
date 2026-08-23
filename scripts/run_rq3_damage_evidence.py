@@ -180,6 +180,11 @@ def candidate_config(
             "factors": factors,
         },
         "rq3": {"reliability_loss_weight": 0.1},
+        "numerical_integrity": {
+            "enabled": True,
+            "trace_steps": [1, 10, 100, 250, 500, 750, 1000],
+            "fail_fast": True,
+        },
         "loss": {"name": "building_only_ce", "class_weight_strategy": "median_frequency", "max_class_weight": 8.0},
         "train": {
             "batch_size": 8, "eval_batch_size": 4, "num_workers": 8,
@@ -209,8 +214,12 @@ def build_tasks(*, phase: str, experiment: str, factors: list[str], manifest_roo
                 config = output_root / "configs" / f"{task_id}.yaml"
                 run_dir = output_root / "runs" / experiment / f"outer_{outer}" / condition / f"seed_{seed}"
                 eval_dir = output_root / "evaluation" / experiment / f"outer_{outer}" / condition / f"seed_{seed}"
-                train_ok = training_complete(run_dir, step)
-                eval_ok = evaluation_complete(eval_dir, step)
+                train_ok = training_complete(
+                    run_dir, step, require_numerical_integrity=True
+                )
+                eval_ok = evaluation_complete(
+                    eval_dir, step, require_numerical_integrity=True
+                )
                 if train_ok and eval_ok:
                     completed += 1
                     continue

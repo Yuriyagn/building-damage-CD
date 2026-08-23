@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "updated_at": "2026-08-21T19:59:24+08:00",
+  "updated_at": "2026-08-23T00:00:00+08:00",
   "entries": [
     {
       "experiment_id": "metadata_multitask_v1_20260814",
@@ -722,6 +722,103 @@
           "verdict": "PROVENANCE_INSUFFICIENT",
           "basis": "No third-party blind lock or scored blind evaluation exists."
         }
+      ]
+    },
+    {
+      "experiment_id": "rq3_e1_numerical_recovery_v1_20260823",
+      "title": "RQ3-E1 numerical integrity recovery diagnostics",
+      "research_question": "Can E1 retain AMP while making component supervision and every score-bearing artifact numerically fail-closed?",
+      "hypothesis": "FP32 component reductions and int64 votes remove the confirmed numerical risks without changing the scientific recipe.",
+      "status": "failed",
+      "provenance_status": "complete",
+      "datasets": ["RQ1 frozen 14-event exposed-development folds"],
+      "manifests_and_audits": [],
+      "split": {
+        "unit": "canonical event outer fold",
+        "train": null,
+        "validation": null,
+        "test_policy": "no independent blind evaluation; no legacy test claims"
+      },
+      "code": {
+        "commit": "75e8efd8f3ae3811b456c605c141a7884b527c3c",
+        "dirty_patch_sha256": null,
+        "configs": [
+          {
+            "path": "configs/rq3_damage_evidence_decomposition_v1/numerical_integrity_amendment_v1.yaml",
+            "sha256": "a1cc5f1b992c3f80477bb3286259be41e366534cc05855015c4706431970a066",
+            "role": "frozen numerical recovery amendment"
+          }
+        ]
+      },
+      "conditions": [
+        {"id": "F0_amp_on", "intervention": "unchanged F0 with integrity checks", "role": "control"},
+        {"id": "E1_amp_off", "intervention": "corrected E1 without AMP", "role": "diagnostic only"},
+        {"id": "E1_amp_on", "intervention": "corrected E1 with required AMP", "role": "recovery candidate"}
+      ],
+      "seeds": [42],
+      "selection": {"split": "outer-0 C2 diagnostic only", "checkpoint_rule": "fixed 1000 steps; no model selection"},
+      "metrics": {"primary": ["finite loss logits gradients parameters buffers optimizer and checkpoint"], "secondary": ["500-step E1/F0 wall-clock ratio"]},
+      "test_exposure": {"used": false, "status": "not_used", "detail": "Exposed development folds only."},
+      "runs": [
+        {
+          "condition": "E1_amp_on",
+          "seed": 42,
+          "status": "failed_numerical_step_2",
+          "artifact": "outputs/stage2/rq3_e1_numerical_recovery_v1_20260823/e1_exact_loss_overfit.json"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "reports/stage2_v2/rq3_e1_numerical_recovery_v1_20260823/STATUS.md",
+          "sha256": "5e2ba3b7fa43b1504d75b0d5e0414cd76e5b32794699ae1aa1586876a37f6a90",
+          "role": "recovery status and claim boundary"
+        },
+        {
+          "path": "reports/stage2_v2/rq3_e1_numerical_recovery_v1_20260823/summary.json",
+          "sha256": "a3a964579b1358e4c1d365beaf53399b739e20316d9ae8d0286110f6379b91b1",
+          "role": "machine-readable numerical recovery gate verdict"
+        }
+      ],
+      "gate": {"decision": "freeze_after_exact_loss_amp_overfit_numerical_failure", "passed": false},
+      "claims": [
+        {"claim": "RQ3-E1 numerical recovery is scientifically validated.", "verdict": "NOT_SUPPORTED_BY_PROVENANCE", "basis": "The required AMP exact-loss overfit failed at step 2 with a non-finite unscaled encoder gradient."}
+      ]
+    },
+    {
+      "experiment_id": "rq3_e1_instance_rerun_v1_20260823",
+      "title": "RQ3-E1 instance supervision rerun after numerical recovery",
+      "research_question": "Does numerically valid building-level supervision improve exposed-event damage grading over frozen F0 and C3?",
+      "hypothesis": "Corrected E1 will pass the unchanged parent pilot and full hard gates.",
+      "status": "blocked",
+      "provenance_status": "blocked_by_failed_numerical_recovery_gate",
+      "datasets": ["RQ1 frozen 14-event exposed-development folds"],
+      "manifests_and_audits": [],
+      "split": {"unit": "canonical event outer fold", "train": null, "validation": null, "test_policy": "exposed development only; blind claims forbidden"},
+      "code": {
+        "commit": "75e8efd8f3ae3811b456c605c141a7884b527c3c",
+        "dirty_patch_sha256": null,
+        "configs": [
+          {
+            "path": "configs/rq3_damage_evidence_decomposition_v1/numerical_integrity_amendment_v1.yaml",
+            "sha256": "a1cc5f1b992c3f80477bb3286259be41e366534cc05855015c4706431970a066",
+            "role": "launch and fail-closed gate authority"
+          }
+        ]
+      },
+      "conditions": [
+        {"id": "E1_C1", "intervention": "instance supervision with zero SAR", "role": "full control"},
+        {"id": "E1_C2", "intervention": "instance supervision with paired SAR", "role": "candidate"},
+        {"id": "E1_C3", "intervention": "instance supervision with fixed deranged SAR and metadata", "role": "negative control"}
+      ],
+      "seeds": [42, 3407, 2026],
+      "selection": {"split": "frozen RQ1 seven-fold selected steps", "checkpoint_rule": "unchanged fixed step per fold"},
+      "metrics": {"primary": ["event-macro damage F1"], "secondary": ["Damaged F1", "Destroyed F1", "event improvement count", "worst-event grade"]},
+      "test_exposure": {"used": false, "status": "not_used", "detail": "No independent blind evaluation is available."},
+      "runs": [],
+      "artifacts": [],
+      "gate": {"decision": "not_started_because_recovery_gate_failed", "passed": false},
+      "claims": [
+        {"claim": "Corrected E1 improves cross-event damage grading.", "verdict": "NOT_SUPPORTED_BY_PROVENANCE", "basis": "Pilot rerun is blocked until all numerical recovery gates pass."}
       ]
     }
   ]

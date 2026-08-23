@@ -58,11 +58,15 @@ def stage2_damage_loss(
     eligible_pixels = valid_mask.bool() & (pixel_index > 0) & (target >= 1) & (target <= 3)
     ids = pixel_index[eligible_pixels].long()
     values = target[eligible_pixels].long() - 1
-    counts = logits.new_zeros((logits.shape[0] + 1, 3))
+    counts = torch.zeros(
+        (logits.shape[0] + 1, 3), device=logits.device, dtype=torch.int64
+    )
     if ids.numel():
-        counts.index_add_(0, ids, torch.nn.functional.one_hot(values, num_classes=3).to(logits.dtype))
+        counts.index_add_(0, ids, torch.nn.functional.one_hot(values, num_classes=3))
     eligible_instances = counts[1:].sum(dim=1) > 0
     if not torch.any(eligible_instances):
+        if not torch.isfinite(logits).all():
+            raise FloatingPointError("instance logits are non-finite with no eligible components")
         return logits.sum() * 0.0
     labels = counts[1:].argmax(dim=1)[eligible_instances] + 1
     instance_logits = logits[eligible_instances].transpose(0, 1)[None, :, :, None]

@@ -34,6 +34,15 @@ from stage2.rq3_components import predicted_prior_components  # noqa: E402
 from stage2.rq3_runtime import reliability_auxiliary_loss, stage2_damage_loss, target_for_stage2_loss  # noqa: E402
 from stage2.losses_v2 import BuildingOnlyGradeLoss  # noqa: E402
 from stage2.datasets_v2 import Stage2V2Dataset  # noqa: E402
+from stage2.numerical_integrity import (  # noqa: E402
+    NumericalIntegrityError,
+    checkpoint_integrity_sidecar,
+    finite_python_values,
+    guard_tensors,
+    scan_tensors,
+    strict_write_json,
+    verify_checkpoint_sidecar,
+)
 
 
 def test_components_use_four_connectivity_and_mask_ambiguous_labels() -> None:
@@ -81,6 +90,33 @@ def test_pool_and_rasterize_round_trip() -> None:
     torch.testing.assert_close(dense[0, :, 1, 1], logits[1])
 
 
+def test_fp16_large_component_pooling_matches_fp32_reference() -> None:
+    features = torch.linspace(-128, 128, 512 * 512, dtype=torch.float32).reshape(
+        1, 1, 512, 512
+    ).half()
+    components = torch.ones((1, 512, 512), dtype=torch.long)
+    pooled = pool_component_features(features, components)
+    expected = torch.tensor(
+        [[features.float().mean().item(), features.float().max().item()]], dtype=torch.float32
+    )
+    assert pooled.pooled.dtype == torch.float32
+    torch.testing.assert_close(pooled.pooled, expected, rtol=1e-6, atol=1e-5)
+
+
+def test_fp16_multiple_large_components_and_empty_component_map() -> None:
+    features = torch.ones((1, 2, 512, 512), dtype=torch.float16)
+    components = torch.zeros((1, 512, 512), dtype=torch.long)
+    components[:, :256] = 1
+    components[:, 256:] = 2
+    pooled = pool_component_features(features, components)
+    assert pooled.pooled.shape == (2, 4)
+    assert pooled.pooled.dtype == torch.float32
+    assert torch.isfinite(pooled.pooled).all()
+    empty = pool_component_features(features, torch.zeros_like(components))
+    assert empty.pooled.shape == (0, 4)
+    assert empty.pooled.dtype == torch.float32
+
+
 def test_masked_target_and_reliability_supervision() -> None:
     target = torch.tensor([[[1, 2], [3, 1]]])
     valid = torch.tensor([[[True, False], [False, True]]])
@@ -112,6 +148,55 @@ def test_instance_loss_counts_each_component_once() -> None:
     observed = stage2_damage_loss(BuildingOnlyGradeLoss(), output, target)
     expected = torch.nn.functional.cross_entropy(instance_logits, torch.tensor([0, 1]))
     torch.testing.assert_close(observed, expected)
+
+
+def test_instance_majority_vote_uses_int64_for_large_components() -> None:
+    target = torch.cat(
+        [
+            torch.ones(3_000, dtype=torch.long),
+            torch.full((40_000,), 2, dtype=torch.long),
+            torch.full((5_000,), 3, dtype=torch.long),
+        ]
+    ).reshape(1, 1, -1)
+    pixel_index = torch.ones_like(target)
+    logits = torch.tensor([[0.0, 5.0, 0.0]], dtype=torch.float16)
+    output = {
+        "instance_logits": logits,
+        "instance_pixel_index": pixel_index,
+        "rq3_loss_valid_mask": torch.ones_like(target, dtype=torch.bool),
+        "damage_logits": torch.zeros(1, 3, 1, target.numel()),
+    }
+    observed = stage2_damage_loss(BuildingOnlyGradeLoss(), output, target)
+    expected = torch.nn.functional.cross_entropy(logits.float(), torch.tensor([1]))
+    torch.testing.assert_close(observed.float(), expected, rtol=2e-3, atol=2e-3)
+
+
+def test_numerical_integrity_rejects_nan_tensor_and_strict_json(tmp_path: Path) -> None:
+    with pytest.raises(NumericalIntegrityError):
+        guard_tensors(
+            tmp_path,
+            stage="unit_test_logits",
+            items=[("logits", torch.tensor([0.0, float("nan")]))],
+            step=7,
+            batch_ids=["sample"],
+        )
+    failure = json.loads((tmp_path / "numerical_failure.json").read_text(encoding="utf-8"))
+    assert failure["status"] == "failed_numerical"
+    assert failure["first_nonfinite_tensor"] == "logits"
+    assert finite_python_values({"metric": float("inf")}) == (False, "value.metric")
+    with pytest.raises(ValueError):
+        strict_write_json(tmp_path / "invalid.json", {"metric": float("nan")})
+
+
+def test_checkpoint_sidecar_rejects_file_hash_mismatch(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "model.pth"
+    torch.save({"model_state": {"weight": torch.ones(2)}}, checkpoint)
+    scan = scan_tensors([("checkpoint.model_state.weight", torch.ones(2))])
+    checkpoint_integrity_sidecar(checkpoint, scan)
+    assert verify_checkpoint_sidecar(checkpoint)["status"] == "passed"
+    checkpoint.write_bytes(checkpoint.read_bytes() + b"tampered")
+    with pytest.raises(ValueError, match="mismatch"):
+        verify_checkpoint_sidecar(checkpoint)
 
 
 def test_blind_lock_rejects_templates_and_accepts_complete_contract() -> None:

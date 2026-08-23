@@ -17,8 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from models.build_model import build_model  # noqa: E402
-from models.metadata_multitask import unpack_model_output  # noqa: E402
-from stage2.rq3_runtime import forward_stage2_model, target_for_stage2_loss  # noqa: E402
+from stage2.rq3_runtime import forward_stage2_model, stage2_damage_loss  # noqa: E402
 from stage2.train_stage2_v2 import build_stage2_v2_loss, compute_class_weights, make_dataset, set_seed  # noqa: E402
 
 
@@ -46,15 +45,36 @@ def main() -> int:
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
     scaler = torch.amp.GradScaler("cuda")
 
+    def fail(stage: str, step: int, tensor: str) -> int:
+        result = {
+            "schema": "rq3_two_batch_overfit_v1",
+            "status": "failed_numerical",
+            "stage": stage,
+            "step": step,
+            "first_nonfinite_tensor": tensor,
+            "amp_scale": float(scaler.get_scale()),
+            "steps_requested": args.steps,
+            "batch_count": len(batches),
+            "required_reduction": 0.5,
+            "passed": False,
+        }
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(result, sort_keys=True), file=sys.stderr)
+        return 86
+
     def losses(training: bool) -> list[torch.Tensor]:
         model.train(training)
         values = []
         for batch in batches:
             with torch.autocast("cuda", dtype=torch.float16):
                 output = forward_stage2_model(model, batch["image"].to(device), batch, device)
-                logits, _ = unpack_model_output(output)
-                target = target_for_stage2_loss(output, batch["mask"].to(device))
-                values.append(criterion(logits, target))
+                values.append(
+                    stage2_damage_loss(criterion, output, batch["mask"].to(device))
+                )
         return values
 
     with torch.no_grad():
@@ -65,10 +85,14 @@ def main() -> int:
         optimizer.zero_grad(set_to_none=True)
         with torch.autocast("cuda", dtype=torch.float16):
             output = forward_stage2_model(model, batch["image"].to(device), batch, device)
-            logits, _ = unpack_model_output(output)
-            target = target_for_stage2_loss(output, batch["mask"].to(device))
-            loss = criterion(logits, target)
+            loss = stage2_damage_loss(criterion, output, batch["mask"].to(device))
+        if not torch.isfinite(loss):
+            return fail("loss", step + 1, "loss.total")
         scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
+        for name, parameter in model.named_parameters():
+            if parameter.grad is not None and not torch.isfinite(parameter.grad).all():
+                return fail("gradient_unscaled", step + 1, f"gradient.{name}")
         scaler.step(optimizer)
         scaler.update()
     with torch.no_grad():

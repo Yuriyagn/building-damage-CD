@@ -1,0 +1,60 @@
+amendment_id: rq3_e1_numerical_integrity_amendment_v1.0
+parent_protocol_id: rq3_damage_evidence_decomposition_v1.0
+date: 2026-08-23
+status: frozen_before_recovery_execution
+evidence_scope: 14_exposed_development_events_only
+supersedes_historical_results: false
+historical_e1_verdict: technical_failure_nonfinite_training
+scientific_constraints:
+  backbone_change: forbidden
+  learning_rate_change: forbidden
+  loss_weight_change: forbidden
+  sampler_change: forbidden
+  roi_rule_change: forbidden
+  selected_step_change: forbidden
+  amp_required_for_formal_development: true
+  e2_e4_authorized: false
+implementation:
+  component_pooling_dtype: float32
+  instance_head_dtype: float32
+  component_vote_dtype: int64
+  failure_exit_code: 86
+  required_training_artifacts:
+    - numerical_integrity.json
+    - completed.json
+    - checkpoint_integrity_sidecar
+  trace_steps: [1, 10, 100, 250, 500, 750, 1000]
+condition_contract:
+  c3_source_deranged_fraction: 1.0
+  require_distinct_c2_c3_tensor_aggregate: true
+  require_sar_metadata_synchronized: true
+recovery_gates:
+  exact_loss_amp_overfit:
+    steps: 30
+    required_relative_loss_reduction: 0.5
+  diagnostics:
+    outer_fold: 0
+    condition: C2
+    seed: 42
+    optimizer_steps: 1000
+    required_conditions: [F0_amp_on, E1_amp_off, E1_amp_on]
+    require_all_finite: true
+    require_e1_amp_on: true
+  throughput:
+    steps: 500
+    condition: amp_on
+    maximum_e1_over_f0_wall_clock_ratio: 2.0
+  failure_policy: freeze_without_retry_or_recipe_change
+pilot:
+  runs: 14
+  matrix: 7_folds_x_C2_C3_x_seed_42
+  gates_unchanged_from_parent: true
+full:
+  launch_only_after_pilot_pass: true
+  runs: 63
+  matrix: 7_folds_x_C1_C2_C3_x_3_seeds
+claim_policy:
+  independent_blind_confirmation: forbidden
+  unseen_event_robustness: forbidden
+  deployment_readiness: forbidden
+  exposed_development_result: allowed

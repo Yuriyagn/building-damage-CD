@@ -53,7 +53,9 @@ def _csv_row_count(path: Path) -> int | None:
         return None
 
 
-def training_complete(run_dir: Path, expected_step: int) -> bool:
+def training_complete(
+    run_dir: Path, expected_step: int, *, require_numerical_integrity: bool = False
+) -> bool:
     """Accept only complete runs produced by the corrected fixed-step trainer."""
 
     completion = _read_json_object(run_dir / "completed.json")
@@ -62,6 +64,12 @@ def training_complete(run_dir: Path, expected_step: int) -> bool:
         return False
     if completion.get("status") != "completed":
         return False
+    if require_numerical_integrity:
+        integrity = _read_json_object(run_dir / "numerical_integrity.json")
+        if completion.get("numerical_integrity_passed") is not True:
+            return False
+        if integrity is None or integrity.get("status") != "passed":
+            return False
     if int(completion.get("optimizer_steps_completed") or -1) != expected_step:
         return False
     if run_info.get("fixed_step_mode") is not True:
@@ -80,6 +88,10 @@ def training_complete(run_dir: Path, expected_step: int) -> bool:
     checkpoint = run_dir / "checkpoints" / f"step_{expected_step:06d}.pth"
     if not checkpoint.is_file() or checkpoint.stat().st_size == 0:
         return False
+    if require_numerical_integrity:
+        sidecar = _read_json_object(checkpoint.with_suffix(checkpoint.suffix + ".integrity.json"))
+        if sidecar is None or sidecar.get("status") != "passed":
+            return False
     try:
         with (run_dir / "metrics_history.csv").open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
@@ -88,13 +100,19 @@ def training_complete(run_dir: Path, expected_step: int) -> bool:
         return False
 
 
-def evaluation_complete(eval_dir: Path, expected_step: int) -> bool:
+def evaluation_complete(
+    eval_dir: Path, expected_step: int, *, require_numerical_integrity: bool = False
+) -> bool:
     """Validate the full outer-evaluation artifact set, not a marker alone."""
 
     summary = _read_json_object(eval_dir / "event_generalization.json")
     metrics = _read_json_object(eval_dir / "metrics.json")
     if summary is None or metrics is None:
         return False
+    if require_numerical_integrity:
+        integrity = _read_json_object(eval_dir / "numerical_integrity.json")
+        if integrity is None or integrity.get("status") != "passed":
+            return False
     try:
         event_count = int(summary["event_count"])
         sample_count = int(metrics["sample_count"])
@@ -261,7 +279,15 @@ def run_tasks(
             with lock:
                 running.pop(task["id"], None)
                 if result.returncode:
-                    failures.append({"id": task["id"], "gpu": gpu, "exit_code": result.returncode, "log": str(log)})
+                    failures.append({
+                        "id": task["id"],
+                        "gpu": gpu,
+                        "exit_code": result.returncode,
+                        "failure_type": (
+                            "failed_numerical" if result.returncode == 86 else "failed_runtime"
+                        ),
+                        "log": str(log),
+                    })
                     stop.set()
                 else:
                     completed_ids.append(task["id"])

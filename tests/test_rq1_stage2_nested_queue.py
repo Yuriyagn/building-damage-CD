@@ -115,6 +115,39 @@ class RQ1Stage2NestedQueueTests(unittest.TestCase):
                     output, manifests, derangements, data_root, Path(tmp), selection
                 )
 
+    def test_numerical_completion_is_optional_but_fail_closed_when_required(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run_dir = root / "run"
+            eval_dir = root / "eval"
+            self.write_training_artifacts(run_dir)
+            self.write_evaluation_artifacts(eval_dir)
+            self.assertTrue(QUEUE.training_complete(run_dir, 6000))
+            self.assertFalse(
+                QUEUE.training_complete(
+                    run_dir, 6000, require_numerical_integrity=True
+                )
+            )
+            completion = run_dir / "completed.json"
+            completion.write_text(
+                '{"status":"completed","optimizer_steps_completed":6000,'
+                '"numerical_integrity_passed":true}\n'
+            )
+            (run_dir / "numerical_integrity.json").write_text('{"status":"passed"}\n')
+            checkpoint = run_dir / "checkpoints" / "step_006000.pth"
+            checkpoint.with_suffix(".pth.integrity.json").write_text('{"status":"passed"}\n')
+            (eval_dir / "numerical_integrity.json").write_text('{"status":"passed"}\n')
+            self.assertTrue(
+                QUEUE.training_complete(
+                    run_dir, 6000, require_numerical_integrity=True
+                )
+            )
+            self.assertTrue(
+                QUEUE.evaluation_complete(
+                    eval_dir, 6000, require_numerical_integrity=True
+                )
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

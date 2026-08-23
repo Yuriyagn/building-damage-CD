@@ -45,6 +45,19 @@ from stage2.metadata_multitask import (  # noqa: E402
     validate_disaster_classes,
 )
 from stage2.metrics_v2 import GroupedV2Meters, Stage2V2MeterBundle  # noqa: E402
+from stage2.numerical_integrity import (  # noqa: E402
+    NUMERICAL_FAILURE_EXIT_CODE,
+    NumericalIntegrityError,
+    append_integrity_snapshot,
+    checkpoint_integrity_sidecar,
+    component_area_summary,
+    fail_numerical,
+    finite_python_values,
+    guard_tensors,
+    named_tensors,
+    scan_tensors,
+    strict_write_json,
+)
 from stage2.rq3_runtime import (  # noqa: E402
     forward_stage2_model,
     reliability_auxiliary_loss,
@@ -566,6 +579,10 @@ def train_one_epoch(
     batch_iterator: Iterator[dict[str, Any]] | None = None,
     collect_metrics: bool = True,
     collect_loss: bool = True,
+    numerical_integrity: bool = False,
+    integrity_output_dir: Path | None = None,
+    optimizer_step: int | None = None,
+    integrity_trace_steps: set[int] | None = None,
 ) -> dict[str, float]:
     model.train()
     meter = Stage2V2MeterBundle() if collect_metrics else None
@@ -598,6 +615,27 @@ def train_one_epoch(
     ):
         image = batch["image"].to(device, non_blocking=True)
         target = batch["mask"].to(device, non_blocking=True)
+        batch_ids = [str(value) for value in batch.get("id", [])]
+        component_map = batch.get("rq3_component_map")
+        areas = component_area_summary(
+            component_map if isinstance(component_map, torch.Tensor) else None
+        )
+        if numerical_integrity:
+            assert integrity_output_dir is not None
+            input_items = [("input.image", image), ("input.target", target)]
+            for key in ("prior", "rq3_component_map"):
+                value = batch.get(key)
+                if isinstance(value, torch.Tensor):
+                    input_items.append((f"input.{key}", value))
+            guard_tensors(
+                integrity_output_dir,
+                stage="train_input",
+                items=input_items,
+                step=optimizer_step,
+                batch_ids=batch_ids,
+                amp_scale=float(scaler.get_scale()),
+                component_areas=areas,
+            )
         with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
             output = forward_stage2_model(model, image, batch, device)
             logits, disaster_logits = unpack_model_output(output)
@@ -619,6 +657,20 @@ def train_one_epoch(
                 ) * reliability_loss
             if disaster_loss is not None:
                 loss = loss + float(disaster_weight) * disaster_loss
+        if numerical_integrity:
+            guard_tensors(
+                integrity_output_dir,
+                stage="train_forward_loss",
+                items=[
+                    *named_tensors(output, "output"),
+                    ("loss.damage", damage_loss),
+                    ("loss.total", loss),
+                ],
+                step=optimizer_step,
+                batch_ids=batch_ids,
+                amp_scale=float(scaler.get_scale()),
+                component_areas=areas,
+            )
         if collect_metrics and batch_index == 0 and disaster_loss is not None:
             gradient_metrics = gradient_interaction(
                 damage_loss,
@@ -631,8 +683,80 @@ def train_one_epoch(
         scaler.scale(loss / max(current_group_size, 1)).backward()
         processed_batches = batch_index + 1
         if processed_batches % accumulation_steps == 0 or processed_batches == total_batches:
+            if numerical_integrity:
+                scaler.unscale_(optimizer)
+                guard_tensors(
+                    integrity_output_dir,
+                    stage="train_gradients_unscaled",
+                    items=(
+                        (f"gradient.{name}", parameter.grad)
+                        for name, parameter in model.named_parameters()
+                        if parameter.grad is not None
+                    ),
+                    step=optimizer_step,
+                    batch_ids=batch_ids,
+                    amp_scale=float(scaler.get_scale()),
+                    component_areas=areas,
+                )
+                per_parameter_norms = [
+                    torch.linalg.vector_norm(parameter.grad.detach().float())
+                    for parameter in model.parameters()
+                    if parameter.grad is not None
+                ]
+                gradient_norm = (
+                    torch.linalg.vector_norm(torch.stack(per_parameter_norms))
+                    if per_parameter_norms
+                    else torch.zeros((), device=device, dtype=torch.float32)
+                )
+                if not bool(torch.isfinite(gradient_norm).item()):
+                    fail_numerical(
+                        integrity_output_dir,
+                        stage="train_global_gradient_norm",
+                        first_nonfinite_tensor="gradient.global_norm",
+                        step=optimizer_step,
+                        batch_ids=batch_ids,
+                        tensor_summary={
+                            "name": "gradient.global_norm",
+                            "dtype": str(gradient_norm.dtype),
+                            "shape": list(gradient_norm.shape),
+                            "finite": False,
+                        },
+                        amp_scale=float(scaler.get_scale()),
+                        component_areas=areas,
+                    )
+            else:
+                gradient_norm = None
             scaler.step(optimizer)
             scaler.update()
+            if numerical_integrity:
+                state_scan = guard_tensors(
+                    integrity_output_dir,
+                    stage="train_post_optimizer",
+                    items=[
+                        *((f"parameter.{name}", value) for name, value in model.named_parameters()),
+                        *((f"buffer.{name}", value) for name, value in model.named_buffers()),
+                        *named_tensors(optimizer.state_dict(), "optimizer"),
+                    ],
+                    step=optimizer_step,
+                    batch_ids=batch_ids,
+                    amp_scale=float(scaler.get_scale()),
+                    component_areas=areas,
+                )
+                if optimizer_step in (integrity_trace_steps or set()):
+                    append_integrity_snapshot(
+                        integrity_output_dir / "integrity_snapshots.json",
+                        {
+                            "step": optimizer_step,
+                            "status": "passed",
+                            "loss": float(loss.detach().item()),
+                            "damage_loss": float(damage_loss.detach().item()),
+                            "gradient_norm": float(gradient_norm.detach().item()),
+                            "amp_scale": float(scaler.get_scale()),
+                            "post_optimizer_scan": state_scan,
+                            "batch_ids": batch_ids,
+                            "component_areas": areas,
+                        },
+                    )
             optimizer.zero_grad(set_to_none=True)
         if collect_loss or collect_metrics:
             batch_size = image.shape[0]
@@ -709,6 +833,9 @@ def evaluate(
     max_batches: int | None = None,
     disaster_criterion: torch.nn.Module | None = None,
     disaster_weight: float = 0.0,
+    numerical_integrity: bool = False,
+    integrity_output_dir: Path | None = None,
+    optimizer_step: int | None = None,
 ) -> dict[str, float]:
     model.eval()
     meter = Stage2V2MeterBundle()
@@ -741,6 +868,25 @@ def evaluate(
                 ) * reliability_loss
             if disaster_loss is not None:
                 loss = loss + float(disaster_weight) * disaster_loss
+        if numerical_integrity:
+            assert integrity_output_dir is not None
+            guard_tensors(
+                integrity_output_dir,
+                stage="validation_forward_loss",
+                items=[
+                    *named_tensors(output, "output"),
+                    ("loss.damage", damage_loss),
+                    ("loss.total", loss),
+                ],
+                step=optimizer_step,
+                batch_ids=[str(value) for value in batch.get("id", [])],
+                amp_scale=None,
+                component_areas=component_area_summary(
+                    batch.get("rq3_component_map")
+                    if isinstance(batch.get("rq3_component_map"), torch.Tensor)
+                    else None
+                ),
+            )
         batch_size = image.shape[0]
         loss_sum += float(loss.item()) * batch_size
         damage_loss_sum += float(damage_loss.item()) * batch_size
@@ -799,10 +945,11 @@ def save_checkpoint(
     seed: int,
     best_metrics: dict[str, dict[str, float | int]],
     class_weight_info: dict[str, Any],
+    numerical_integrity: bool = False,
+    integrity_output_dir: Path | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(
-        {
+    payload = {
             "epoch": epoch,
             "seed": seed,
             "config": cfg,
@@ -811,9 +958,26 @@ def save_checkpoint(
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "scheduler_state": scheduler.state_dict() if scheduler is not None else None,
-        },
-        path,
-    )
+        }
+    if numerical_integrity:
+        assert integrity_output_dir is not None
+        scan = guard_tensors(
+            integrity_output_dir,
+            stage="checkpoint_pre_save",
+            items=named_tensors(payload, "checkpoint"),
+            step=epoch,
+        )
+        payload["numerical_integrity"] = {"passed": True, "scan": scan}
+    torch.save(payload, path)
+    if numerical_integrity:
+        loaded = torch.load(path, map_location="cpu", weights_only=False)
+        scan = guard_tensors(
+            integrity_output_dir,
+            stage="checkpoint_post_load",
+            items=named_tensors(loaded, "checkpoint"),
+            step=epoch,
+        )
+        checkpoint_integrity_sidecar(path, scan)
 
 
 def parse_args() -> argparse.Namespace:
@@ -862,6 +1026,11 @@ def main() -> None:
         raise FileExistsError(f"refusing to overwrite non-empty output directory: {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
     write_json(output_dir / "config_resolved.json", cfg)
+    numerical_cfg = dict(cfg.get("numerical_integrity", {}))
+    numerical_integrity = bool(numerical_cfg.get("enabled", False))
+    integrity_trace_steps = {
+        int(value) for value in numerical_cfg.get("trace_steps", []) if int(value) > 0
+    }
 
     if not torch.cuda.is_available() and not args.allow_cpu:
         raise RuntimeError("CUDA is unavailable; pass --allow-cpu only for a diagnostic smoke test")
@@ -1067,6 +1236,11 @@ def main() -> None:
             "train_max_batches_per_step_or_epoch": train_max_batches,
             "validation_batch_limit": eval_max_batches,
             "amp": amp,
+            "numerical_integrity": {
+                "enabled": numerical_integrity,
+                "trace_steps": sorted(integrity_trace_steps),
+                "failure_exit_code": NUMERICAL_FAILURE_EXIT_CODE,
+            },
             "deterministic": deterministic,
             "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
             "seed": seed,
@@ -1101,6 +1275,10 @@ def main() -> None:
             disaster_weight=disaster_weight,
             disaster_label_map=disaster_label_map,
             batch_iterator=fixed_batch_iterator,
+            numerical_integrity=numerical_integrity,
+            integrity_output_dir=output_dir,
+            optimizer_step=1,
+            integrity_trace_steps=integrity_trace_steps,
         )
         step_model_epoch(model)
         val_metrics = evaluate(
@@ -1113,9 +1291,23 @@ def main() -> None:
             max_batches=eval_max_batches,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
+            numerical_integrity=numerical_integrity,
+            integrity_output_dir=output_dir,
+            optimizer_step=1,
         )
         payload = {"status": "ok", "train": train_metrics, "val": val_metrics}
-        write_json(output_dir / "smoke_test.json", payload)
+        if numerical_integrity:
+            passed, offending = finite_python_values(payload)
+            if not passed:
+                fail_numerical(
+                    output_dir,
+                    stage="smoke_score_artifact",
+                    first_nonfinite_tensor=str(offending),
+                    step=1,
+                )
+            strict_write_json(output_dir / "smoke_test.json", payload)
+        else:
+            write_json(output_dir / "smoke_test.json", payload)
         print(json.dumps(payload, sort_keys=True), flush=True)
         return
 
@@ -1169,6 +1361,10 @@ def main() -> None:
             batch_iterator=fixed_batch_iterator,
             collect_metrics=collect_train_metrics,
             collect_loss=collect_train_loss,
+            numerical_integrity=numerical_integrity,
+            integrity_output_dir=output_dir,
+            optimizer_step=epoch,
+            integrity_trace_steps=integrity_trace_steps,
         )
         step_model_epoch(model)
         if fixed_step_mode and epoch not in eval_step_set:
@@ -1189,6 +1385,9 @@ def main() -> None:
             eval_max_batches,
             disaster_criterion=disaster_criterion,
             disaster_weight=disaster_weight,
+            numerical_integrity=numerical_integrity,
+            integrity_output_dir=output_dir,
+            optimizer_step=epoch,
         )
         if scheduler is not None:
             scheduler.step()
@@ -1198,6 +1397,15 @@ def main() -> None:
             **{f"train_{key}": value for key, value in train_metrics.items()},
             **{f"val_{key}": value for key, value in val_metrics.items()},
         }
+        if numerical_integrity:
+            passed, offending = finite_python_values(row)
+            if not passed:
+                fail_numerical(
+                    output_dir,
+                    stage="metrics_row",
+                    first_nonfinite_tensor=str(offending),
+                    step=epoch,
+                )
         for filename, metric_name in checkpoint_metrics.items():
             value = float(row[metric_name])
             if value > float(best_metrics[filename]["value"]):
@@ -1212,6 +1420,8 @@ def main() -> None:
                     seed,
                     best_metrics,
                     class_weight_info,
+                    numerical_integrity,
+                    output_dir,
                 )
         recent = history[-(early_window - 1) :] if early_window > 1 else []
         primary_values = [float(old[primary_name]) for old in recent] + [float(row[primary_name])]
@@ -1237,6 +1447,8 @@ def main() -> None:
                 seed,
                 best_metrics,
                 class_weight_info,
+                numerical_integrity,
+                output_dir,
             )
         if fixed_step_mode:
             save_checkpoint(
@@ -1249,6 +1461,8 @@ def main() -> None:
                 seed,
                 best_metrics,
                 class_weight_info,
+                numerical_integrity,
+                output_dir,
             )
             progress = fixed_step_progress(epoch, train_metrics["loss"])
             write_json(output_dir / "latest_progress.json", progress)
@@ -1286,10 +1500,44 @@ def main() -> None:
         "checkpoint_policy": checkpoint_policy,
         "save_last_checkpoint": save_last_checkpoint,
         "best_metrics": best_metrics,
+        "numerical_integrity_passed": numerical_integrity,
     }
-    write_json(output_dir / "completed.json", completion)
+    if numerical_integrity:
+        passed, offending = finite_python_values({"history": history, "completion": completion})
+        if not passed:
+            fail_numerical(
+                output_dir,
+                stage="score_artifact",
+                first_nonfinite_tensor=str(offending),
+                step=epochs,
+            )
+        strict_write_json(
+            output_dir / "numerical_integrity.json",
+            {
+                "status": "passed",
+                "optimizer_steps_completed": epochs if fixed_step_mode else None,
+                "trace_steps_required": sorted(integrity_trace_steps),
+                "trace_steps_recorded": sorted(
+                    {
+                        int(row["step"])
+                        for row in json.loads(
+                            (output_dir / "integrity_snapshots.json").read_text(encoding="utf-8")
+                        )
+                    }
+                )
+                if (output_dir / "integrity_snapshots.json").exists()
+                else [],
+            },
+        )
+        strict_write_json(output_dir / "completed.json", completion)
+    else:
+        write_json(output_dir / "completed.json", completion)
     print(json.dumps(completion, sort_keys=True), flush=True)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except NumericalIntegrityError as error:
+        print(json.dumps(error.report, sort_keys=True, allow_nan=False), file=sys.stderr, flush=True)
+        raise SystemExit(NUMERICAL_FAILURE_EXIT_CODE) from error
