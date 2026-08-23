@@ -1,0 +1,39 @@
+{
+  "amendment_id": "rq3_e1_numerical_integrity_amendment_v1.0",
+  "claim_scope": "14 exposed development events only",
+  "condition_contract_outer0_val": {
+    "c2_tensor_aggregate_sha256": "d34c1d3f872059354a92ef10cb847c19260968facee8bdeae31568e7b4783b29",
+    "c3_deranged_fraction": 1.0,
+    "c3_tensor_aggregate_sha256": "fa63d0db777ed7990934a029660f763961605d3cccfc11ef324046836d049eb5",
+    "identical_tensor_pair_count": 0,
+    "metadata_sync_mismatch_count": 0,
+    "passed": true,
+    "sample_count": 680
+  },
+  "cuda_smoke": {
+    "amp": true,
+    "optimizer_steps": 1,
+    "passed": true
+  },
+  "exact_loss_amp_overfit": {
+    "amp_scale": 65536.0,
+    "first_nonfinite_tensor": "gradient.base_model.encoder.conv1.weight",
+    "passed": false,
+    "stage": "gradient_unscaled",
+    "status": "failed_numerical",
+    "step": 2
+  },
+  "full_started": false,
+  "gate": {
+    "decision": "freeze_numerical_recovery",
+    "passed": false,
+    "reason": "The mandatory exact-loss AMP overfit produced a non-finite unscaled encoder gradient at step 2."
+  },
+  "pilot_started": false,
+  "protocol_id": "rq3_damage_evidence_decomposition_v1.0",
+  "repository_tests": {
+    "passed": 107,
+    "warnings": 12
+  },
+  "thousand_step_diagnostics_started": false
+}

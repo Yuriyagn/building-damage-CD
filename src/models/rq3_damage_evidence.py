@@ -70,7 +70,13 @@ class PooledInstances:
 
 
 def pool_component_features(features: torch.Tensor, component_map: torch.Tensor) -> PooledInstances:
-    """Vectorized masked mean+max pooling for per-image contiguous component IDs."""
+    """Vectorized masked mean+max pooling in an explicit FP32 numerical island.
+
+    Component reductions can cover most of a 512x512 crop.  Keeping their
+    accumulators in the decoder's autocast dtype silently loses integer
+    precision and can overflow for realistic activations, so the reduction and
+    the returned descriptors are deliberately FP32.
+    """
 
     if features.ndim != 4 or component_map.ndim != 3:
         raise ValueError("features must be [B,C,H,W] and component_map [B,H,W]")
@@ -98,31 +104,42 @@ def pool_component_features(features: torch.Tensor, component_map: torch.Tensor)
             )
             offset += count
     if offset == 0:
-        empty = features.new_zeros((0, features.shape[1] * 2))
+        empty = torch.zeros(
+            (0, features.shape[1] * 2), device=features.device, dtype=torch.float32
+        )
         return PooledInstances(
             pooled=empty,
             pixel_index=global_map,
             batch_index=torch.empty(0, device=features.device, dtype=torch.long),
         )
 
-    labels = global_map.reshape(-1)
-    values = features.permute(0, 2, 3, 1).reshape(-1, features.shape[1])
-    keep = labels > 0
-    labels_kept = labels[keep]
-    values_kept = values[keep]
-    sums = features.new_zeros((offset + 1, features.shape[1]))
-    sums.index_add_(0, labels_kept, values_kept)
-    counts = features.new_zeros((offset + 1, 1))
-    counts.index_add_(0, labels_kept, features.new_ones((labels_kept.numel(), 1)))
-    maxima = features.new_zeros((offset + 1, features.shape[1]))
-    maxima.scatter_reduce_(
-        0,
-        labels_kept[:, None].expand(-1, features.shape[1]),
-        values_kept,
-        reduce="amax",
-        include_self=False,
-    )
-    pooled = torch.cat([sums[1:] / counts[1:].clamp_min(1.0), maxima[1:]], dim=1)
+    with torch.autocast(device_type=features.device.type, enabled=False):
+        labels = global_map.reshape(-1)
+        values = features.float().permute(0, 2, 3, 1).reshape(-1, features.shape[1])
+        keep = labels > 0
+        labels_kept = labels[keep]
+        values_kept = values[keep]
+        sums = torch.zeros(
+            (offset + 1, features.shape[1]), device=features.device, dtype=torch.float32
+        )
+        sums.index_add_(0, labels_kept, values_kept)
+        counts = torch.zeros((offset + 1, 1), device=features.device, dtype=torch.float32)
+        counts.index_add_(
+            0,
+            labels_kept,
+            torch.ones((labels_kept.numel(), 1), device=features.device, dtype=torch.float32),
+        )
+        maxima = torch.zeros(
+            (offset + 1, features.shape[1]), device=features.device, dtype=torch.float32
+        )
+        maxima.scatter_reduce_(
+            0,
+            labels_kept[:, None].expand(-1, features.shape[1]),
+            values_kept,
+            reduce="amax",
+            include_self=False,
+        )
+        pooled = torch.cat([sums[1:] / counts[1:].clamp_min(1.0), maxima[1:]], dim=1)
     return PooledInstances(
         pooled=pooled,
         pixel_index=global_map,
@@ -220,7 +237,8 @@ class RQ3DamageEvidenceModel(nn.Module):
         dense_spatial = self._dense_logits(decoder)
         instance_logits: torch.Tensor | None = None
         if self.instance_head is not None:
-            instance_logits = self.instance_head(pooled.pooled)
+            with torch.autocast(device_type=decoder.device.type, enabled=False):
+                instance_logits = self.instance_head.float()(pooled.pooled.float())
             dense_spatial = rasterize_instance_logits(instance_logits, pooled.pixel_index)
 
         output: dict[str, torch.Tensor] = {
@@ -249,7 +267,10 @@ class RQ3DamageEvidenceModel(nn.Module):
         gate_map = gate_table[delta_pooled.pixel_index.long()][:, None]
 
         if self.instance_head is not None:
-            control_instances = self.instance_head(pool_component_features(control_decoder, component_map).pooled)
+            with torch.autocast(device_type=decoder.device.type, enabled=False):
+                control_instances = self.instance_head.float()(
+                    pool_component_features(control_decoder, component_map).pooled.float()
+                )
             spatial_instances = instance_logits
             assert spatial_instances is not None
             fused_instances = fuse_control_sar(
